@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EastFront 2026 - WWII Hex Strategy Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>EastFront 2026</h1>
+            <div class="game-info">
+                <span id="current-player">Current Player: Axis</span>
+                <span id="turn-counter">Turn: 1</span>
+            </div>
+        </header>
+
+        <main>
+            <div class="game-board">
+                <canvas id="game-canvas" width="1200" height="800"></canvas>
+            </div>
+
+            <aside class="sidebar">
+                <div class="panel">
+                    <h3>Game Status</h3>
+                    <p id="status-text">Welcome to EastFront 2026. Select a unit to begin.</p>
+                </div>
+
+                <div class="panel">
+                    <h3>Selected Unit</h3>
+                    <div id="unit-info">
+                        <p>None selected</p>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3>Controls</h3>
+                    <button id="end-turn-btn">End Turn</button>
+                    <button id="reset-btn">Reset Game</button>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <script type="module" src="src/main.ts"></script>
+</body>
+</html>
