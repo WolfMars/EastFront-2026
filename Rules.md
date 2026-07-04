@@ -1,6 +1,6 @@
 # Rules
 ## Movement
-A unit moves its movement points
+A unit moves using its movement points
 
 ## Combat
 Different types of combat
@@ -17,7 +17,16 @@ Armor
 ## Intelligence
 The more intelligence, the more info on (own and) enemy units
 ## The map
-## Fog of war
-## A turn
-Movement
 
+## Fog of war
+
+## A turn
+HQ-phase (upload, deploy, organise)
+Deploy air-forces
+Movement simultaneous
+Repeat:
+    Skirmish phase
+    Movement
+Until no more skirmish
+Assault
+Result of assaults
