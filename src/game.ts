@@ -52,7 +52,7 @@ export class GameState {
             owner: Player.AXIS,
             position: { q: -15, r: 0 },
             strength: 4,
-            movement: 0,
+            movement: 6,
             maxMovement: 6
         });
         this.addUnit({
@@ -60,7 +60,7 @@ export class GameState {
             owner: Player.AXIS,
             position: { q: -15, r: 2 },
             strength: 3,
-            movement: 0,
+            movement: 4,
             maxMovement: 4
         });
         this.addUnit({
@@ -68,7 +68,7 @@ export class GameState {
             owner: Player.AXIS,
             position: { q: -13, r: 2 },
             strength: 2,
-            movement: 0,
+            movement: 3,
             maxMovement: 3
         });
 
@@ -78,7 +78,7 @@ export class GameState {
             owner: Player.SOVIET,
             position: { q: 10, r: 0 },
             strength: 3,
-            movement: 0,
+            movement: 5,
             maxMovement: 5
         });
         this.addUnit({
@@ -86,7 +86,7 @@ export class GameState {
             owner: Player.SOVIET,
             position: { q: 10, r: 2 },
             strength: 3,
-            movement: 0,
+            movement: 3,
             maxMovement: 3
         });
         this.addUnit({
@@ -94,7 +94,7 @@ export class GameState {
             owner: Player.SOVIET,
             position: { q: 10, r: -2 },
             strength: 2,
-            movement: 0,
+            movement: 3,
             maxMovement: 3
         });
     }
