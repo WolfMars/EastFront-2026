@@ -94,6 +94,26 @@ main {
     color: #bdc3c7;
 }
 
+.map-key-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    border-bottom: 1px solid #2c3e50;
+}
+
+.map-key-row:last-child { border-bottom: none; }
+
+.map-key-swatch {
+    width: 20px;
+    height: 16px;
+    border: 1px solid #1a1a1a;
+    display: inline-block;
+}
+
+.map-key-name { flex: 1; color: #ecf0f1; }
+.map-key-cost { color: #bdc3c7; font-size: 0.9em; }
+
 #unit-info {
     font-size: 0.9em;
 }

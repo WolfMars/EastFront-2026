@@ -4,8 +4,8 @@ A unit moves using its movement points
 
 ## Combat
 Different types of combat
-Assault - to move into a hex occupied by enemy
-Skirmish - moving into Zone of control
+Assault - to move into a hex occupied by enemy - change or no change of hex ownership, enter or no enter the hex
+Skirmish - moving into Zone of control - stop/stand, move on, retreat
 
 ## Units
 All units have a movement value, a combat value, and a name
@@ -42,7 +42,7 @@ This is partly dependent on the allocation of points to Intelligence
 Receive reinforcements
 HQ-phase (upload, deploy, organise)
 Deploy air-forces (choose one or more hexes)
-Movement (simultaneous)
+Movement
 Repeat:
     Skirmish phase
     Movement

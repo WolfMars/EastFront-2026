@@ -33,7 +33,7 @@ export function axialToCube(q: number, r: number): CubeCoord {
 /**
  * Convert cube to axial coordinates
  */
-export function cubeToAxial(x: number, y: number, z: number): AxialCoord {
+export function cubeToAxial(x: number, _y: number, z: number): AxialCoord {
     return {
         q: x,
         r: z,

@@ -1,5 +1,5 @@
-import { AxialCoord, hexToPixel, pixelToHex, hexKey } from './hex';
-import { generateMap, getTerrainColor, TerrainType, Hex } from './map';
+import { AxialCoord, hexToPixel, pixelToHex } from './hex';
+import { generateMap, getTerrainColor, Hex, TerrainType, getTerrainMovementCost, getTerrainDisplayName } from './map';
 import { GameState, Player, UnitType } from './game';
 
 const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
@@ -9,8 +9,8 @@ const HEX_SIZE = 25; // pixels
 const OFFSET_X = canvas.width / 2;
 const OFFSET_Y = canvas.height / 2;
 
-let gameState = new GameState();
 let hexMap = generateMap(canvas.width, canvas.height);
+let gameState = new GameState(hexMap);
 
 /**
  * Convert game coordinates to canvas coordinates
@@ -216,8 +216,8 @@ document.getElementById('end-turn-btn')!.addEventListener('click', () => {
  * Reset game button
  */
 document.getElementById('reset-btn')!.addEventListener('click', () => {
-    gameState = new GameState();
     hexMap = generateMap(canvas.width, canvas.height);
+    gameState = new GameState(hexMap);
     render();
     updateUI();
 });
@@ -225,3 +225,30 @@ document.getElementById('reset-btn')!.addEventListener('click', () => {
 // Initial render
 render();
 updateUI();
+
+/**
+ * Populate the map key in the sidebar showing color, name and movement cost
+ */
+function renderMapKey(): void {
+    const keyDiv = document.getElementById('map-key')!;
+    keyDiv.innerHTML = '';
+
+    // Iterate over TerrainType enum members
+    const terrains = Object.values(TerrainType) as TerrainType[];
+    terrains.forEach((t) => {
+        const color = getTerrainColor(t);
+        const name = getTerrainDisplayName(t);
+        const cost = getTerrainMovementCost(t);
+
+        const row = document.createElement('div');
+        row.className = 'map-key-row';
+        row.innerHTML = `
+            <span class="map-key-swatch" style="background:${color}"></span>
+            <span class="map-key-name">${name}</span>
+            <span class="map-key-cost">Cost: ${cost}</span>
+        `;
+        keyDiv.appendChild(row);
+    });
+}
+
+renderMapKey();

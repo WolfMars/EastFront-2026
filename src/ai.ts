@@ -3,8 +3,7 @@
  * Placeholder for future implementation
  */
 
-import { GameState, Player, Unit } from './game';
-import { AxialCoord } from './hex';
+import { GameState, Player } from './game';
 
 export class AIPlayer {
     player: Player;
@@ -24,6 +23,7 @@ export class AIPlayer {
 
         for (const unit of myUnits) {
             // For now, just end turn without moving
+            void unit;
             // TODO: Implement simple heuristics
             // - Find nearest enemy
             // - Move toward it
