@@ -18,7 +18,7 @@ export interface Unit {
     owner: Player;
     position: AxialCoord;
     strength: number; // 1-5
-    movementPoints: number;
+    movement: number;
     maxMovement: number;
 }
 
@@ -36,6 +36,7 @@ export class GameState {
     units: Map<string, Unit> = new Map();
     selectedUnitId: string | null = null;
     validMoves: AxialCoord[] = [];
+    selectedHex: AxialCoord | null = null;
     map: Map<string, Hex>;
     lastMoveCosts: Map<string, number> = new Map();
 
@@ -51,18 +52,24 @@ export class GameState {
             owner: Player.AXIS,
             position: { q: -15, r: 0 },
             strength: 4,
+            movement: 0,
+            maxMovement: 6
         });
         this.addUnit({
             type: UnitType.INFANTRY,
             owner: Player.AXIS,
             position: { q: -15, r: 2 },
             strength: 3,
+            movement: 0,
+            maxMovement: 4
         });
         this.addUnit({
             type: UnitType.HEADQUARTERS,
             owner: Player.AXIS,
-            position: { q: -15, r: -2 },
+            position: { q: -13, r: 2 },
             strength: 2,
+            movement: 0,
+            maxMovement: 3
         });
 
         // Soviet starting units (near Eastern position)
@@ -71,18 +78,24 @@ export class GameState {
             owner: Player.SOVIET,
             position: { q: 10, r: 0 },
             strength: 3,
+            movement: 0,
+            maxMovement: 5
         });
         this.addUnit({
             type: UnitType.INFANTRY,
             owner: Player.SOVIET,
             position: { q: 10, r: 2 },
             strength: 3,
+            movement: 0,
+            maxMovement: 3
         });
         this.addUnit({
             type: UnitType.INFANTRY,
             owner: Player.SOVIET,
             position: { q: 10, r: -2 },
             strength: 2,
+            movement: 0,
+            maxMovement: 3
         });
     }
 
@@ -91,6 +104,8 @@ export class GameState {
         owner: Player;
         position: AxialCoord;
         strength: number;
+        movement: number;
+        maxMovement: number;
     }): void {
         const id = `${props.owner}-${this.units.size}`;
         this.units.set(id, {
@@ -99,8 +114,8 @@ export class GameState {
             owner: props.owner,
             position: props.position,
             strength: props.strength,
-            movementPoints: 3,
-            maxMovement: 3,
+            movement: props.movement,
+            maxMovement: props.maxMovement,
         });
     }
 
@@ -111,8 +126,9 @@ export class GameState {
         }
 
         this.selectedUnitId = unitId;
+        this.selectedHex = null;
         // Compute reachable tiles using movementCost from map
-        const costs = this.computeReachableCosts(unit.position, unit.movementPoints);
+        const costs = this.computeReachableCosts(unit.position, unit.movement);
         this.lastMoveCosts = costs;
 
         this.validMoves = Array.from(costs.keys())
@@ -122,6 +138,13 @@ export class GameState {
                 return { q: Number(qStr), r: Number(rStr) } as AxialCoord;
             });
         return true;
+    }
+
+    selectHex(coord: AxialCoord): void {
+        this.selectedHex = coord;
+        this.selectedUnitId = null;
+        this.validMoves = [];
+        this.lastMoveCosts = new Map();
     }
 
     moveUnit(targetCoord: AxialCoord): boolean {
@@ -135,7 +158,7 @@ export class GameState {
 
         const cost = this.lastMoveCosts.get(targetKey)!;
         unit.position = targetCoord;
-        unit.movementPoints -= cost;
+        unit.movement -= cost;
         this.validMoves = [];
         this.lastMoveCosts = new Map();
         this.selectedUnitId = null;
@@ -143,7 +166,7 @@ export class GameState {
         return true;
     }
 
-    private computeReachableCosts(start: AxialCoord, movementPoints: number): Map<string, number> {
+    private computeReachableCosts(start: AxialCoord, movement: number): Map<string, number> {
         const dirs = [
             { q: 1, r: 0 },
             { q: -1, r: 0 },
@@ -170,7 +193,7 @@ export class GameState {
                 const hex = this.map.get(nkey)!;
                 const enterCost = hex.movementCost ?? 1;
                 const newCost = node.cost + enterCost;
-                if (newCost > movementPoints) continue;
+                if (newCost > movement) continue;
                 if (costs.has(nkey) && costs.get(nkey)! <= newCost) continue;
                 pq.push({ key: nkey, coord: nc, cost: newCost });
             }
@@ -183,7 +206,7 @@ export class GameState {
         // Reset all units' movement points
         this.units.forEach((unit) => {
             if (unit.owner === this.currentPlayer) {
-                unit.movementPoints = unit.maxMovement;
+                unit.movement = unit.maxMovement;
             }
         });
 

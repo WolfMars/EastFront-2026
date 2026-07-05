@@ -123,6 +123,43 @@ function drawUnits(): void {
 }
 
 /**
+ * Draw only the outline of a hex (no fill)
+ */
+function drawHexOutline(coord: AxialCoord, strokeColor: string = '#FFFF00', strokeWidth: number = 3): void {
+    const pixel = gameToCanvas(coord);
+    const x = pixel.x;
+    const y = pixel.y;
+
+    ctx.strokeStyle = strokeColor;
+    ctx.lineWidth = strokeWidth;
+    ctx.beginPath();
+    for (let i = 0; i < 6; i++) {
+        const angle = (Math.PI / 3) * i;
+        const hx = x + HEX_SIZE * Math.cos(angle);
+        const hy = y + HEX_SIZE * Math.sin(angle);
+        if (i === 0) ctx.moveTo(hx, hy);
+        else ctx.lineTo(hx, hy);
+    }
+    ctx.closePath();
+    ctx.stroke();
+}
+
+function drawSelectedHex(): void {
+    if (!gameState.selectedHex) return;
+    const coord = gameState.selectedHex;
+    const key = `${coord.q},${coord.r}`;
+    const hex = hexMap.get(key);
+    if (!hex) {
+        drawHexOutline(coord, '#FFCC00', 2);
+        return;
+    }
+
+    // Draw a translucent fill overlay, then a bright outline
+    drawHex(coord, 'rgba(255, 255, 0, 0.08)', '#FFCC00', 2);
+    drawHexOutline(coord, '#FFCC00', 3);
+}
+
+/**
  * Highlight valid moves
  */
 function drawValidMoves(): void {
@@ -141,6 +178,7 @@ function render(): void {
     drawMap();
     drawValidMoves();
     drawUnits();
+    drawSelectedHex();
 }
 
 /**
@@ -170,7 +208,37 @@ function updateUI(): void {
                 </div>
                 <div class="unit-stat">
                     <span>Movement:</span>
-                    <strong>${unit.movementPoints}/${unit.maxMovement}</strong>
+                    <strong>${unit.movement}/${unit.maxMovement}</strong>
+                </div>
+            `;
+        }
+    } else if (gameState.selectedHex) {
+        const coord = gameState.selectedHex;
+        const key = `${coord.q},${coord.r}`;
+        const hex = hexMap.get(key);
+        if (hex) {
+            statusText.textContent = `Hex selected: ${hex.terrainName}`;
+            unitInfo.innerHTML = `
+                <div class="unit-stat">
+                    <span>Coords:</span>
+                    <strong>${coord.q}, ${coord.r}</strong>
+                </div>
+                <div class="unit-stat">
+                    <span>Terrain:</span>
+                    <strong>${hex.terrainName}</strong>
+                </div>
+                <div class="unit-stat">
+                    <span>Movement Cost:</span>
+                    <strong>${hex.movementCost}</strong>
+                </div>
+                ${hex.name ? `<div class="unit-stat"><span>Name:</span><strong>${hex.name}</strong></div>` : ''}
+            `;
+        } else {
+            statusText.textContent = 'Hex selected (off-map)';
+            unitInfo.innerHTML = `
+                <div class="unit-stat">
+                    <span>Coords:</span>
+                    <strong>${coord.q}, ${coord.r}</strong>
                 </div>
             `;
         }
@@ -195,8 +263,16 @@ canvas.addEventListener('click', (event) => {
     if (unit && unit.owner === gameState.currentPlayer) {
         gameState.selectUnit(unit.id);
     } else if (gameState.selectedUnitId) {
-        // Try to move to clicked hex
-        gameState.moveUnit(coord);
+        // If the clicked hex is a valid move, move; otherwise select the hex (unselecting the unit)
+        const isValidMove = gameState.validMoves.some(m => m.q === coord.q && m.r === coord.r);
+        if (isValidMove) {
+            gameState.moveUnit(coord);
+        } else {
+            gameState.selectHex(coord);
+        }
+    } else if (!unit) {
+        // Empty hex clicked: select hex for info
+        gameState.selectHex(coord);
     }
 
     render();
