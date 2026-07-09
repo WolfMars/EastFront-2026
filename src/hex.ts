@@ -71,8 +71,10 @@ export function hexesInRange(center: AxialCoord, range: number): AxialCoord[] {
  * size: radius of the hex (distance from center to vertex)
  */
 export function hexToPixel(coord: AxialCoord, size: number): PixelCoord {
-    const x = size * (3 / 2 * coord.q);
-    const y = size * (Math.sqrt(3) / 2 * coord.q + Math.sqrt(3) * coord.r);
+    // r-axis horizontal: swap q and r roles from previous flat-top layout
+    //const x = size * (Math.sqrt(3) / 2 * coord.q + Math.sqrt(3) * coord.r);
+    const x = size * (Math.sqrt(3) * coord.q + Math.sqrt(3) / 2 * coord.r);
+    const y = size * (3 / 2 * coord.r);
     return { x, y };
 }
 
@@ -80,12 +82,12 @@ export function hexToPixel(coord: AxialCoord, size: number): PixelCoord {
  * Convert pixel coordinates to nearest hex (pointy-top orientation)
  */
 export function pixelToHex(px: number, py: number, size: number): AxialCoord {
-    const q = (2 / 3 * px) / size;
-    const r = (-1 / 3 * px + Math.sqrt(3) / 3 * py) / size;
+    // Correct inverse matrix for pointy-top orientation
+    const q = (Math.sqrt(3) / 3 * px - 1 / 3 * py) / size;
+    const r = (2 / 3 * py) / size; // Fixed: Pointy-top r maps strictly to vertical pixel py
 
     return roundHex({ q, r });
 }
-
 /**
  * Round fractional hex coordinates to nearest hex
  */
@@ -98,15 +100,15 @@ export function roundHex(coord: AxialCoord): AxialCoord {
 
     const xDiff = Math.abs(rx - cube.x);
     const yDiff = Math.abs(ry - cube.y);
-    const zDiff = Math.abs(rz - cube.z);
+    const zDiff = Math.abs(rz - cube.z); // Fixed: This must be cube.z, not the broken multiplication from before
 
     if (xDiff > yDiff && xDiff > zDiff) {
         rx = -ry - rz;
     } else if (yDiff > zDiff) {
         ry = -rx - rz;
-    } else {
-        rz = -rx - ry;
-    }
+    } 
+    // Note: You do not need the 'else { rz = -rx - ry; }' block because 
+    // cubeToAxial only reads rx and ry (q and r). Modifying rz changes nothing.
 
     return cubeToAxial(rx, ry, rz);
 }

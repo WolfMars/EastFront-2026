@@ -3,7 +3,15 @@
     {
       "type": "armor",
       "owner": "axis",
-      "position": { "q": -2, "r": 0 },
+      "position": { "q": -14, "r": -2 },
+      "strength": 4,
+      "movement": 6,
+      "maxMovement": 6
+    },
+    {
+      "type": "armor",
+      "owner": "axis",
+      "position": { "q": -12, "r": 2 },
       "strength": 4,
       "movement": 6,
       "maxMovement": 6
@@ -11,7 +19,15 @@
     {
       "type": "infantry",
       "owner": "axis",
-      "position": { "q": -15, "r": 2 },
+      "position": { "q": -10, "r": -4 },
+      "strength": 3,
+      "movement": 4,
+      "maxMovement": 4
+    },
+    {
+      "type": "infantry",
+      "owner": "axis",
+      "position": { "q": -8, "r": 1 },
       "strength": 3,
       "movement": 4,
       "maxMovement": 4
@@ -19,7 +35,7 @@
     {
       "type": "headquarters",
       "owner": "axis",
-      "position": { "q": -13, "r": 2 },
+      "position": { "q": -6, "r": -1 },
       "strength": 2,
       "movement": 3,
       "maxMovement": 3
@@ -27,7 +43,7 @@
     {
       "type": "armor",
       "owner": "soviet",
-      "position": { "q": 10, "r": 0 },
+      "position": { "q": 8, "r": -2 },
       "strength": 3,
       "movement": 5,
       "maxMovement": 5
@@ -43,7 +59,23 @@
     {
       "type": "infantry",
       "owner": "soviet",
-      "position": { "q": 10, "r": -2 },
+      "position": { "q": 11, "r": -1 },
+      "strength": 2,
+      "movement": 3,
+      "maxMovement": 3
+    },
+    {
+      "type": "infantry",
+      "owner": "soviet",
+      "position": { "q": 7, "r": 4 },
+      "strength": 2,
+      "movement": 3,
+      "maxMovement": 3
+    },
+    {
+      "type": "headquarters",
+      "owner": "soviet",
+      "position": { "q": 9, "r": 0 },
       "strength": 2,
       "movement": 3,
       "maxMovement": 3

@@ -73,7 +73,7 @@ function drawHex(
 
     ctx.beginPath();
     for (let i = 0; i < 6; i++) {
-        const angle = (Math.PI / 3) * i;
+        const angle = (Math.PI / 3) * (i + 0.5); //Där satt pointy top!!!
         const hx = x + HEX_SIZE * Math.cos(angle);
         const hy = y + HEX_SIZE * Math.sin(angle);
         if (i === 0) ctx.moveTo(hx, hy);
@@ -206,6 +206,38 @@ function drawSelectedHex(): void {
     drawHexOutline(coord, '#FFCC00', 3);
 }
 
+function drawNorthArrow(): void {
+    const x = 36;
+    const y = 36;
+
+    ctx.save();
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+    ctx.strokeStyle = '#111111';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(x - 20, y - 20, 40, 40, 8);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.strokeStyle = '#0d3b66';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(x, y - 10);
+    ctx.lineTo(x, y + 10);
+    ctx.moveTo(x, y - 10);
+    ctx.lineTo(x - 4, y - 4);
+    ctx.moveTo(x, y - 10);
+    ctx.lineTo(x + 4, y - 4);
+    ctx.stroke();
+
+    ctx.fillStyle = '#0d3b66';
+    ctx.font = 'bold 10px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('N', x, y + 18);
+    ctx.restore();
+}
+
 /**
  * Highlight valid moves
  */
@@ -226,6 +258,7 @@ function render(): void {
     drawValidMoves();
     drawUnits();
     drawSelectedHex();
+    drawNorthArrow();
 }
 
 /**
