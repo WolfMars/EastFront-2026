@@ -5,12 +5,22 @@ import { GameState, Player, UnitType } from './game';
 const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
 const ctx = canvas.getContext('2d')!;
 
-const HEX_SIZE = 25; // pixels
-const OFFSET_X = canvas.width / 2;
-const OFFSET_Y = canvas.height / 2;
+const HEX_SIZE = 28; // pixels
+const PAN_STEP = 32;
+
+let offsetX = canvas.width / 2;
+let offsetY = canvas.height / 2;
 
 let hexMap = generateMap(canvas.width, canvas.height);
 let gameState = new GameState(hexMap);
+
+let isDragging = false;
+let dragStartX = 0;
+let dragStartY = 0;
+let suppressNextClick = false;
+
+canvas.style.cursor = 'grab';
+canvas.style.touchAction = 'none';
 
 /**
  * Convert game coordinates to canvas coordinates
@@ -18,8 +28,8 @@ let gameState = new GameState(hexMap);
 function gameToCanvas(coord: AxialCoord): { x: number; y: number } {
     const pixel = hexToPixel(coord, HEX_SIZE);
     return {
-        x: pixel.x + OFFSET_X,
-        y: pixel.y + OFFSET_Y,
+        x: pixel.x + offsetX,
+        y: pixel.y + offsetY,
     };
 }
 
@@ -27,7 +37,12 @@ function gameToCanvas(coord: AxialCoord): { x: number; y: number } {
  * Convert canvas coordinates to game coordinates
  */
 function canvasToGame(x: number, y: number): AxialCoord {
-    return pixelToHex(x - OFFSET_X, y - OFFSET_Y, HEX_SIZE);
+    return pixelToHex(x - offsetX, y - offsetY, HEX_SIZE);
+}
+
+function panMap(dx: number, dy: number): void {
+    offsetX += dx;
+    offsetY += dy;
 }
 
 /**
@@ -92,25 +107,48 @@ function drawUnit(unitId: string): void {
     const y = pixel.y;
 
     // Unit color based on player
-    const color = unit.owner === Player.AXIS ? '#FF4444' : '#4444FF';
+    const color = unit.owner === Player.AXIS ? '#FF4444' : '#6A8CFF';
 
-    // Draw unit circle
+    const rectWidth = HEX_SIZE * 1.4;
+    const rectHeight = HEX_SIZE * 1.12;
+    const rectX = x - rectWidth / 2;
+    const rectY = y - rectHeight / 2;
+
     ctx.fillStyle = color;
+    ctx.strokeStyle = '#111111';
+    ctx.lineWidth = 1.6;
     ctx.beginPath();
-    ctx.arc(x, y, HEX_SIZE * 0.6, 0, Math.PI * 2);
+    ctx.rect(rectX, rectY, rectWidth, rectHeight);
     ctx.fill();
+    ctx.stroke();
 
-    // Draw unit type indicator
-    ctx.fillStyle = '#FFFFFF';
-    ctx.font = 'bold 12px Arial';
+    ctx.strokeStyle = '#000000';
+    ctx.lineWidth = 2.2;
+    ctx.beginPath();
+
+    if (unit.type === UnitType.ARMOR) {
+        ctx.ellipse(x, y - 4, rectWidth * 0.3, rectHeight * 0.2, 0, 0, Math.PI * 2);
+        ctx.stroke();
+    } else if (unit.type === UnitType.INFANTRY) {
+        ctx.moveTo(rectX + 6, rectY + 6);
+        ctx.lineTo(rectX + rectWidth - 6, rectY + rectHeight -10);
+        ctx.moveTo(rectX + rectWidth - 6, rectY + 6);
+        ctx.lineTo(rectX + 6, rectY + rectHeight - 10);
+        ctx.stroke();
+    } else if (unit.type === UnitType.HEADQUARTERS) {
+        ctx.fillStyle = '#000000';
+        ctx.font = 'bold 9px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('HQ', x, y - 2);
+    }
+
+    ctx.fillStyle = '#000000';
+    ctx.font = 'bold 10px Arial';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-
-    let label = 'I';
-    if (unit.type === UnitType.ARMOR) label = 'A';
-    else if (unit.type === UnitType.HEADQUARTERS) label = 'HQ';
-
-    ctx.fillText(label, x, y);
+    const detailText = `${unit.strength}-${unit.maxMovement}`;
+    ctx.fillText(detailText, x, y + 10);
 }
 
 /**
@@ -251,7 +289,45 @@ function updateUI(): void {
 /**
  * Canvas click handler
  */
+canvas.addEventListener('pointerdown', (event) => {
+    isDragging = true;
+    dragStartX = event.clientX;
+    dragStartY = event.clientY;
+    suppressNextClick = false;
+    canvas.style.cursor = 'grabbing';
+    canvas.setPointerCapture(event.pointerId);
+});
+
+canvas.addEventListener('pointermove', (event) => {
+    if (!isDragging) return;
+
+    const dx = event.clientX - dragStartX;
+    const dy = event.clientY - dragStartY;
+    dragStartX = event.clientX;
+    dragStartY = event.clientY;
+
+    panMap(dx, dy);
+    suppressNextClick = true;
+    render();
+});
+
+canvas.addEventListener('pointerup', (event) => {
+    isDragging = false;
+    canvas.style.cursor = 'grab';
+    canvas.releasePointerCapture(event.pointerId);
+});
+
+canvas.addEventListener('pointerleave', () => {
+    isDragging = false;
+    canvas.style.cursor = 'grab';
+});
+
 canvas.addEventListener('click', (event) => {
+    if (suppressNextClick) {
+        suppressNextClick = false;
+        return;
+    }
+
     const rect = canvas.getBoundingClientRect();
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;
@@ -296,6 +372,26 @@ document.getElementById('reset-btn')!.addEventListener('click', () => {
     gameState = new GameState(hexMap);
     render();
     updateUI();
+});
+
+window.addEventListener('keydown', (event) => {
+    if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        panMap(-PAN_STEP, 0);
+        render();
+    } else if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        panMap(PAN_STEP, 0);
+        render();
+    } else if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        panMap(0, -PAN_STEP);
+        render();
+    } else if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        panMap(0, PAN_STEP);
+        render();
+    }
 });
 
 // Initial render
