@@ -1,5 +1,6 @@
 import { AxialCoord, hexEqual, hexKey } from './hex';
 import { Hex } from './map';
+import defaultSetupData from './default-setup.json';
 
 export enum Player {
     AXIS = 'axis',
@@ -22,6 +23,19 @@ export interface Unit {
     maxMovement: number;
 }
 
+export interface SetupUnitData {
+    type: string;
+    owner: string;
+    position: AxialCoord;
+    strength: number;
+    movement: number;
+    maxMovement: number;
+}
+
+export interface GameSetupData {
+    units: SetupUnitData[];
+}
+
 export enum TurnPhase {
     SELECT = 'select',
     MOVE = 'move',
@@ -39,63 +53,31 @@ export class GameState {
     selectedHex: AxialCoord | null = null;
     map: Map<string, Hex>;
     lastMoveCosts: Map<string, number> = new Map();
+    private setupData: GameSetupData;
 
-    constructor(map: Map<string, Hex>) {
+    constructor(map: Map<string, Hex>, setupData: GameSetupData = defaultSetupData as GameSetupData) {
         this.map = map;
+        this.setupData = setupData;
         this.initializeUnits();
     }
 
     private initializeUnits(): void {
-        // Axis starting units (near Western starting position)
-        this.addUnit({
-            type: UnitType.ARMOR,
-            owner: Player.AXIS,
-            position: { q: -15, r: 0 },
-            strength: 4,
-            movement: 6,
-            maxMovement: 6
-        });
-        this.addUnit({
-            type: UnitType.INFANTRY,
-            owner: Player.AXIS,
-            position: { q: -15, r: 2 },
-            strength: 3,
-            movement: 4,
-            maxMovement: 4
-        });
-        this.addUnit({
-            type: UnitType.HEADQUARTERS,
-            owner: Player.AXIS,
-            position: { q: -13, r: 2 },
-            strength: 2,
-            movement: 3,
-            maxMovement: 3
-        });
+        this.setupData.units.forEach((unitData) => {
+            const type = unitData.type === UnitType.ARMOR
+                ? UnitType.ARMOR
+                : unitData.type === UnitType.HEADQUARTERS
+                    ? UnitType.HEADQUARTERS
+                    : UnitType.INFANTRY;
+            const owner = unitData.owner === Player.AXIS ? Player.AXIS : Player.SOVIET;
 
-        // Soviet starting units (near Eastern position)
-        this.addUnit({
-            type: UnitType.ARMOR,
-            owner: Player.SOVIET,
-            position: { q: 10, r: 0 },
-            strength: 3,
-            movement: 5,
-            maxMovement: 5
-        });
-        this.addUnit({
-            type: UnitType.INFANTRY,
-            owner: Player.SOVIET,
-            position: { q: 10, r: 2 },
-            strength: 3,
-            movement: 3,
-            maxMovement: 3
-        });
-        this.addUnit({
-            type: UnitType.INFANTRY,
-            owner: Player.SOVIET,
-            position: { q: 10, r: -2 },
-            strength: 2,
-            movement: 3,
-            maxMovement: 3
+            this.addUnit({
+                type,
+                owner,
+                position: unitData.position,
+                strength: unitData.strength,
+                movement: unitData.movement,
+                maxMovement: unitData.maxMovement,
+            });
         });
     }
 
@@ -128,7 +110,7 @@ export class GameState {
         this.selectedUnitId = unitId;
         this.selectedHex = null;
         // Compute reachable tiles using movementCost from map
-        const costs = this.computeReachableCosts(unit.position, unit.movement);
+        const costs = this.computeReachableCosts(unit.position, unit.movement, unit.owner);
         this.lastMoveCosts = costs;
 
         this.validMoves = Array.from(costs.keys())
@@ -156,6 +138,11 @@ export class GameState {
         const targetKey = hexKey(targetCoord);
         if (!this.lastMoveCosts.has(targetKey)) return false;
 
+        const occupyingUnit = this.getUnitAt(targetCoord);
+        if (occupyingUnit && occupyingUnit.owner !== unit.owner) {
+            return false;
+        }
+
         const cost = this.lastMoveCosts.get(targetKey)!;
         unit.position = targetCoord;
         unit.movement -= cost;
@@ -166,7 +153,7 @@ export class GameState {
         return true;
     }
 
-    private computeReachableCosts(start: AxialCoord, movement: number): Map<string, number> {
+    private computeReachableCosts(start: AxialCoord, movement: number, owner: Player): Map<string, number> {
         const dirs = [
             { q: 1, r: 0 },
             { q: -1, r: 0 },
@@ -190,6 +177,12 @@ export class GameState {
                 const nc: AxialCoord = { q: node.coord.q + d.q, r: node.coord.r + d.r };
                 const nkey = hexKey(nc);
                 if (!this.map.has(nkey)) continue;
+
+                const occupyingUnit = this.getUnitAt(nc);
+                if (occupyingUnit && occupyingUnit.owner !== owner) {
+                    continue;
+                }
+
                 const hex = this.map.get(nkey)!;
                 const enterCost = hex.movementCost ?? 1;
                 const newCost = node.cost + enterCost;

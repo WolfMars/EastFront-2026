@@ -1,6 +1,6 @@
 import { AxialCoord, hexToPixel, pixelToHex } from './hex';
 import { generateMap, getTerrainColor, Hex, TerrainType, getTerrainMovementCost, getTerrainDisplayName } from './map';
-import { GameState, Player, UnitType } from './game';
+import { GameState, Player, UnitType, type GameSetupData } from './game';
 
 const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
 const ctx = canvas.getContext('2d')!;
@@ -13,6 +13,15 @@ let offsetY = canvas.height / 2;
 
 let hexMap = generateMap(canvas.width, canvas.height);
 let gameState = new GameState(hexMap);
+
+async function loadSetupFromFile(file: File): Promise<void> {
+    const text = await file.text();
+    const setupData = JSON.parse(text) as GameSetupData;
+    hexMap = generateMap(canvas.width, canvas.height);
+    gameState = new GameState(hexMap, setupData);
+    render();
+    updateUI();
+}
 
 let isDragging = false;
 let dragStartX = 0;
@@ -251,6 +260,29 @@ function updateUI(): void {
             `;
         }
     } else if (gameState.selectedHex) {
+        const selectedUnit = gameState.getUnitAt(gameState.selectedHex);
+        if (selectedUnit && selectedUnit.owner !== gameState.currentPlayer) {
+            statusText.textContent = `Enemy ${selectedUnit.type} selected.`;
+            unitInfo.innerHTML = `
+                <div class="unit-stat">
+                    <span>Type:</span>
+                    <strong>${selectedUnit.type}</strong>
+                </div>
+                <div class="unit-stat">
+                    <span>Owner:</span>
+                    <strong>${selectedUnit.owner}</strong>
+                </div>
+                <div class="unit-stat">
+                    <span>Strength:</span>
+                    <strong>${selectedUnit.strength}</strong>
+                </div>
+                <div class="unit-stat">
+                    <span>Movement:</span>
+                    <strong>${selectedUnit.movement}/${selectedUnit.maxMovement}</strong>
+                </div>
+            `;
+            return;
+        }
         const coord = gameState.selectedHex;
         const key = `${coord.q},${coord.r}`;
         const hex = hexMap.get(key);
@@ -336,8 +368,12 @@ canvas.addEventListener('click', (event) => {
 
     // Check if clicking on a unit
     const unit = gameState.getUnitAt(coord);
-    if (unit && unit.owner === gameState.currentPlayer) {
-        gameState.selectUnit(unit.id);
+    if (unit) {
+        if (unit.owner === gameState.currentPlayer) {
+            gameState.selectUnit(unit.id);
+        } else {
+            gameState.selectHex(coord);
+        }
     } else if (gameState.selectedUnitId) {
         // If the clicked hex is a valid move, move; otherwise select the hex (unselecting the unit)
         const isValidMove = gameState.validMoves.some(m => m.q === coord.q && m.r === coord.r);
@@ -372,6 +408,18 @@ document.getElementById('reset-btn')!.addEventListener('click', () => {
     gameState = new GameState(hexMap);
     render();
     updateUI();
+});
+
+document.getElementById('load-setup-btn')!.addEventListener('click', () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json,application/json';
+    input.onchange = async () => {
+        const file = input.files?.[0];
+        if (!file) return;
+        await loadSetupFromFile(file);
+    };
+    input.click();
 });
 
 window.addEventListener('keydown', (event) => {
