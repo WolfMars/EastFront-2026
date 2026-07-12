@@ -52,18 +52,18 @@ const TERRAIN_DISPLAY_NAME: Record<TerrainType, string> = {
 // Key terrain: Pripyat Marshes (r=4-7, q=-12 to -9),
 //              Carpathians (r=10-13 SW), Caucasus (r=17-18 SE).
 const BOARD_ROWS = [
-    { r:  -8, qStart: -18, codes: 'wwwwwwwwwwwwfffffwwfffffff' }, // N Finland / Lake Ladoga
-    { r:  -7, qStart: -18, codes: 'wwwwwwwwwwwwwwwwfwwfffffff' }, // Gulf of Finland / Leningrad
+    { r:  -8, qStart: -18, codes: 'wwwwwwwwwwwwfffffwxfffffff' }, // N Finland / Lake Ladoga
+    { r:  -7, qStart: -18, codes: 'wwwwwwwwwwwwwwwwfxxfffffff' }, // Gulf of Finland / Leningrad
     { r:  -6, qStart: -18, codes: 'wwwwwwwwwwwfffffffffffffff' }, // Tallinn / Estonia coast
-    { r:  -5, qStart: -18, codes: 'wwwwwwwwwwffffffffffffffff' }, // Baltic states forest
-    { r:  -4, qStart: -18, codes: 'wwwwwwwwwwwfwwffffffffffff' }, // Gulf of Riga / Lake Peipus
-    { r:  -3, qStart: -18, codes: 'wwwwwwwwwwffffffffffffffff' }, // Latvia / Pskov
-    { r:  -2, qStart: -18, codes: 'wwwwwwwwwf..ffffffffffffff' }, // Riga / Lithuania
-    { r:  -1, qStart: -18, codes: 'wwwwwwwfffffffffffffffffff' }, // Lithuanian coast / Belarus
-    { r:   0, qStart: -18, codes: 'wwww..ffffffffffffffffffff' }, // Königsberg / Central Russia
-    { r:   1, qStart: -18, codes: 'wwww.fffffffffffffffffffff' }, // East Prussia / Belarus
-    { r:   2, qStart: -18, codes: 'www.ffffffffffffffffffffff' }, // Poland border / forest
-    { r:   3, qStart: -18, codes: 'ww.fffffffffff............' }, // Minsk / Ukraine opens east
+    { r:  -5, qStart: -18, codes: 'wwwwwwwwwwfffwffffffffffff' }, // Baltic states forest
+    { r:  -4, qStart: -18, codes: 'wwwwwwwwwwwf.wfff.ffffffff' }, // Gulf of Riga / Lake Peipus
+    { r:  -3, qStart: -18, codes: 'wwwwwwww.wfff.ffx.ffffffff' }, // N Latvia / Pskov
+    { r:  -2, qStart: -18, codes: 'wwwwwww..f..ff.f..ffffffff' }, // Riga / Lithuania
+    { r:  -1, qStart: -18, codes: 'wwwwwww...ffffffffffffffff' }, // S Latvia/ Belarus
+    { r:   0, qStart: -18, codes: 'wwwwww..f.f.ffff.fffffffff' }, // N Lithuania / Central Russia
+    { r:   1, qStart: -18, codes: 'wwww.f.ff.f.ffffffffffffff' }, // East Prussia / Belarus
+    { r:   2, qStart: -18, codes: 'www.f.ffffffffffffffffffff' }, // Poland border / forest
+    { r:   3, qStart: -18, codes: '.w..ffffffffff............' }, // Minsk / Ukraine opens east
     { r:   4, qStart: -18, codes: '......xxxxffff............' }, // Pripyat Marshes begin
     { r:   5, qStart: -18, codes: '.....xxxxffff.............' }, // Pripyat Marshes center
     { r:   6, qStart: -18, codes: '.....xxxxffff.............' }, // Pripyat / Brest
@@ -107,7 +107,7 @@ const BOARD_CITIES: Array<{ q: number; r: number; name: string }> = [
     // Northern sector — Army Group North objectives
     { q: -6,  r: -6, name: 'Tallinn' },
     { q: -6,  r: -3, name: 'Pskov' },
-    { q: -3,  r: -4, name: 'Novgorod' },
+    { q: -2,  r: -4, name: 'Novgorod' },
     { q: -9,  r: -2, name: 'Riga' },
     { q: -2,  r: -7, name: 'Leningrad' },
     // Baltic states
