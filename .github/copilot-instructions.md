@@ -11,6 +11,7 @@ refined over time. Do not treat the current implementation as authoritative.
 2. Flag explicit decision points: "Step N requires choosing X or Y — which do you prefer?"
 3. When perfect accuracy is expensive, prefer a good-enough result and note the trade-off.
    Do not let perfect be the enemy of good.
+4. Seriously - do not let perfect be the enemy of good. If you find yourself thinking "I could make this better", stop and ask me.
 
 ### During a task
 - Stop at natural breakpoints rather than driving straight to a polished result.

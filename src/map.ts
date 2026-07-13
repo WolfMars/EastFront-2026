@@ -156,21 +156,21 @@ const BOARD_ROWS = [
     { r:   1, qStart: -18, codes: 'wwww.f.ff.f.ffffffffffffff' }, // East Prussia / Belarus
     { r:   2, qStart: -18, codes: 'www.f.ffffffffffffffffffff' }, // Poland border / forest
     { r:   3, qStart: -18, codes: '.w..ffffffffff............' }, // Minsk / Ukraine opens east
-    { r:   4, qStart: -18, codes: '......xxxxffff............' }, // Pripyat Marshes begin
-    { r:   5, qStart: -18, codes: '.....xxxxffff.............' }, // Pripyat Marshes center
-    { r:   6, qStart: -18, codes: '.....xxxxffff.............' }, // Pripyat / Brest
-    { r:   7, qStart: -18, codes: '....xxxx..................' }, // Pripyat Marshes south
+    { r:   4, qStart: -18, codes: '........f.ffff............' }, // Pripyat Marshes begin
+    { r:   5, qStart: -18, codes: '.....ffxf.fff.............' }, // Pripyat Marshes center
+    { r:   6, qStart: -18, codes: '.....fxxxffff.............' }, // Pripyat / Brest
+    { r:   7, qStart: -18, codes: '.....fxx..................' }, // Pripyat Marshes south
     { r:   8, qStart: -18, codes: '..........................' }, // Ukraine steppes / Kiev
     { r:   9, qStart: -18, codes: '..........................' }, // Ukraine / Kharkov / Lviv
-    { r:  10, qStart: -18, codes: 'mmm.....................ww' }, // Carpathians / Caspian
-    { r:  11, qStart: -18, codes: 'mmm.....................ww' }, // Carpathians / Stalingrad
-    { r:  12, qStart: -18, codes: 'mm......................ww' }, // Carpathian foothills
-    { r:  13, qStart: -18, codes: 'mm.....................www' }, // Romania / Black Sea west
-    { r:  14, qStart: -18, codes: '.........wwww..........www' }, // Odessa coast / Azov / Caspian
-    { r:  15, qStart: -18, codes: '.........wwww.........wwww' }, // Black Sea north coast
-    { r:  16, qStart: -18, codes: '.wwww....wwwww........wwww' }, // Black Sea / Crimea
-    { r:  17, qStart: -18, codes: '.wwwwmmmmwwwww........wwww' }, // Crimean Mts / Black Sea
-    { r:  18, qStart: -18, codes: 'wwww.mmmwwwwwmmmmmmm.wwwww' }, // Caucasus / Black Sea
+    { r:  10, qStart: -18, codes: '.f......................ww' }, // Carpathians / Caspian
+    { r:  11, qStart: -18, codes: 'ff......................ww' }, // Carpathians / Stalingrad
+    { r:  12, qStart: -18, codes: 'fmm.....................ww' }, // Carpathian foothills
+    { r:  13, qStart: -18, codes: 'fmm....................www' }, // Romania / Black Sea west
+    { r:  14, qStart: -18, codes: '..m........ww..........www' }, // Odessa coast / Azov / Caspian
+    { r:  15, qStart: -18, codes: '..m.....wwww..........wwww' }, // Black Sea north coast
+    { r:  16, qStart: -18, codes: '...www.wwww...........wwww' }, // Black Sea / Crimea
+    { r:  17, qStart: -18, codes: '..www..m...m..........wwww' }, // Crimean Mts / Black Sea
+    { r:  18, qStart: -18, codes: '.wwwwmmwwwwmmmmmmmmm.wwwww' }, // Caucasus / Black Sea
 ];
 
 const TERRAIN_CODE_MAP: Record<string, TerrainType> = {
