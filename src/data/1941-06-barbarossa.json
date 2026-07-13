@@ -1,0 +1,22 @@
+{
+  "scenario": "Operation Barbarossa — 22 June 1941",
+  "date": "1941-06-22",
+  "defaultOwner": "S",
+  "rows": [
+    { "r":  0, "axisMaxQ": -13 },
+    { "r":  1, "axisMaxQ": -13 },
+    { "r":  2, "axisMaxQ": -13 },
+    { "r":  3, "axisMaxQ": -14 },
+    { "r":  4, "axisMaxQ": -14 },
+    { "r":  5, "axisMaxQ": -14 },
+    { "r":  6, "axisMaxQ": -15 },
+    { "r":  7, "axisMaxQ": -15 },
+    { "r":  8, "axisMaxQ": -15 },
+    { "r":  9, "axisMaxQ": -17 },
+    { "r": 10, "axisMaxQ": -16 },
+    { "r": 11, "axisMaxQ": -16 },
+    { "r": 12, "axisMaxQ": -16 },
+    { "r": 13, "axisMaxQ": -16 },
+    { "r": 14, "axisMaxQ": -15 }
+  ]
+}

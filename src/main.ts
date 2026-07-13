@@ -1,6 +1,7 @@
-import { AxialCoord, hexToPixel, pixelToHex } from './hex';
-import { generateMap, getTerrainColor, Hex, TerrainType, getTerrainMovementCost, getTerrainDisplayName } from './map';
+import { AxialCoord, hexToPixel, pixelToHex, hexSideKey } from './hex';
+import { generateMap, getTerrainColor, getOwnerColor, getFrontlineColor, applyBorderData, Hex, TerrainType, getTerrainMovementCost, getTerrainDisplayName, type BorderData } from './map';
 import { GameState, Player, UnitType, type GameSetupData } from './game';
+import defaultBorderData from './data/1941-06-barbarossa.json';
 
 const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
 const ctx = canvas.getContext('2d')!;
@@ -12,13 +13,26 @@ let offsetX = canvas.width / 2;
 let offsetY = canvas.height / 2;
 
 let hexMap = generateMap(canvas.width, canvas.height);
+let currentBorderData: BorderData = defaultBorderData as BorderData;
+applyBorderData(hexMap, currentBorderData);
 let gameState = new GameState(hexMap);
 
 async function loadSetupFromFile(file: File): Promise<void> {
     const text = await file.text();
     const setupData = JSON.parse(text) as GameSetupData;
     hexMap = generateMap(canvas.width, canvas.height);
+    applyBorderData(hexMap, currentBorderData);
     gameState = new GameState(hexMap, setupData);
+    render();
+    updateUI();
+}
+
+async function loadBorderFromFile(file: File): Promise<void> {
+    const text = await file.text();
+    currentBorderData = JSON.parse(text) as BorderData;
+    hexMap = generateMap(canvas.width, canvas.height);
+    applyBorderData(hexMap, currentBorderData);
+    gameState = new GameState(hexMap);
     render();
     updateUI();
 }
@@ -100,6 +114,53 @@ function drawMap(): void {
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText(hex.name, pixel.x, pixel.y);
+        }
+    });
+}
+
+// Pointy-top hex directions with the two vertex indices that form the shared edge.
+// Vertices are at angle (π/3)*(i+0.5); edge between v1 and v2 faces neighbor (dq, dr).
+const HEX_DIRS = [
+    { dq: +1, dr:  0, v1: 5, v2: 0 }, // E
+    { dq:  0, dr: +1, v1: 0, v2: 1 }, // SE
+    { dq: -1, dr: +1, v1: 1, v2: 2 }, // SW
+    { dq: -1, dr:  0, v1: 2, v2: 3 }, // W
+    { dq:  0, dr: -1, v1: 3, v2: 4 }, // NW
+    { dq: +1, dr: -1, v1: 4, v2: 5 }, // NE
+] as const;
+
+function drawOwnershipDots(): void {
+    hexMap.forEach((hex: Hex) => {
+        const color = getOwnerColor(hex.owner);
+        if (!color) return;
+        const { x, y } = gameToCanvas(hex.coord);
+        ctx.beginPath();
+        ctx.arc(x + HEX_SIZE * 0.45, y + HEX_SIZE * 0.45, 4, 0, Math.PI * 2);
+        ctx.fillStyle = color;
+        ctx.fill();
+    });
+}
+
+function drawFrontlines(): void {
+    const drawn = new Set<string>();
+    hexMap.forEach((hex: Hex) => {
+        for (const dir of HEX_DIRS) {
+            const neighbor = hexMap.get(`${hex.coord.q + dir.dq},${hex.coord.r + dir.dr}`);
+            if (!neighbor) continue;
+            const color = getFrontlineColor(hex.owner, neighbor.owner);
+            if (!color) continue;
+            const key = hexSideKey(hex.coord, neighbor.coord);
+            if (drawn.has(key)) continue;
+            drawn.add(key);
+            const { x, y } = gameToCanvas(hex.coord);
+            const a1 = (Math.PI / 3) * (dir.v1 + 0.5);
+            const a2 = (Math.PI / 3) * (dir.v2 + 0.5);
+            ctx.beginPath();
+            ctx.moveTo(x + HEX_SIZE * Math.cos(a1), y + HEX_SIZE * Math.sin(a1));
+            ctx.lineTo(x + HEX_SIZE * Math.cos(a2), y + HEX_SIZE * Math.sin(a2));
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 3;
+            ctx.stroke();
         }
     });
 }
@@ -255,6 +316,8 @@ function render(): void {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     drawMap();
+    drawOwnershipDots();
+    drawFrontlines();
     drawValidMoves();
     drawUnits();
     drawSelectedHex();
@@ -438,6 +501,7 @@ document.getElementById('end-turn-btn')!.addEventListener('click', () => {
  */
 document.getElementById('reset-btn')!.addEventListener('click', () => {
     hexMap = generateMap(canvas.width, canvas.height);
+    applyBorderData(hexMap, currentBorderData);
     gameState = new GameState(hexMap);
     render();
     updateUI();
@@ -451,6 +515,18 @@ document.getElementById('load-setup-btn')!.addEventListener('click', () => {
         const file = input.files?.[0];
         if (!file) return;
         await loadSetupFromFile(file);
+    };
+    input.click();
+});
+
+document.getElementById('load-border-btn')!.addEventListener('click', () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json,application/json';
+    input.onchange = async () => {
+        const file = input.files?.[0];
+        if (!file) return;
+        await loadBorderFromFile(file);
     };
     input.click();
 });

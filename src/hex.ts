@@ -126,3 +126,15 @@ export function hexEqual(a: AxialCoord, b: AxialCoord): boolean {
 export function hexKey(coord: AxialCoord): string {
     return `${coord.q},${coord.r}`;
 }
+
+/**
+ * Canonical key for the shared edge between two hexes.
+ * Order-independent: hexSideKey(a, b) === hexSideKey(b, a).
+ * Does not validate that a and b are actually adjacent.
+ */
+export function hexSideKey(a: AxialCoord, b: AxialCoord): string {
+    // Canonical ordering: smaller q first; break ties by smaller r.
+    const [first, second] =
+        a.q < b.q || (a.q === b.q && a.r < b.r) ? [a, b] : [b, a];
+    return `${first.q},${first.r}|${second.q},${second.r}`;
+}

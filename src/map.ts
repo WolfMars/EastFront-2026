@@ -1,5 +1,97 @@
 import { AxialCoord } from './hex';
 
+/** Hex ownership: A = Axis, S = Soviet, N = None */
+export type HexOwner = 'A' | 'S' | 'N';
+
+const OWNER_COLORS: Record<HexOwner, string | null> = {
+    A: '#4A5340', // Feldgrau
+    S: '#CC2200', // Soviet red
+    N: null,      // No indicator
+};
+
+/** Returns the ownership dot color for a hex, or null if none should be drawn. */
+export function getOwnerColor(owner: HexOwner): string | null {
+    return OWNER_COLORS[owner];
+}
+
+/**
+ * Returns the frontline edge color when two adjacent hexes have conflicting
+ * ownership (Axis vs Soviet), or null if no frontline should be drawn.
+ */
+export function getFrontlineColor(a: HexOwner, b: HexOwner): string | null {
+    if ((a === 'A' && b === 'S') || (a === 'S' && b === 'A')) {
+        return '#FF8C00'; // Orange
+    }
+    return null;
+}
+
+/** Terrain/feature on a hex edge. Extend this union as new side types are added. */
+export type HexSideType = 'none';
+
+/** Map from a canonical hex-side key (see hexSideKey) to its side data. */
+export type HexSideMap = Map<string, HexSideType>;
+
+/** One row entry in a border scenario file.
+ *  Use axisMaxQ for a simple threshold (q <= axisMaxQ → Axis, rest → Soviet).
+ *  Use codes + qStart for explicit per-hex ownership ('A', 'S', or 'N'),
+ *  matching the same style as BOARD_ROWS terrain codes. Both can coexist in
+ *  the same file — codes takes precedence when present on a row.
+ */
+export interface BorderRowData {
+    r: number;
+    axisMaxQ?: number;
+    qStart?: number;
+    codes?: string;
+}
+
+/**
+ * Scenario border file. For each listed row, ownership is determined by
+ * codes (if present) or axisMaxQ. Rows not listed use defaultOwner.
+ */
+export interface BorderData {
+    scenario: string;
+    date: string;
+    defaultOwner: HexOwner;
+    rows: BorderRowData[];
+}
+
+const OWNER_CODE_MAP: Record<string, HexOwner> = { A: 'A', S: 'S', N: 'N' };
+
+/** Apply a border scenario to an existing hex map (mutates hex.owner in-place). */
+export function applyBorderData(hexMap: Map<string, Hex>, borderData: BorderData): void {
+    // Build per-hex lookup from coded rows
+    const hexOwnerOverride = new Map<string, HexOwner>();
+    // Build threshold lookup from axisMaxQ rows
+    const thresholdByR = new Map<number, number>();
+
+    borderData.rows.forEach((row) => {
+        if (row.codes !== undefined) {
+            const qStart = row.qStart ?? -18;
+            [...row.codes].forEach((code, index) => {
+                const owner = OWNER_CODE_MAP[code];
+                if (!owner) throw new Error(`Invalid border code '${code}' at r=${row.r}`);
+                hexOwnerOverride.set(`${qStart + index},${row.r}`, owner);
+            });
+        } else if (row.axisMaxQ !== undefined) {
+            thresholdByR.set(row.r, row.axisMaxQ);
+        }
+    });
+
+    hexMap.forEach((hex) => {
+        const key = `${hex.coord.q},${hex.coord.r}`;
+        if (hexOwnerOverride.has(key)) {
+            hex.owner = hexOwnerOverride.get(key)!;
+        } else {
+            const axisMaxQ = thresholdByR.get(hex.coord.r);
+            if (axisMaxQ !== undefined) {
+                hex.owner = hex.coord.q <= axisMaxQ ? 'A' : 'S';
+            } else {
+                hex.owner = borderData.defaultOwner;
+            }
+        }
+    });
+}
+
 export enum TerrainType {
     CLEAR = 'clear',
     FOREST = 'forest',
@@ -15,7 +107,7 @@ export interface Hex {
     terrainName: string;
     movementCost: number;
     name?: string;
-    owner?: string;
+    owner: HexOwner;
 }
 
 const TERRAIN_COLORS: Record<TerrainType, string> = {
@@ -165,6 +257,7 @@ export function generateMap(_width: number, _height: number): Map<string, Hex> {
                 terrainName,
                 movementCost,
                 name,
+                owner: 'N',
             });
         }
     }
