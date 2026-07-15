@@ -41,6 +41,7 @@ let isDragging = false;
 let dragStartX = 0;
 let dragStartY = 0;
 let suppressNextClick = false;
+let dragTotalDistance = 0; // accumulate movement while dragging
 
 canvas.style.cursor = 'grab';
 canvas.style.touchAction = 'none';
@@ -446,6 +447,7 @@ canvas.addEventListener('pointerdown', (event) => {
     dragStartX = event.clientX;
     dragStartY = event.clientY;
     suppressNextClick = false;
+    dragTotalDistance = 0;
     canvas.style.cursor = 'grabbing';
     canvas.setPointerCapture(event.pointerId);
 });
@@ -455,11 +457,15 @@ canvas.addEventListener('pointermove', (event) => {
 
     const dx = event.clientX - dragStartX;
     const dy = event.clientY - dragStartY;
+    // update accumulated drag distance and only suppress the next click
+    // if movement exceeded a small threshold (prevents tiny jitters from cancelling clicks)
+    dragTotalDistance += Math.hypot(dx, dy);
     dragStartX = event.clientX;
     dragStartY = event.clientY;
 
     panMap(dx, dy);
-    suppressNextClick = true;
+    const CLICK_SUPPRESS_THRESHOLD = 6; // pixels
+    suppressNextClick = dragTotalDistance > CLICK_SUPPRESS_THRESHOLD;
     render();
 });
 
