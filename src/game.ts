@@ -37,16 +37,14 @@ export interface GameSetupData {
 }
 
 export enum TurnPhase {
-    SELECT = 'select',
     MOVE = 'move',
     ATTACK = 'attack',
-    END = 'end',
 }
 
 export class GameState {
     currentPlayer: Player = Player.AXIS;
     turn: number = 1;
-    phase: TurnPhase = TurnPhase.SELECT;
+    phase: TurnPhase = TurnPhase.MOVE;
     units: Map<string, Unit> = new Map();
     selectedUnitId: string | null = null;
     validMoves: AxialCoord[] = [];
@@ -195,24 +193,38 @@ export class GameState {
         return costs;
     }
 
-    endTurn(): void {
-        // Reset all units' movement points
-        this.units.forEach((unit) => {
-            if (unit.owner === this.currentPlayer) {
-                unit.movement = unit.maxMovement;
-            }
-        });
-
-        // Switch player
-        this.currentPlayer = this.currentPlayer === Player.AXIS ? Player.SOVIET : Player.AXIS;
-
-        if (this.currentPlayer === Player.AXIS) {
-            this.turn++;
+    advancePhase(): void {
+        // If we're in the movement phase, advance to attack phase.
+        if (this.phase === TurnPhase.MOVE) {
+            this.phase = TurnPhase.ATTACK;
+            this.selectedUnitId = null;
+            this.validMoves = [];
+            this.lastMoveCosts = new Map();
+            return;
         }
 
-        this.selectedUnitId = null;
-        this.validMoves = [];
-        this.phase = TurnPhase.SELECT;
+        // If we're in the attack phase, end the turn: reset movement for the outgoing player,
+        // switch player, increment turn when Axis becomes current, and enter Movement phase.
+        if (this.phase === TurnPhase.ATTACK) {
+            this.units.forEach((unit) => {
+                if (unit.owner === this.currentPlayer) {
+                    unit.movement = unit.maxMovement;
+                }
+            });
+
+            // Switch player
+            this.currentPlayer = this.currentPlayer === Player.AXIS ? Player.SOVIET : Player.AXIS;
+
+            if (this.currentPlayer === Player.AXIS) {
+                this.turn++;
+            }
+
+            this.selectedUnitId = null;
+            this.validMoves = [];
+            this.lastMoveCosts = new Map();
+            this.phase = TurnPhase.MOVE;
+            return;
+        }
     }
 
     getUnitAt(coord: AxialCoord): Unit | undefined {

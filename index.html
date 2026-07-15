@@ -13,6 +13,7 @@
             <div class="game-info">
                 <span id="current-player">Current Player: Axis</span>
                 <span id="turn-counter">Turn: 1</span>
+                <span id="phase-indicator">Phase: MOVE</span>
             </div>
         </header>
 
@@ -24,7 +25,8 @@
             <aside class="sidebar">
                 <div class="panel">
                     <h3>Game Status</h3>
-                    <p id="status-text">Welcome to EastFront 2026. Select a unit to begin.</p>
+                    <p id="status-text">Welcome to EastFront 2026.  Select a unit to begin.</p>
+                    <div id="phase-badge" class="phase-badge">MOVE</div>
                 </div>
 
                 <div class="panel">
@@ -35,8 +37,11 @@
                 </div>
 
                 <div class="panel">
-                    <h3>Controls</h3>
+                    <h3>Game Control</h3>
                     <button id="end-turn-btn">End Turn</button>
+                </div>
+                <div class="panel">
+                    <h3>Setup Control</h3>
                     <button id="reset-btn">Reset Game</button>
                     <button id="load-setup-btn">Load Setup File</button>
                     <button id="load-border-btn">Load Border File</button>

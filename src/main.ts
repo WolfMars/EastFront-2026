@@ -1,6 +1,6 @@
 import { AxialCoord, hexToPixel, pixelToHex, hexSideKey } from './hex';
 import { generateMap, getTerrainColor, getOwnerColor, getFrontlineColor, applyBorderData, Hex, TerrainType, getTerrainMovementCost, getTerrainDisplayName, type BorderData } from './map';
-import { GameState, Player, UnitType, type GameSetupData } from './game';
+import { GameState, Player, UnitType, type GameSetupData, TurnPhase } from './game';
 import defaultBorderData from './data/1941-06-barbarossa.json';
 
 const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
@@ -177,7 +177,7 @@ function drawUnit(unitId: string): void {
     const y = pixel.y;
 
     // Unit color based on player
-    const color = unit.owner === Player.AXIS ? '#FF4444' : '#6A8CFF';
+    const color = unit.owner === Player.SOVIET ? '#FF4444' : '#6A8CFF';
 
     const rectWidth = HEX_SIZE * 1.4;
     const rectHeight = HEX_SIZE * 1.12;
@@ -331,10 +331,34 @@ function updateUI(): void {
     const currentPlayerSpan = document.getElementById('current-player')!;
     const turnCounterSpan = document.getElementById('turn-counter')!;
     const statusText = document.getElementById('status-text')!;
+    const phaseIndicator = document.getElementById('phase-indicator')!;
+    const phaseBadge = document.getElementById('phase-badge') as HTMLDivElement | null;
     const unitInfo = document.getElementById('unit-info')!;
 
     currentPlayerSpan.textContent = `Current Player: ${gameState.currentPlayer.toUpperCase()}`;
     turnCounterSpan.textContent = `Turn: ${gameState.turn}`;
+    phaseIndicator.textContent = `Phase: ${gameState.phase.toUpperCase()}`;
+
+    const endBtn = document.getElementById('end-turn-btn') as HTMLButtonElement | null;
+    if (endBtn) {
+        endBtn.textContent = gameState.phase === TurnPhase.MOVE ? 'End Phase' : 'End Turn';
+    }
+
+    if (phaseBadge) {
+        phaseBadge.textContent = gameState.phase.toUpperCase();
+        // Simple styling: green for MOVE, crimson for ATTACK
+        if (gameState.phase === TurnPhase.MOVE) {
+            phaseBadge.style.backgroundColor = '#2ecc71';
+            phaseBadge.style.color = '#042a14';
+        } else {
+            phaseBadge.style.backgroundColor = '#ff6b6b';
+            phaseBadge.style.color = '#330000';
+        }
+        phaseBadge.style.padding = '6px 10px';
+        phaseBadge.style.display = 'inline-block';
+        phaseBadge.style.borderRadius = '6px';
+        phaseBadge.style.fontWeight = 'bold';
+    }
 
     if (gameState.selectedUnitId) {
         const unit = gameState.units.get(gameState.selectedUnitId);
@@ -409,7 +433,7 @@ function updateUI(): void {
             `;
         }
     } else {
-        statusText.textContent = 'Select a unit to begin.';
+        statusText.textContent = 'Stick a unit to begin.';
         unitInfo.innerHTML = '<p>None selected</p>';
     }
 }
@@ -491,7 +515,7 @@ canvas.addEventListener('click', (event) => {
  * End turn button
  */
 document.getElementById('end-turn-btn')!.addEventListener('click', () => {
-    gameState.endTurn();
+    gameState.advancePhase();
     render();
     updateUI();
 });
