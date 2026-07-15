@@ -94,6 +94,22 @@ main {
     color: #bdc3c7;
 }
 
+.status-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.phase-badge {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-weight: bold;
+    background-color: #2ecc71; /* default MOVE green */
+    color: #042a14;
+}
+
 .map-key-row {
     display: flex;
     align-items: center;
