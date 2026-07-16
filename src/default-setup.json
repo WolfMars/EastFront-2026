@@ -51,7 +51,7 @@
     {
       "type": "infantry",
       "owner": "soviet",
-      "position": { "q": -8, "r": 3 },
+      "position": { "q": -12, "r": 3 },
       "strength": 3,
       "movement": 3,
       "maxMovement": 3
@@ -59,7 +59,7 @@
     {
       "type": "infantry",
       "owner": "soviet",
-      "position": { "q": -6, "r": -5 },
+      "position": { "q": -12, "r": 4 },
       "strength": 2,
       "movement": 3,
       "maxMovement": 3
@@ -67,7 +67,7 @@
     {
       "type": "infantry",
       "owner": "soviet",
-      "position": { "q": -5, "r": 7 },
+      "position": { "q": -12, "r": 5 },
       "strength": 2,
       "movement": 3,
       "maxMovement": 3

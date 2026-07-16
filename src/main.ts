@@ -17,6 +17,54 @@ let currentBorderData: BorderData = defaultBorderData as BorderData;
 applyBorderData(hexMap, currentBorderData);
 let gameState = new GameState(hexMap);
 
+// Simple on-page logger: writes a short message to #log-message and appends history to #log-history.
+function pageLog(message: string, appendHistory: boolean = true): void {
+    const logSpan = document.getElementById('log-message');
+    if (logSpan) logSpan.textContent = message;
+    if (appendHistory) {
+        const history = document.getElementById('log-history');
+        if (history) {
+            const p = document.createElement('div');
+            p.className = 'log-entry';
+            p.textContent = `${new Date().toLocaleTimeString()} — ${message}`;
+            history.prepend(p);
+            // Trim history to most recent 20 entries
+            while (history.children.length > 20) history.removeChild(history.lastChild!);
+        }
+    }
+}
+
+// Persistent debug panel state
+let lastClick: { q: number; r: number } | null = null;
+
+function updateDebugPanel(): void {
+    const panel = document.getElementById('debug-panel');
+    if (!panel) return;
+    const phase = gameState.phase;
+    const selected = gameState.selectedUnitId ?? 'none';
+    const currentPlayer = gameState.currentPlayer;
+    const selectedPos = gameState.selectedUnitId ? (() => {
+        const u = gameState.units.get(gameState.selectedUnitId!);
+        return u ? `${u.position.q},${u.position.r}` : 'unknown';
+    })() : 'none';
+    const last = lastClick ? `${lastClick.q},${lastClick.r}` : 'none';
+    const attacksArray = Array.from(gameState.attacks.entries());
+    const attacksHtml = attacksArray.length === 0
+        ? '<em>none</em>'
+        : `<ul>${attacksArray.map(([a,t]) => `<li>${a} → ${t}</li>`).join('')}</ul>`;
+    const uniqueCount = typeof gameState.getUniqueAttackTargetsCount === 'function' ? gameState.getUniqueAttackTargetsCount() : 0;
+
+    panel.innerHTML = `
+        <div><strong>DEBUG</strong></div>
+        <div>Phase: ${phase}</div>
+        <div>Current player: ${currentPlayer}</div>
+        <div>Selected unit: ${selected} (${selectedPos})</div>
+        <div>Last click: ${last}</div>
+        <div>Unique targets: ${uniqueCount}</div>
+        <div>Attacks: ${attacksHtml}</div>
+    `;
+}
+
 async function loadSetupFromFile(file: File): Promise<void> {
     const text = await file.text();
     const setupData = JSON.parse(text) as GameSetupData;
@@ -437,6 +485,12 @@ function updateUI(): void {
         statusText.textContent = 'Stick a unit to begin.';
         unitInfo.innerHTML = '<p>None selected</p>';
     }
+    if (gameState.phase === TurnPhase.ATTACK && typeof gameState.getUniqueAttackTargetsCount === 'function') {
+        pageLog(`Enemies targeted: ${gameState.getUniqueAttackTargetsCount()}`, false);
+    } else {
+        pageLog('', false);
+    }
+    updateDebugPanel();
 }
 
 /**
@@ -491,22 +545,105 @@ canvas.addEventListener('click', (event) => {
     const y = event.clientY - rect.top;
 
     const coord = canvasToGame(x, y);
+    // Debug: show click coordinates and current phase so we can trace why logging/attacks
+    pageLog(`Click ${coord.q},${coord.r} phase=${gameState.phase}`, false);
+    lastClick = { q: coord.q, r: coord.r };
+    updateDebugPanel();
 
     // Check if clicking on a unit
     const unit = gameState.getUnitAt(coord);
     if (unit) {
+        // If we're in ATTACK phase and an own unit is selected, and the clicked unit is an enemy,
+        // treat this as an attack attempt (if adjacent). Otherwise, default to selection behavior.
+        if (gameState.phase === TurnPhase.ATTACK && gameState.selectedUnitId && unit.owner !== gameState.currentPlayer) {
+            const attacker = gameState.units.get(gameState.selectedUnitId);
+            if (attacker) {
+                const adjacent = [
+                    { q: attacker.position.q + 1, r: attacker.position.r },
+                    { q: attacker.position.q - 1, r: attacker.position.r },
+                    { q: attacker.position.q, r: attacker.position.r + 1 },
+                    { q: attacker.position.q, r: attacker.position.r - 1 },
+                    { q: attacker.position.q + 1, r: attacker.position.r - 1 },
+                    { q: attacker.position.q - 1, r: attacker.position.r + 1 },
+                ];
+                const isAdjacent = adjacent.some(c => c.q === coord.q && c.r === coord.r);
+                pageLog(`Enemy at click: ${unit.id} owner=${unit.owner} adjacent=${isAdjacent}`);
+                if (isAdjacent) {
+                    const ok = gameState.recordAttack(attacker.id, unit.id);
+                    if (ok) {
+                        pageLog(`Attacker ${attacker.id} -> target ${unit.id}`);
+                        gameState.selectedUnitId = null;
+                    } else {
+                        const alreadyUsed = gameState.attacks.has(attacker.id);
+                        pageLog(`Attack failed: attacker=${attacker.id} owner=${attacker.owner}, target=${unit.id} owner=${unit.owner}, currentPlayer=${gameState.currentPlayer}, alreadyUsed=${alreadyUsed}`);
+                    }
+                    render();
+                    updateUI();
+                    updateDebugPanel();
+                    // we've handled the click as an attack
+                    // return early to avoid also selecting the hex below
+                    return;
+                }
+            }
+        }
         if (unit.owner === gameState.currentPlayer) {
             gameState.selectUnit(unit.id);
         } else {
             gameState.selectHex(coord);
         }
     } else if (gameState.selectedUnitId) {
-        // If the clicked hex is a valid move, move; otherwise select the hex (unselecting the unit)
-        const isValidMove = gameState.validMoves.some(m => m.q === coord.q && m.r === coord.r);
-        if (isValidMove) {
-            gameState.moveUnit(coord);
+        // ATTACK phase: if an attacker is selected and user clicks an adjacent enemy unit,
+        // register the attack (one attack per attacker). Otherwise behave like movement.
+        if (gameState.phase === TurnPhase.ATTACK) {
+            const attacker = gameState.units.get(gameState.selectedUnitId);
+            if (attacker) {
+                // Check for adjacent enemy unit at clicked coord
+                const enemy = gameState.getUnitAt(coord);
+                if (enemy && enemy.owner !== gameState.currentPlayer) {
+                    const adjacentCoords = [
+                        { q: attacker.position.q + 1, r: attacker.position.r },
+                        { q: attacker.position.q - 1, r: attacker.position.r },
+                        { q: attacker.position.q, r: attacker.position.r + 1 },
+                        { q: attacker.position.q, r: attacker.position.r - 1 },
+                        { q: attacker.position.q + 1, r: attacker.position.r - 1 },
+                        { q: attacker.position.q - 1, r: attacker.position.r + 1 },
+                    ];
+                    const isAdjacent = adjacentCoords.some(c => c.q === coord.q && c.r === coord.r);
+                    // Debug: report whether enemy exists and adjacency before recording attack
+                    pageLog(`Enemy at click: ${enemy ? enemy.id : 'none'} owner=${enemy ? enemy.owner : 'n/a'} adjacent=${isAdjacent}`);
+                    if (isAdjacent) {
+                        // recordAttack enforces one attack per attacker
+                        const ok = gameState.recordAttack(attacker.id, enemy.id);
+                        console.log('Attack recorded:', ok, 'Attacks:', gameState.attacks);
+                        if (ok) {
+                            pageLog(`Attacker ${attacker.id} -> target ${enemy.id}`);
+                            // deselect attacker to encourage selecting next attacker
+                            gameState.selectedUnitId = null;
+                        } else {
+                            // Provide detailed failure info to debug why recordAttack returned false
+                            const attackerOwner = attacker.owner;
+                            const targetOwner = enemy.owner;
+                            const alreadyUsed = gameState.attacks.has(attacker.id);
+                            pageLog(`Attack failed: attacker=${attacker.id} owner=${attackerOwner}, target=${enemy.id} owner=${targetOwner}, currentPlayer=${gameState.currentPlayer}, alreadyUsed=${alreadyUsed}`);
+                        }
+                        render();
+                        updateUI();
+                        updateDebugPanel();
+                    } else {
+                        gameState.selectHex(coord);
+                    }
+                } else {
+                    gameState.selectHex(coord);
+                }
+            }
         } else {
-            gameState.selectHex(coord);
+            // Movement-phase behavior: move if valid, otherwise select hex
+            const isValidMove = gameState.validMoves.some(m => m.q === coord.q && m.r === coord.r);
+            if (isValidMove) {
+                gameState.moveUnit(coord);
+            } else {
+                gameState.selectHex(coord);
+            }
         }
     } else if (!unit) {
         // Empty hex clicked: select hex for info

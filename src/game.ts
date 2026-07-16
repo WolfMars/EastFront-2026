@@ -51,6 +51,8 @@ export class GameState {
     selectedHex: AxialCoord | null = null;
     map: Map<string, Hex>;
     lastMoveCosts: Map<string, number> = new Map();
+    // Map of attackerId -> targetUnitId for the current attack phase
+    attacks: Map<string, string> = new Map();
     private setupData: GameSetupData;
 
     constructor(map: Map<string, Hex>, setupData: GameSetupData = defaultSetupData as GameSetupData) {
@@ -127,6 +129,31 @@ export class GameState {
         this.lastMoveCosts = new Map();
     }
 
+    hasUnitAttacked(unitId: string): boolean {
+        return this.attacks.has(unitId);
+    }
+
+    recordAttack(attackerId: string, targetUnitId: string): boolean {
+        const attacker = this.units.get(attackerId);
+        const target = this.units.get(targetUnitId);
+        if (!attacker || !target) return false;
+        if (attacker.owner !== this.currentPlayer) return false;
+        if (target.owner === this.currentPlayer) return false;
+        if (this.attacks.has(attackerId)) return false; // attacker already used
+
+        this.attacks.set(attackerId, targetUnitId);
+        console.log(this.attacks.size, 'attacks recorded:', Array.from(this.attacks.entries()));
+        return true;
+    }
+
+    getUniqueAttackTargetsCount(): number {
+        return new Set(Array.from(this.attacks.values())).size;
+    }
+
+    resetAttacks(): void {
+        this.attacks = new Map();
+    }
+
     moveUnit(targetCoord: AxialCoord): boolean {
         if (!this.selectedUnitId) return false;
 
@@ -200,6 +227,12 @@ export class GameState {
             this.selectedUnitId = null;
             this.validMoves = [];
             this.lastMoveCosts = new Map();
+            this.units.forEach((unit) => {
+                if (unit.owner === this.currentPlayer) {
+                    unit.movement = 0; // No movement left during attack phase
+                }
+            });
+            this.resetAttacks();
             return;
         }
 
@@ -222,6 +255,7 @@ export class GameState {
             this.selectedUnitId = null;
             this.validMoves = [];
             this.lastMoveCosts = new Map();
+            this.resetAttacks();
             this.phase = TurnPhase.MOVE;
             return;
         }
