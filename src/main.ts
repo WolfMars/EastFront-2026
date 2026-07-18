@@ -65,6 +65,13 @@ function updateDebugPanel(): void {
     `;
 }
 
+async function clearLogHistory(): Promise<void> {
+    const history = document.getElementById('log-history');
+    if (history) {
+        history.innerHTML = '';
+    }
+}
+
 async function loadSetupFromFile(file: File): Promise<void> {
     const text = await file.text();
     const setupData = JSON.parse(text) as GameSetupData;
@@ -746,5 +753,10 @@ function renderMapKey(): void {
         keyDiv.appendChild(row);
     });
 }
+
+document.getElementById('clear-log-btn')!.addEventListener('click', async () => {
+    await clearLogHistory();
+    pageLog('Log cleared', false);
+});
 
 renderMapKey();

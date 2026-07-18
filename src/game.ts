@@ -239,6 +239,9 @@ export class GameState {
         // If we're in the attack phase, end the turn: reset movement for the outgoing player,
         // switch player, increment turn when Axis becomes current, and enter Movement phase.
         if (this.phase === TurnPhase.ATTACK) {
+            // Resolve all recorded attacks before ending the attack phase
+            this.resolveAttacks();
+
             this.units.forEach((unit) => {
                 if (unit.owner === this.currentPlayer) {
                     unit.movement = unit.maxMovement;
@@ -258,6 +261,54 @@ export class GameState {
             this.resetAttacks();
             this.phase = TurnPhase.MOVE;
             return;
+        }
+    }
+
+    // Resolve combat based on the collected `attacks` map.
+    // Rules (simple):
+    // - For each defender, sum strengths of all attackers targeting it.
+    // - If combined attacker strength > defender strength -> remove defender.
+    // - If equal -> no result.
+    // - If combined attacker strength < defender strength -> remove all attackers.
+    private resolveAttacks(): void {
+        // Group attackers by target
+        const byTarget = new Map<string, string[]>();
+        for (const [attackerId, targetId] of this.attacks.entries()) {
+            if (!byTarget.has(targetId)) byTarget.set(targetId, []);
+            byTarget.get(targetId)!.push(attackerId);
+        }
+
+        // Keep sets of units to remove to avoid mutating while iterating
+        const removeUnitIds = new Set<string>();
+
+        for (const [targetId, attackerIds] of byTarget.entries()) {
+            const target = this.units.get(targetId);
+            if (!target) continue; // defender already gone or invalid
+
+            // Collect valid attackers (skip attackers that have been removed earlier)
+            const attackers = attackerIds
+                .map(id => this.units.get(id))
+                .filter((u): u is NonNullable<typeof u> => !!u);
+
+            if (attackers.length === 0) continue;
+
+            const combined = attackers.reduce((s, u) => s + u.strength, 0);
+
+            if (combined > target.strength) {
+                // Attackers win: defender removed
+                removeUnitIds.add(targetId);
+                pageLog(`Combat: ${attackers.length} attackers defeated defender ${targetId}`, false);
+            } else if (combined < target.strength) {
+                // Defender wins: remove all attackers that attacked this defender
+                for (const a of attackers) removeUnitIds.add(a.id);
+            } else {
+                // equal: no result
+            }
+        }
+
+        // Apply removals
+        for (const id of removeUnitIds) {
+            this.units.delete(id);
         }
     }
 
