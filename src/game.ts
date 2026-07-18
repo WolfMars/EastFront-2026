@@ -1,6 +1,7 @@
 import { AxialCoord, hexEqual, hexKey } from './hex';
 import { Hex } from './map';
 import defaultSetupData from './default-setup.json';
+import { globalBus, GameMessage } from './messaging';
 
 export enum Player {
     AXIS = 'axis',
@@ -53,6 +54,8 @@ export class GameState {
     lastMoveCosts: Map<string, number> = new Map();
     // Map of attackerId -> targetUnitId for the current attack phase
     attacks: Map<string, string> = new Map();
+    // Last combat resolution messages (UI reads this for debug display)
+    lastCombatMessages: string[] = [];
     private setupData: GameSetupData;
 
     constructor(map: Map<string, Hex>, setupData: GameSetupData = defaultSetupData as GameSetupData) {
@@ -142,7 +145,8 @@ export class GameState {
         if (this.attacks.has(attackerId)) return false; // attacker already used
 
         this.attacks.set(attackerId, targetUnitId);
-        console.log(this.attacks.size, 'attacks recorded:', Array.from(this.attacks.entries()));
+        const msg: GameMessage = { type: 'attack', text: `Attack declared: ${attackerId} → ${targetUnitId}`, data: { attackerId, targetUnitId } };
+        globalBus.emit(msg);
         return true;
     }
 
@@ -174,6 +178,9 @@ export class GameState {
         this.validMoves = [];
         this.lastMoveCosts = new Map();
         this.selectedUnitId = null;
+
+        const msg: GameMessage = { type: 'movement', text: `Unit ${unit.id} moved to ${targetCoord.q},${targetCoord.r}`, data: { unitId: unit.id, to: targetCoord } };
+        globalBus.emit(msg);
 
         return true;
     }
@@ -220,7 +227,7 @@ export class GameState {
         return costs;
     }
 
-    advancePhase(): void {
+    advancePhase(): string[] {
         // If we're in the movement phase, advance to attack phase.
         if (this.phase === TurnPhase.MOVE) {
             this.phase = TurnPhase.ATTACK;
@@ -233,14 +240,16 @@ export class GameState {
                 }
             });
             this.resetAttacks();
-            return;
+            return [];
         }
 
         // If we're in the attack phase, end the turn: reset movement for the outgoing player,
         // switch player, increment turn when Axis becomes current, and enter Movement phase.
         if (this.phase === TurnPhase.ATTACK) {
             // Resolve all recorded attacks before ending the attack phase
-            this.resolveAttacks();
+            const messages = this.resolveAttacks();
+            // expose messages for UI/debug panel
+            this.lastCombatMessages = messages;
 
             this.units.forEach((unit) => {
                 if (unit.owner === this.currentPlayer) {
@@ -260,8 +269,9 @@ export class GameState {
             this.lastMoveCosts = new Map();
             this.resetAttacks();
             this.phase = TurnPhase.MOVE;
-            return;
+            return messages;
         }
+        return [];
     }
 
     // Resolve combat based on the collected `attacks` map.
@@ -270,7 +280,7 @@ export class GameState {
     // - If combined attacker strength > defender strength -> remove defender.
     // - If equal -> no result.
     // - If combined attacker strength < defender strength -> remove all attackers.
-    private resolveAttacks(): void {
+    private resolveAttacks(): string[] {
         // Group attackers by target
         const byTarget = new Map<string, string[]>();
         for (const [attackerId, targetId] of this.attacks.entries()) {
@@ -280,6 +290,7 @@ export class GameState {
 
         // Keep sets of units to remove to avoid mutating while iterating
         const removeUnitIds = new Set<string>();
+        const messages: string[] = [];
 
         for (const [targetId, attackerIds] of byTarget.entries()) {
             const target = this.units.get(targetId);
@@ -297,12 +308,23 @@ export class GameState {
             if (combined > target.strength) {
                 // Attackers win: defender removed
                 removeUnitIds.add(targetId);
-                pageLog(`Combat: ${attackers.length} attackers defeated defender ${targetId}`, false);
+                const atkNames = attackers.map(a => a.id).join(', ');
+                const text = `Defender ${target.id} removed by ${atkNames} (${combined} > ${target.strength})`;
+                messages.push(text);
+                globalBus.emit({ type: 'combat', text, data: { targetId, attackerIds, combined, targetStrength: target.strength } });
             } else if (combined < target.strength) {
                 // Defender wins: remove all attackers that attacked this defender
                 for (const a of attackers) removeUnitIds.add(a.id);
+                const atkNames = attackers.map(a => a.id).join(', ');
+                const text = `Attackers ${atkNames} eliminated by ${target.id} (${combined} < ${target.strength})`;
+                messages.push(text);
+                globalBus.emit({ type: 'combat', text, data: { targetId, attackerIds, combined, targetStrength: target.strength } });
             } else {
                 // equal: no result
+                const atkNames = attackers.map(a => a.id).join(', ');
+                const text = `No result: ${atkNames} vs ${target.id} (${combined} = ${target.strength})`;
+                messages.push(text);
+                globalBus.emit({ type: 'combat', text, data: { targetId, attackerIds, combined, targetStrength: target.strength } });
             }
         }
 
@@ -310,6 +332,8 @@ export class GameState {
         for (const id of removeUnitIds) {
             this.units.delete(id);
         }
+
+        return messages;
     }
 
     getUnitAt(coord: AxialCoord): Unit | undefined {

@@ -1,6 +1,7 @@
 import { AxialCoord, hexToPixel, pixelToHex, hexSideKey } from './hex';
 import { generateMap, getTerrainColor, getOwnerColor, getFrontlineColor, applyBorderData, Hex, TerrainType, getTerrainMovementCost, getTerrainDisplayName, type BorderData } from './map';
 import { GameState, Player, UnitType, type GameSetupData, TurnPhase } from './game';
+import { globalBus, type GameMessage } from './messaging';
 import defaultBorderData from './data/1941-06-barbarossa.json';
 
 const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
@@ -18,7 +19,7 @@ applyBorderData(hexMap, currentBorderData);
 let gameState = new GameState(hexMap);
 
 // Simple on-page logger: writes a short message to #log-message and appends history to #log-history.
-function pageLog(message: string, appendHistory: boolean = true): void {
+export function pageLog(message: string, appendHistory: boolean = true): void {
     const logSpan = document.getElementById('log-message');
     if (logSpan) logSpan.textContent = message;
     if (appendHistory) {
@@ -33,6 +34,57 @@ function pageLog(message: string, appendHistory: boolean = true): void {
         }
     }
 }
+
+// Toast helpers
+function ensureToastContainer(): HTMLElement {
+    let c = document.getElementById('toast-container');
+    if (!c) {
+        c = document.createElement('div');
+        c.id = 'toast-container';
+        c.className = 'toast-container';
+        document.body.appendChild(c);
+    }
+    return c;
+}
+
+function showToast(text: string, type: GameMessage['type'] = 'info', timeout = 4000): void {
+    const container = ensureToastContainer();
+    const toast = document.createElement('div');
+    toast.className = `toast toast--${type}`;
+    toast.setAttribute('role', 'status');
+    toast.innerHTML = `<div class="toast-text">${text}</div>`;
+
+    const close = document.createElement('button');
+    close.className = 'close';
+    close.innerText = '×';
+    close.setAttribute('aria-label', 'Dismiss');
+    close.onclick = () => {
+        if (toast.parentElement) toast.parentElement.removeChild(toast);
+    };
+    toast.appendChild(close);
+
+    container.appendChild(toast);
+    if (type === 'movement') {
+        // For movement messages, make the toast stay shorter
+        timeout = 1000;
+    }
+    setTimeout(() => {
+        if (toast.parentElement) toast.parentElement.removeChild(toast);
+    }, timeout);
+}
+
+// Subscribe to game messages and render them in the UI
+globalBus.on((m: GameMessage) => {
+    // default UI behavior: put message in page log and keep history unless message requests otherwise
+    const append = m.data && typeof m.data.appendHistory === 'boolean' ? m.data.appendHistory : true;
+    pageLog(m.text, append);
+    // show a toast for important message types
+    if (m.type === 'combat' || m.type === 'attack' || m.type === 'movement') {
+        showToast(m.text, m.type);
+    }
+    // also update debug panel content (updateDebugPanel reads gameState.lastCombatMessages)
+    updateDebugPanel();
+});
 
 // Persistent debug panel state
 let lastClick: { q: number; r: number } | null = null;
@@ -52,6 +104,8 @@ function updateDebugPanel(): void {
     const attacksHtml = attacksArray.length === 0
         ? '<em>none</em>'
         : `<ul>${attacksArray.map(([a,t]) => `<li>${a} → ${t}</li>`).join('')}</ul>`;
+    const combatMsgs = Array.isArray((gameState as any).lastCombatMessages) ? (gameState as any).lastCombatMessages as string[] : [];
+    const combatHtml = combatMsgs.length === 0 ? '<em>none</em>' : `<ul>${combatMsgs.map(m => `<li>${m}</li>`).join('')}</ul>`;
     const uniqueCount = typeof gameState.getUniqueAttackTargetsCount === 'function' ? gameState.getUniqueAttackTargetsCount() : 0;
 
     panel.innerHTML = `
@@ -62,6 +116,7 @@ function updateDebugPanel(): void {
         <div>Last click: ${last}</div>
         <div>Unique targets: ${uniqueCount}</div>
         <div>Attacks: ${attacksHtml}</div>
+        <div>Combat results: ${combatHtml}</div>
     `;
 }
 
@@ -493,9 +548,7 @@ function updateUI(): void {
         unitInfo.innerHTML = '<p>None selected</p>';
     }
     if (gameState.phase === TurnPhase.ATTACK && typeof gameState.getUniqueAttackTargetsCount === 'function') {
-        pageLog(`Enemies targeted: ${gameState.getUniqueAttackTargetsCount()}`, false);
-    } else {
-        pageLog('', false);
+        globalBus.emit({ type: 'info', text: `Enemies targeted: ${gameState.getUniqueAttackTargetsCount()}`, data: { appendHistory: false } });
     }
     updateDebugPanel();
 }
@@ -553,7 +606,7 @@ canvas.addEventListener('click', (event) => {
 
     const coord = canvasToGame(x, y);
     // Debug: show click coordinates and current phase so we can trace why logging/attacks
-    pageLog(`Click ${coord.q},${coord.r} phase=${gameState.phase}`, false);
+    globalBus.emit({ type: 'info', text: `Click ${coord.q},${coord.r} phase=${gameState.phase}`, data: { appendHistory: false } });
     lastClick = { q: coord.q, r: coord.r };
     updateDebugPanel();
 
@@ -574,15 +627,15 @@ canvas.addEventListener('click', (event) => {
                     { q: attacker.position.q - 1, r: attacker.position.r + 1 },
                 ];
                 const isAdjacent = adjacent.some(c => c.q === coord.q && c.r === coord.r);
-                pageLog(`Enemy at click: ${unit.id} owner=${unit.owner} adjacent=${isAdjacent}`);
+                globalBus.emit({ type: 'info', text: `Enemy at click: ${unit.id} owner=${unit.owner} adjacent=${isAdjacent}`, data: { unitId: unit.id, owner: unit.owner, adjacent: isAdjacent } });
                 if (isAdjacent) {
                     const ok = gameState.recordAttack(attacker.id, unit.id);
                     if (ok) {
-                        pageLog(`Attacker ${attacker.id} -> target ${unit.id}`);
+                        globalBus.emit({ type: 'attack', text: `Attacker ${attacker.id} -> target ${unit.id}`, data: { attackerId: attacker.id, targetId: unit.id } });
                         gameState.selectedUnitId = null;
                     } else {
                         const alreadyUsed = gameState.attacks.has(attacker.id);
-                        pageLog(`Attack failed: attacker=${attacker.id} owner=${attacker.owner}, target=${unit.id} owner=${unit.owner}, currentPlayer=${gameState.currentPlayer}, alreadyUsed=${alreadyUsed}`);
+                        globalBus.emit({ type: 'error', text: `Attack failed: attacker=${attacker.id} owner=${attacker.owner}, target=${unit.id} owner=${unit.owner}, currentPlayer=${gameState.currentPlayer}, alreadyUsed=${alreadyUsed}`, data: { attackerId: attacker.id, targetId: unit.id, alreadyUsed } });
                     }
                     render();
                     updateUI();
@@ -617,13 +670,12 @@ canvas.addEventListener('click', (event) => {
                     ];
                     const isAdjacent = adjacentCoords.some(c => c.q === coord.q && c.r === coord.r);
                     // Debug: report whether enemy exists and adjacency before recording attack
-                    pageLog(`Enemy at click: ${enemy ? enemy.id : 'none'} owner=${enemy ? enemy.owner : 'n/a'} adjacent=${isAdjacent}`);
+                    globalBus.emit({ type: 'info', text: `Enemy at click: ${enemy ? enemy.id : 'none'} owner=${enemy ? enemy.owner : 'n/a'} adjacent=${isAdjacent}`, data: { adjacent: isAdjacent } });
                     if (isAdjacent) {
                         // recordAttack enforces one attack per attacker
                         const ok = gameState.recordAttack(attacker.id, enemy.id);
-                        console.log('Attack recorded:', ok, 'Attacks:', gameState.attacks);
                         if (ok) {
-                            pageLog(`Attacker ${attacker.id} -> target ${enemy.id}`);
+                            globalBus.emit({ type: 'attack', text: `Attacker ${attacker.id} -> target ${enemy.id}`, data: { attackerId: attacker.id, targetId: enemy.id } });
                             // deselect attacker to encourage selecting next attacker
                             gameState.selectedUnitId = null;
                         } else {
@@ -631,7 +683,7 @@ canvas.addEventListener('click', (event) => {
                             const attackerOwner = attacker.owner;
                             const targetOwner = enemy.owner;
                             const alreadyUsed = gameState.attacks.has(attacker.id);
-                            pageLog(`Attack failed: attacker=${attacker.id} owner=${attackerOwner}, target=${enemy.id} owner=${targetOwner}, currentPlayer=${gameState.currentPlayer}, alreadyUsed=${alreadyUsed}`);
+                            globalBus.emit({ type: 'error', text: `Attack failed: attacker=${attacker.id} owner=${attackerOwner}, target=${enemy.id} owner=${targetOwner}, currentPlayer=${gameState.currentPlayer}, alreadyUsed=${alreadyUsed}`, data: { attackerId: attacker.id, targetId: enemy.id, alreadyUsed } });
                         }
                         render();
                         updateUI();
