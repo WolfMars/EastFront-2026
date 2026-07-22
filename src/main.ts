@@ -306,16 +306,7 @@ function drawRivers(): void {
                 ctx.moveTo(x1, y1);
                 ctx.lineTo(x2, y2);
                 ctx.strokeStyle = '#2f9eff';
-                ctx.lineWidth = 5;
-                ctx.setLineDash([8, 4]);
-                ctx.stroke();
-                ctx.setLineDash([]);
-                // inner thinner dark line to give depth
-                ctx.beginPath();
-                ctx.moveTo(x1, y1);
-                ctx.lineTo(x2, y2);
-                ctx.strokeStyle = 'rgba(10,40,80,0.6)';
-                ctx.lineWidth = 2;
+                ctx.lineWidth = 6;
                 ctx.stroke();
             } else if (sideType === 'bridge') {
                 // draw solid river
