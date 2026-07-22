@@ -1,5 +1,6 @@
 import { AxialCoord, hexToPixel, pixelToHex, hexSideKey } from './hex';
-import { generateMap, getTerrainColor, getOwnerColor, getFrontlineColor, applyBorderData, Hex, TerrainType, getTerrainMovementCost, getTerrainDisplayName, type BorderData } from './map';
+import { generateMap, getTerrainColor, getOwnerColor, getFrontlineColor, applyBorderData, applyRiverData, Hex, TerrainType, getTerrainMovementCost, getTerrainDisplayName, type BorderData, type HexSideMap } from './map';
+import defaultRiverData from '../data/rivers-sidekeys.json';
 import { GameState, Player, UnitType, type GameSetupData, TurnPhase } from './game';
 import { globalBus, type GameMessage } from './messaging';
 import defaultBorderData from './data/1941-06-barbarossa.json';
@@ -16,6 +17,8 @@ let offsetY = canvas.height / 2;
 let hexMap = generateMap(canvas.width, canvas.height);
 let currentBorderData: BorderData = defaultBorderData as BorderData;
 applyBorderData(hexMap, currentBorderData);
+let currentRiverData: any = defaultRiverData as any;
+let riverSideMap: HexSideMap = applyRiverData(hexMap, currentRiverData);
 let gameState = new GameState(hexMap);
 
 // Simple on-page logger: writes a short message to #log-message and appends history to #log-history.
@@ -132,6 +135,7 @@ async function loadSetupFromFile(file: File): Promise<void> {
     const setupData = JSON.parse(text) as GameSetupData;
     hexMap = generateMap(canvas.width, canvas.height);
     applyBorderData(hexMap, currentBorderData);
+    riverSideMap = applyRiverData(hexMap, currentRiverData);
     gameState = new GameState(hexMap, setupData);
     render();
     updateUI();
@@ -142,6 +146,7 @@ async function loadBorderFromFile(file: File): Promise<void> {
     currentBorderData = JSON.parse(text) as BorderData;
     hexMap = generateMap(canvas.width, canvas.height);
     applyBorderData(hexMap, currentBorderData);
+    riverSideMap = applyRiverData(hexMap, currentRiverData);
     gameState = new GameState(hexMap);
     render();
     updateUI();
@@ -246,7 +251,7 @@ function drawOwnershipDots(): void {
         if (!color) return;
         const { x, y } = gameToCanvas(hex.coord);
         ctx.beginPath();
-        ctx.arc(x + HEX_SIZE * 0.45, y + HEX_SIZE * 0.45, 4, 0, Math.PI * 2);
+        ctx.arc(x, y + HEX_SIZE * 0.7, 4, 0, Math.PI * 2);
         ctx.fillStyle = color;
         ctx.fill();
     });
@@ -272,6 +277,65 @@ function drawFrontlines(): void {
             ctx.strokeStyle = color;
             ctx.lineWidth = 3;
             ctx.stroke();
+        }
+    });
+}
+
+function drawRivers(): void {
+    if (!riverSideMap) return;
+    const drawn = new Set<string>();
+    hexMap.forEach((hex: Hex) => {
+        for (const dir of HEX_DIRS) {
+            const neighbor = hexMap.get(`${hex.coord.q + dir.dq},${hex.coord.r + dir.dr}`);
+            if (!neighbor) continue;
+            const key = hexSideKey(hex.coord, neighbor.coord);
+            if (drawn.has(key)) continue;
+            drawn.add(key);
+            const sideType = riverSideMap.get(key);
+            if (!sideType) continue;
+            const { x, y } = gameToCanvas(hex.coord);
+            const a1 = (Math.PI / 3) * (dir.v1 + 0.5);
+            const a2 = (Math.PI / 3) * (dir.v2 + 0.5);
+            const x1 = x + HEX_SIZE * Math.cos(a1);
+            const y1 = y + HEX_SIZE * Math.sin(a1);
+            const x2 = x + HEX_SIZE * Math.cos(a2);
+            const y2 = y + HEX_SIZE * Math.sin(a2);
+
+            if (sideType === 'river') {
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.strokeStyle = '#2f9eff';
+                ctx.lineWidth = 5;
+                ctx.setLineDash([8, 4]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                // inner thinner dark line to give depth
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.strokeStyle = 'rgba(10,40,80,0.6)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            } else if (sideType === 'bridge') {
+                // draw solid river
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.strokeStyle = '#2f9eff';
+                ctx.lineWidth = 5;
+                ctx.stroke();
+                // draw bridge rectangle at midpoint
+                const mx = (x1 + x2) / 2;
+                const my = (y1 + y2) / 2;
+                const angle = Math.atan2(y2 - y1, x2 - x1);
+                ctx.save();
+                ctx.translate(mx, my);
+                ctx.rotate(angle);
+                ctx.fillStyle = '#8B5A2B';
+                ctx.fillRect(-10, -4, 20, 8);
+                ctx.restore();
+            }
         }
     });
 }
@@ -428,6 +492,7 @@ function render(): void {
 
     drawMap();
     drawOwnershipDots();
+    drawRivers();
     drawFrontlines();
     drawValidMoves();
     drawUnits();
@@ -728,6 +793,7 @@ document.getElementById('end-turn-btn')!.addEventListener('click', () => {
 document.getElementById('reset-btn')!.addEventListener('click', () => {
     hexMap = generateMap(canvas.width, canvas.height);
     applyBorderData(hexMap, currentBorderData);
+    riverSideMap = applyRiverData(hexMap, currentRiverData);
     gameState = new GameState(hexMap);
     render();
     updateUI();

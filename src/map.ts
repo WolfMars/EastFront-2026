@@ -1,4 +1,4 @@
-import { AxialCoord } from './hex';
+import { AxialCoord, hexSideKey } from './hex';
 
 /** Hex ownership: A = Axis, S = Soviet, N = None */
 export type HexOwner = 'A' | 'S' | 'N';
@@ -26,10 +26,57 @@ export function getFrontlineColor(a: HexOwner, b: HexOwner): string | null {
 }
 
 /** Terrain/feature on a hex edge. Extend this union as new side types are added. */
-export type HexSideType = 'none';
+/** Terrain/feature on a hex edge. Extend this union as new side types are added. */
+export type HexSideType = 'none' | 'river' | 'bridge';
 
 /** Map from a canonical hex-side key (see hexSideKey) to its side data. */
 export type HexSideMap = Map<string, HexSideType>;
+
+/**
+ * Apply river/side data to the map. Accepts a simple JSON structure like:
+ * { "rivers": ["q,r|q,r", { "key": "q,r|q,r", "type": "river" }] }
+ * Returns a HexSideMap of canonical side keys -> side type.
+ */
+export function applyRiverData(hexMap: Map<string, Hex>, riverData: any): HexSideMap {
+    const sideMap: HexSideMap = new Map();
+    if (!riverData) return sideMap;
+
+    const entries: Array<string | { key: string; type?: string }> = [];
+    if (Array.isArray(riverData.rivers)) {
+        for (const e of riverData.rivers) entries.push(e);
+    } else if (Array.isArray(riverData.sides)) {
+        for (const e of riverData.sides) entries.push(e);
+    }
+
+    for (const e of entries) {
+        if (typeof e === 'string') {
+            const key = e;
+            sideMap.set(key, 'river');
+            continue;
+        }
+        if (e && typeof e.key === 'string') {
+            const t = e.type === 'bridge' ? 'bridge' : 'river';
+            sideMap.set(e.key, t as HexSideType);
+        }
+    }
+
+    // Optionally validate keys against hexMap and canonicalize using hexSideKey
+    const canonical = new Map<string, HexSideType>();
+    for (const [k, v] of sideMap.entries()) {
+        const parts = k.split('|');
+        if (parts.length !== 2) {
+            canonical.set(k, v);
+            continue;
+        }
+        const [a, b] = parts;
+        const [aq, ar] = a.split(',').map(Number);
+        const [bq, br] = b.split(',').map(Number);
+        const ck = hexSideKey({ q: aq, r: ar }, { q: bq, r: br });
+        canonical.set(ck, v);
+    }
+
+    return canonical;
+}
 
 /** One row entry in a border scenario file.
  *  Use axisMaxQ for a simple threshold (q <= axisMaxQ → Axis, rest → Soviet).
