@@ -635,7 +635,7 @@ canvas.addEventListener('click', (event) => {
                         gameState.selectedUnitId = null;
                     } else {
                         const alreadyUsed = gameState.attacks.has(attacker.id);
-                        globalBus.emit({ type: 'error', text: `Attack failed: attacker=${attacker.id} owner=${attacker.owner}, target=${unit.id} owner=${unit.owner}, currentPlayer=${gameState.currentPlayer}, alreadyUsed=${alreadyUsed}`, data: { attackerId: attacker.id, targetId: unit.id, alreadyUsed } });
+                        globalBus.emit({ type: 'error', text: `1 - Attack failed: attacker=${attacker.id} owner=${attacker.owner}, target=${unit.id} owner=${unit.owner}, currentPlayer=${gameState.currentPlayer}, alreadyUsed=${alreadyUsed}`, data: { attackerId: attacker.id, targetId: unit.id, alreadyUsed } });
                     }
                     render();
                     updateUI();
@@ -675,7 +675,7 @@ canvas.addEventListener('click', (event) => {
                         // recordAttack enforces one attack per attacker
                         const ok = gameState.recordAttack(attacker.id, enemy.id);
                         if (ok) {
-                            globalBus.emit({ type: 'attack', text: `Attacker ${attacker.id} -> target ${enemy.id}`, data: { attackerId: attacker.id, targetId: enemy.id } });
+                            //globalBus.emit({ type: 'attack', text: `Attacker ${attacker.id} -> target ${enemy.id}`, data: { attackerId: attacker.id, targetId: enemy.id } });
                             // deselect attacker to encourage selecting next attacker
                             gameState.selectedUnitId = null;
                         } else {
@@ -683,7 +683,7 @@ canvas.addEventListener('click', (event) => {
                             const attackerOwner = attacker.owner;
                             const targetOwner = enemy.owner;
                             const alreadyUsed = gameState.attacks.has(attacker.id);
-                            globalBus.emit({ type: 'error', text: `Attack failed: attacker=${attacker.id} owner=${attackerOwner}, target=${enemy.id} owner=${targetOwner}, currentPlayer=${gameState.currentPlayer}, alreadyUsed=${alreadyUsed}`, data: { attackerId: attacker.id, targetId: enemy.id, alreadyUsed } });
+                            globalBus.emit({ type: 'error', text: `2 - Attack failed: attacker=${attacker.id} owner=${attackerOwner}, target=${enemy.id} owner=${targetOwner}, currentPlayer=${gameState.currentPlayer}, alreadyUsed=${alreadyUsed}`, data: { attackerId: attacker.id, targetId: enemy.id, alreadyUsed } });
                         }
                         render();
                         updateUI();

@@ -145,8 +145,8 @@ export class GameState {
         if (this.attacks.has(attackerId)) return false; // attacker already used
 
         this.attacks.set(attackerId, targetUnitId);
-        const msg: GameMessage = { type: 'attack', text: `Attack declared: ${attackerId} → ${targetUnitId}`, data: { attackerId, targetUnitId } };
-        globalBus.emit(msg);
+        // const msg: GameMessage = { type: 'attack', text: `Attack declared: ${attackerId} → ${targetUnitId}`, data: { attackerId, targetUnitId } };
+        // globalBus.emit(msg);
         return true;
     }
 
@@ -309,7 +309,7 @@ export class GameState {
                 // Attackers win: defender removed
                 removeUnitIds.add(targetId);
                 const atkNames = attackers.map(a => a.id).join(', ');
-                const text = `Defender ${target.id} removed by ${atkNames} (${combined} > ${target.strength})`;
+                const text = `Attack success ${target.id} removed by ${atkNames} (${combined} > ${target.strength})`;
                 messages.push(text);
                 globalBus.emit({ type: 'combat', text, data: { targetId, attackerIds, combined, targetStrength: target.strength } });
             } else if (combined < target.strength) {
