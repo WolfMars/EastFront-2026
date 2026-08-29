@@ -4,6 +4,7 @@ import defaultRiverData from '../data/rivers-sidekeys.json';
 import { GameState, Player, UnitType, type GameSetupData, TurnPhase } from './game';
 import { globalBus, type GameMessage } from './messaging';
 import defaultBorderData from './data/1941-06-barbarossa.json';
+import agcSetupData from './data/agc-barbarossa-setup.json';
 
 const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
 const ctx = canvas.getContext('2d')!;
@@ -19,7 +20,7 @@ let currentBorderData: BorderData = defaultBorderData as BorderData;
 applyBorderData(hexMap, currentBorderData);
 let currentRiverData: any = defaultRiverData as any;
 let riverSideMap: HexSideMap = applyRiverData(hexMap, currentRiverData);
-let gameState = new GameState(hexMap);
+let gameState = new GameState(hexMap, agcSetupData as GameSetupData);
 
 // Simple on-page logger: writes a short message to #log-message and appends history to #log-history.
 export function pageLog(message: string, appendHistory: boolean = true): void {
@@ -385,6 +386,15 @@ function drawUnit(unitId: string): void {
     ctx.textBaseline = 'middle';
     const detailText = `${unit.strength}-${unit.maxMovement}`;
     ctx.fillText(detailText, x, y + 10);
+
+    // Unit name label at top of counter (compressed to fit if long)
+    if (unit.name) {
+        ctx.fillStyle = '#000000';
+        ctx.font = '7px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(unit.name, x, rectY + 5, rectWidth - 4);
+    }
 }
 
 /**
@@ -530,8 +540,12 @@ function updateUI(): void {
     if (gameState.selectedUnitId) {
         const unit = gameState.units.get(gameState.selectedUnitId);
         if (unit) {
-            statusText.textContent = `${unit.type} selected. Click a highlighted hex to move.`;
+            statusText.textContent = `${unit.name ?? unit.type} selected. Click a highlighted hex to move.`;
             unitInfo.innerHTML = `
+                <div class="unit-stat">
+                    <span>Unit:</span>
+                    <strong>${unit.name ?? unit.type}</strong>
+                </div>
                 <div class="unit-stat">
                     <span>Type:</span>
                     <strong>${unit.type}</strong>
@@ -549,8 +563,12 @@ function updateUI(): void {
     } else if (gameState.selectedHex) {
         const selectedUnit = gameState.getUnitAt(gameState.selectedHex);
         if (selectedUnit && selectedUnit.owner !== gameState.currentPlayer) {
-            statusText.textContent = `Enemy ${selectedUnit.type} selected.`;
+            statusText.textContent = `Enemy ${selectedUnit.name ?? selectedUnit.type} selected.`;
             unitInfo.innerHTML = `
+                <div class="unit-stat">
+                    <span>Unit:</span>
+                    <strong>${selectedUnit.name ?? selectedUnit.type}</strong>
+                </div>
                 <div class="unit-stat">
                     <span>Type:</span>
                     <strong>${selectedUnit.type}</strong>
@@ -866,6 +884,13 @@ function renderMapKey(): void {
 document.getElementById('clear-log-btn')!.addEventListener('click', async () => {
     await clearLogHistory();
     pageLog('Log cleared', false);
+});
+
+const debugToggleBtn = document.getElementById('debug-toggle-btn')!;
+const debugSection = debugToggleBtn.closest('.debug-section')!;
+debugToggleBtn.addEventListener('click', () => {
+    const expanded = debugSection.classList.toggle('expanded');
+    debugToggleBtn.textContent = expanded ? '▲ Hide' : '▼ Show';
 });
 
 renderMapKey();

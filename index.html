@@ -14,11 +14,7 @@
                 <span id="current-player">Current Player: Axis</span>
                 <span id="turn-counter">Turn: 1</span>
                 <span id="phase-indicator">Phase: MOVE</span>
-                <span id="log-message">Here we write simple dev log msgs</span>
-                <div id="log-history" class="log-history"></div>
-                <div id="debug-panel" class="debug-panel" aria-live="polite"></div>
-                <div id="reset-log" class="reset-log">
-                    <button id="clear-log-btn">Clear Log</button></div>
+                <span id="log-message">Ready</span>
             </div>
         </header>
 
@@ -28,6 +24,20 @@
             </div>
 
             <aside class="sidebar">
+                <div class="panel debug-section">
+                    <div class="debug-header">
+                        <h3>Debug</h3>
+                        <button id="debug-toggle-btn" class="debug-toggle">▼ Show</button>
+                    </div>
+                    <div class="debug-body">
+                        <div id="debug-panel" class="debug-panel" aria-live="polite"></div>
+                        <div id="log-history" class="log-history"></div>
+                        <div id="reset-log" class="reset-log">
+                            <button id="clear-log-btn">Clear Log</button>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="panel">
                     <h3>Game Status</h3>
                     <div class="status-row">

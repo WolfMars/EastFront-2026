@@ -185,39 +185,39 @@ const TERRAIN_DISPLAY_NAME: Record<TerrainType, string> = {
 };
 
 // Map covers Eastern Front at ~80 km/hex with Moscow at (0,0).
-// Geographic range: q=-18..+7, r=-8..+18 (26 wide × 27 tall).
+// Geographic range: q=-21..+7, r=-8..+18 (29 wide × 27 tall).
 // Water bodies: Baltic Sea, Gulf of Finland, Lake Ladoga, Lake Peipus,
 //               Black Sea, Sea of Azov, Caspian (western edge).
 // Key terrain: Pripyat Marshes (r=4-7, q=-12 to -9),
 //              Carpathians (r=10-13 SW), Caucasus (r=17-18 SE).
 const BOARD_ROWS = [
-    { r:  -8, qStart: -18, codes: 'wwwwwwwwwwwwfffffwxfffffff' }, // N Finland / Lake Ladoga
-    { r:  -7, qStart: -18, codes: 'wwwwwwwwwwwwwwwwfxxfffffff' }, // Gulf of Finland / Leningrad
-    { r:  -6, qStart: -18, codes: 'wwwwwwwwwwwfffffffffffffff' }, // Tallinn / Estonia coast
-    { r:  -5, qStart: -18, codes: 'wwwwwwwwwwfffwffffffffffff' }, // Baltic states forest
-    { r:  -4, qStart: -18, codes: 'wwwwwwwwwwwf.wfff.ffffffff' }, // Gulf of Riga / Lake Peipus
-    { r:  -3, qStart: -18, codes: 'wwwwwwww.wfff.ffx.ffffffff' }, // N Latvia / Pskov
-    { r:  -2, qStart: -18, codes: 'wwwwwww..f..ff.f..ffffffff' }, // Riga / Lithuania
-    { r:  -1, qStart: -18, codes: 'wwwwwww...ffffffffffffffff' }, // S Latvia/ Belarus
-    { r:   0, qStart: -18, codes: 'wwwwww..f.f.ffff.fffffffff' }, // N Lithuania / Central Russia
-    { r:   1, qStart: -18, codes: 'wwww.f.ff.f.ffffffffffffff' }, // East Prussia / Belarus
-    { r:   2, qStart: -18, codes: 'www.f.ffffffffffffffffffff' }, // Poland border / forest
-    { r:   3, qStart: -18, codes: '.w..ffffffffff............' }, // Minsk / Ukraine opens east
-    { r:   4, qStart: -18, codes: '........f.ffff............' }, // Pripyat Marshes begin
-    { r:   5, qStart: -18, codes: '.....ffxf.fff.............' }, // Pripyat Marshes center
-    { r:   6, qStart: -18, codes: '.....fxxxffff.............' }, // Pripyat / Brest
-    { r:   7, qStart: -18, codes: '.....fxx..................' }, // Pripyat Marshes south
-    { r:   8, qStart: -18, codes: '..........................' }, // Ukraine steppes / Kiev
-    { r:   9, qStart: -18, codes: '..........................' }, // Ukraine / Kharkov / Lviv
-    { r:  10, qStart: -18, codes: '.f......................ww' }, // Carpathians / Caspian
-    { r:  11, qStart: -18, codes: 'ff......................ww' }, // Carpathians / Stalingrad
-    { r:  12, qStart: -18, codes: 'fmm.....................ww' }, // Carpathian foothills
-    { r:  13, qStart: -18, codes: 'fmm....................www' }, // Romania / Black Sea west
-    { r:  14, qStart: -18, codes: '..m........ww..........www' }, // Odessa coast / Azov / Caspian
-    { r:  15, qStart: -18, codes: '..m.....wwww..........wwww' }, // Black Sea north coast
-    { r:  16, qStart: -18, codes: '...www.wwww...........wwww' }, // Black Sea / Crimea
-    { r:  17, qStart: -18, codes: '..www..m...m..........wwww' }, // Crimean Mts / Black Sea
-    { r:  18, qStart: -18, codes: '.wwwwmmwwwwmmmmmmmmm.wwwww' }, // Caucasus / Black Sea
+    { r:  -8, qStart: -21, codes: 'wwwwwwwwwwwwwwwfffffwxfffffff' }, // N Finland / Lake Ladoga
+    { r:  -7, qStart: -21, codes: 'wwwwwwwwwwwwwwwwwwwfxxfffffff' }, // Gulf of Finland / Leningrad
+    { r:  -6, qStart: -21, codes: 'wwwwwwwwwwwwwwfffffffffffffff' }, // Tallinn / Estonia coast
+    { r:  -5, qStart: -21, codes: 'wwwwwwwwwwwwwfffwffffffffffff' }, // Baltic states forest
+    { r:  -4, qStart: -21, codes: 'wwwwwwwwwwwwwwf.wfff.ffffffff' }, // Gulf of Riga / Lake Peipus
+    { r:  -3, qStart: -21, codes: 'wwwwwwwwwwww.wfff.ffx.fffffff' }, // N Latvia / Pskov
+    { r:  -2, qStart: -21, codes: 'wwwwwwwwww..f..ff.f..ffffffff' }, // Riga / Lithuania
+    { r:  -1, qStart: -21, codes: 'wwwwwwwww....ffffffffffffffff' }, // S Latvia/ Belarus
+    { r:   0, qStart: -21, codes: 'wwwwwwww.f..f.f.ffff.ffffffff' }, // N Lithuania / Central Russia
+    { r:   1, qStart: -21, codes: 'wwwwwww.f.ff.f.ffffffffffffff' }, // East Prussia / Belarus
+    { r:   2, qStart: -21, codes: 'wwwwww.f.ffffffffffffffffffff' }, // Poland border / forest
+    { r:   3, qStart: -21, codes: '...w...ffffffffff............' }, // Minsk / Ukraine opens east
+    { r:   4, qStart: -21, codes: '...........f.ffff............' }, // Pripyat Marshes begin
+    { r:   5, qStart: -21, codes: '........ffxf.fff.............' }, // Pripyat Marshes center
+    { r:   6, qStart: -21, codes: '........fxxxffff.............' }, // Pripyat / Brest
+    { r:   7, qStart: -21, codes: '........xx...................' }, // Pripyat Marshes south
+    { r:   8, qStart: -21, codes: '.............................' }, // Ukraine steppes / Kiev (extended for AGS)
+    { r:   9, qStart: -21, codes: '.............................' }, // Ukraine / Kharkov / Lviv (extended for AGS)
+    { r:  10, qStart: -21, codes: '....f......................ww' }, // Carpathians / Caspian (extended for AGS)
+    { r:  11, qStart: -21, codes: '...ff......................ww' }, // Carpathians / Stalingrad (extended for AGS)
+    { r:  12, qStart: -21, codes: '...fmm.....................ww' }, // Carpathian foothills (extended for AGS)
+    { r:  13, qStart: -21, codes: '...fmm....................www' }, // Romania / Black Sea west
+    { r:  14, qStart: -21, codes: '.....m........ww..........www' }, // Odessa coast / Azov / Caspian
+    { r:  15, qStart: -21, codes: '.....m.....wwww..........wwww' }, // Black Sea north coast
+    { r:  16, qStart: -21, codes: '......www.wwww...........wwww' }, // Black Sea / Crimea
+    { r:  17, qStart: -21, codes: '.....www..m...m..........wwww' }, // Crimean Mts / Black Sea
+    { r:  18, qStart: -21, codes: '....wwwwmmwwwwmmmmmmmmm.wwwww' }, // Caucasus / Black Sea
 ];
 
 const TERRAIN_CODE_MAP: Record<string, TerrainType> = {
@@ -260,6 +260,9 @@ const BOARD_CITIES: Array<{ q: number; r: number; name: string }> = [
     { q:  0,  r: -2, name: 'Tver' },
     { q:  0,  r:  0, name: 'Moscow' },
     // Southern sector — Army Group South objectives
+    { q: -19, r:  3, name: 'Gdansk' },
+    { q: -19, r:  6, name: 'Poznan' },
+    { q: -12, r:  2, name: 'Bialystok' },
     { q: -15, r:  2, name: 'Königsberg' },
     { q: -17, r:  6, name: 'Warsaw' },
     { q: -14, r:  6, name: 'Brest' },
@@ -285,7 +288,7 @@ export function generateMap(_width: number, _height: number): Map<string, Hex> {
         cityPositions.set(`${city.q},${city.r}`, city.name);
     });
 
-    for (let q = -18; q <= 7; q++) {
+    for (let q = -21; q <= 7; q++) {
         for (let r = -8; r <= 18; r++) {
             const key = `${q},${r}`;
             let terrain = getBoardTerrain(q, r);

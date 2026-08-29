@@ -16,6 +16,7 @@ export enum UnitType {
 
 export interface Unit {
     id: string;
+    name?: string;
     type: UnitType;
     owner: Player;
     position: AxialCoord;
@@ -25,6 +26,7 @@ export interface Unit {
 }
 
 export interface SetupUnitData {
+    name?: string;
     type: string;
     owner: string;
     position: AxialCoord;
@@ -74,6 +76,7 @@ export class GameState {
             const owner = unitData.owner === Player.AXIS ? Player.AXIS : Player.SOVIET;
 
             this.addUnit({
+                name: unitData.name,
                 type,
                 owner,
                 position: unitData.position,
@@ -85,6 +88,7 @@ export class GameState {
     }
 
     private addUnit(props: {
+        name?: string;
         type: UnitType;
         owner: Player;
         position: AxialCoord;
@@ -95,6 +99,7 @@ export class GameState {
         const id = `${props.owner}-${this.units.size}`;
         this.units.set(id, {
             id,
+            name: props.name,
             type: props.type,
             owner: props.owner,
             position: props.position,
