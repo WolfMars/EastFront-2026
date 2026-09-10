@@ -9,11 +9,33 @@ import agcSetupData from './data/agc-barbarossa-setup.json';
 const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
 const ctx = canvas.getContext('2d')!;
 
-const HEX_SIZE = 28; // pixels
+const MIN_HEX_SIZE = 16;
+const MAX_HEX_SIZE = 64;
+const DEFAULT_HEX_SIZE = 28;
 const PAN_STEP = 32;
+
+let HEX_SIZE = DEFAULT_HEX_SIZE; // pixels
 
 let offsetX = canvas.width / 2;
 let offsetY = canvas.height / 2;
+
+function setZoom(nextHexSize: number, anchorX = canvas.width / 2, anchorY = canvas.height / 2): void {
+    const clampedSize = Math.min(Math.max(nextHexSize, MIN_HEX_SIZE), MAX_HEX_SIZE);
+    if (clampedSize === HEX_SIZE) return;
+
+    const previousSize = HEX_SIZE;
+    const worldX = (anchorX - offsetX) / previousSize;
+    const worldY = (anchorY - offsetY) / previousSize;
+
+    HEX_SIZE = clampedSize;
+    offsetX = anchorX - worldX * clampedSize;
+    offsetY = anchorY - worldY * clampedSize;
+    render();
+}
+
+function zoomBy(factor: number, anchorX = canvas.width / 2, anchorY = canvas.height / 2): void {
+    setZoom(HEX_SIZE * factor, anchorX, anchorY);
+}
 
 let hexMap = generateMap(canvas.width, canvas.height);
 let currentBorderData: BorderData = defaultBorderData as BorderData;
@@ -222,6 +244,28 @@ function drawMap(): void {
     hexMap.forEach((hex: Hex) => {
         const color = getTerrainColor(hex.terrain);
         drawHex(hex.coord, color);
+
+        if (hex.terrain === 'city') {
+            const pixel = gameToCanvas(hex.coord);
+            const citySize = HEX_SIZE * 0.52;
+            const x = pixel.x;
+            const y = pixel.y;
+
+            ctx.beginPath();
+            for (let i = 0; i < 6; i++) {
+                const angle = (Math.PI / 3) * (i + 0.5);
+                const hx = x + citySize * Math.cos(angle);
+                const hy = y + citySize * Math.sin(angle);
+                if (i === 0) ctx.moveTo(hx, hy);
+                else ctx.lineTo(hx, hy);
+            }
+            ctx.closePath();
+            ctx.fillStyle = '#8B5A2B';
+            ctx.fill();
+            ctx.strokeStyle = '#5C3A1F';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+        }
 
         // Draw city names
         if (hex.name) {
@@ -663,6 +707,15 @@ canvas.addEventListener('pointerup', (event) => {
     canvas.releasePointerCapture(event.pointerId);
 });
 
+canvas.addEventListener('wheel', (event) => {
+    event.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    const zoomFactor = event.deltaY < 0 ? 1.12 : 0.88;
+    zoomBy(zoomFactor, x, y);
+}, { passive: false });
+
 canvas.addEventListener('pointerleave', () => {
     isDragging = false;
     canvas.style.cursor = 'grab';
@@ -794,6 +847,14 @@ document.getElementById('end-turn-btn')!.addEventListener('click', () => {
     gameState.advancePhase();
     render();
     updateUI();
+});
+
+document.getElementById('zoom-in-btn')!.addEventListener('click', () => {
+    zoomBy(1.15, canvas.width / 2, canvas.height / 2);
+});
+
+document.getElementById('zoom-out-btn')!.addEventListener('click', () => {
+    zoomBy(0.85, canvas.width / 2, canvas.height / 2);
 });
 
 /**

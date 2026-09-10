@@ -1,5 +1,5 @@
 import { AxialCoord, hexEqual, hexKey } from './hex';
-import { Hex } from './map';
+import { Hex, TerrainType } from './map';
 import defaultSetupData from './default-setup.json';
 import { globalBus, GameMessage } from './messaging';
 
@@ -118,7 +118,7 @@ export class GameState {
         this.selectedUnitId = unitId;
         this.selectedHex = null;
         // Compute reachable tiles using movementCost from map
-        const costs = this.computeReachableCosts(unit.position, unit.movement, unit.owner);
+        const costs = this.computeReachableCosts(unit.position, unit.movement, unit.owner, unit);
         this.lastMoveCosts = costs;
 
         this.validMoves = Array.from(costs.keys())
@@ -163,6 +163,56 @@ export class GameState {
         this.attacks = new Map();
     }
 
+    private getStackingLimitForHex(coord: AxialCoord): number {
+        const hex = this.map.get(hexKey(coord));
+        if (!hex) return 0;
+
+        switch (hex.terrain) {
+            case TerrainType.WATER:
+                return 0;
+            case TerrainType.FOREST:
+            case TerrainType.MOUNTAIN:
+            case TerrainType.MARSHLAND:
+                return 1;
+            case TerrainType.CITY:
+                return 2;
+            default:
+                return 2;
+        }
+    }
+
+    private canUnitOccupyHex(coord: AxialCoord, incomingUnit: Unit): boolean {
+        const hex = this.map.get(hexKey(coord));
+        if (!hex) return false;
+        if (hex.terrain === TerrainType.WATER) return false;
+
+        const occupants = this.getUnitsAtHex(coord).filter(unit => unit.id !== incomingUnit.id);
+        const totalUnits = occupants.length + 1;
+        const limit = this.getStackingLimitForHex(coord);
+        if (totalUnits > limit) return false;
+
+        if (hex.terrain === TerrainType.CITY) {
+            const combatUnits = occupants.filter(unit => unit.type !== UnitType.HEADQUARTERS).length + (incomingUnit.type !== UnitType.HEADQUARTERS ? 1 : 0);
+            const hasHq = occupants.some(unit => unit.type === UnitType.HEADQUARTERS) || incomingUnit.type === UnitType.HEADQUARTERS;
+            if (combatUnits > 1 && !hasHq) return false;
+        }
+
+        return true;
+    }
+
+    private canUnitEnterHexForMovement(coord: AxialCoord, movingUnit: Unit): boolean {
+        const existingUnit = this.getUnitAt(coord);
+        if (existingUnit && existingUnit.id !== movingUnit.id && existingUnit.owner !== movingUnit.owner) {
+            return false;
+        }
+
+        return this.canUnitOccupyHex(coord, movingUnit);
+    }
+
+    private getUnitsAtHex(coord: AxialCoord): Unit[] {
+        return Array.from(this.units.values()).filter(unit => hexEqual(unit.position, coord));
+    }
+
     moveUnit(targetCoord: AxialCoord): boolean {
         if (!this.selectedUnitId) return false;
 
@@ -174,6 +224,10 @@ export class GameState {
 
         const occupyingUnit = this.getUnitAt(targetCoord);
         if (occupyingUnit && occupyingUnit.owner !== unit.owner) {
+            return false;
+        }
+
+        if (!this.canUnitOccupyHex(targetCoord, unit)) {
             return false;
         }
 
@@ -190,7 +244,7 @@ export class GameState {
         return true;
     }
 
-    private computeReachableCosts(start: AxialCoord, movement: number, owner: Player): Map<string, number> {
+    private computeReachableCosts(start: AxialCoord, movement: number, owner: Player, movingUnit: Unit): Map<string, number> {
         const dirs = [
             { q: 1, r: 0 },
             { q: -1, r: 0 },
@@ -215,12 +269,12 @@ export class GameState {
                 const nkey = hexKey(nc);
                 if (!this.map.has(nkey)) continue;
 
-                const occupyingUnit = this.getUnitAt(nc);
-                if (occupyingUnit && occupyingUnit.owner !== owner) {
-                    continue;
-                }
-
                 const hex = this.map.get(nkey)!;
+                if (hex.terrain === TerrainType.WATER) continue;
+
+                const virtualUnit = { ...movingUnit, position: nc, id: `${movingUnit.id}-virtual` } as Unit;
+                if (!this.canUnitEnterHexForMovement(nc, virtualUnit)) continue;
+
                 const enterCost = hex.movementCost ?? 1;
                 const newCost = node.cost + enterCost;
                 if (newCost > movement) continue;

@@ -2,6 +2,17 @@
 ## Movement
 A unit moves using its movement points
 
+## Stacking
+A major unit is any corps-sized or army-sized formation on the map, such as infantry corps, armored corps, or headquarters. A support element may count as a non-combat unit for stacking purposes.
+
+- A hex may contain up to 2 major units in clear terrain.
+- In forest, mountain, or marsh terrain, a hex may contain only 1 major unit.
+- In cities, a hex may contain 2 total units, but only 1 combat unit unless one is an HQ or support element.
+- Units may not stack in water hexes.
+- If a unit cannot enter a hex because of stacking, it must halt in the nearest legal hex.
+
+This rule is designed to keep terrain relevant and combat formations concentrated without creating constant bookkeeping for the player.
+
 ## Combat
 Different types of combat
 Assault - to move into a hex occupied by enemy - change or no change of hex ownership, enter or no enter the hex
