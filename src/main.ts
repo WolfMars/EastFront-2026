@@ -1,7 +1,7 @@
 import { AxialCoord, hexToPixel, pixelToHex, hexSideKey } from './hex';
 import { generateMap, getTerrainColor, getOwnerColor, getFrontlineColor, applyBorderData, applyRiverData, Hex, TerrainType, getTerrainMovementCost, getTerrainDisplayName, type BorderData, type HexSideMap } from './map';
 import defaultRiverData from '../data/rivers-sidekeys.json';
-import { GameState, Player, UnitType, type GameSetupData, TurnPhase } from './game';
+import { GameState, Player, UnitType, type GameSetupData, TurnPhase, getStrengthBandShortLabel } from './game';
 import { globalBus, type GameMessage } from './messaging';
 import defaultBorderData from './data/1941-06-barbarossa.json';
 import agcSetupData from './data/agc-barbarossa-setup.json';
@@ -382,6 +382,7 @@ function drawRivers(): void {
 function drawUnit(unitId: string): void {
     const unit = gameState.units.get(unitId);
     if (!unit) return;
+    const intel = gameState.getUnitIntelView(unit.id, gameState.currentPlayer);
 
     const pixel = gameToCanvas(unit.position);
     const x = pixel.x;
@@ -421,14 +422,22 @@ function drawUnit(unitId: string): void {
         ctx.font = 'bold 9px Arial';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText('HQ', x, y - 2);
+        ctx.fillText(intel?.command.hqSymbol ? `${intel.command.hqSymbol} HQ` : 'HQ', x, y - 2);
+    }
+
+    if (intel?.command.hqSymbol && unit.type !== UnitType.HEADQUARTERS) {
+        ctx.fillStyle = '#000000';
+        ctx.font = 'bold 10px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(intel.command.hqSymbol, x, rectY + 11);
     }
 
     ctx.fillStyle = '#000000';
     ctx.font = 'bold 10px Arial';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    const detailText = `${unit.strength}-${unit.maxMovement}`;
+    const detailText = `${getStrengthBandShortLabel(unit.strength)}-${unit.maxMovement}`;
     ctx.fillText(detailText, x, y + 10);
 
     // Unit name label at top of counter (compressed to fit if long)
@@ -584,50 +593,100 @@ function updateUI(): void {
     if (gameState.selectedUnitId) {
         const unit = gameState.units.get(gameState.selectedUnitId);
         if (unit) {
+            const intel = gameState.getUnitIntelView(unit.id, gameState.currentPlayer);
             statusText.textContent = `${unit.name ?? unit.type} selected. Click a highlighted hex to move.`;
             unitInfo.innerHTML = `
                 <div class="unit-stat">
                     <span>Unit:</span>
-                    <strong>${unit.name ?? unit.type}</strong>
+                    <strong>${intel?.name ?? unit.name ?? unit.type}</strong>
                 </div>
                 <div class="unit-stat">
                     <span>Type:</span>
-                    <strong>${unit.type}</strong>
+                    <strong>${intel?.type ?? unit.type}</strong>
                 </div>
                 <div class="unit-stat">
                     <span>Strength:</span>
-                    <strong>${unit.strength}</strong>
+                    <strong>${intel?.strengthLabel ?? getStrengthBandShortLabel(unit.strength)}</strong>
+                </div>
+                <div class="unit-stat">
+                    <span>Quality:</span>
+                    <strong>${intel?.qualityLabel ?? 'Unknown'}</strong>
+                </div>
+                <div class="unit-stat">
+                    <span>Intel:</span>
+                    <strong>${intel?.intelAgeLabel ?? 'unknown'}</strong>
+                </div>
+                <div class="unit-stat">
+                    <span>HQ:</span>
+                    <strong>${intel?.command.commandHqName ?? 'None'}</strong>
+                </div>
+                <div class="unit-stat">
+                    <span>Symbol:</span>
+                    <strong>${intel?.command.hqSymbol ?? 'n/a'}</strong>
+                </div>
+                <div class="unit-stat">
+                    <span>Command:</span>
+                    <strong>${intel?.command.commandStateLabel ?? 'Unknown'}</strong>
+                </div>
+                <div class="unit-stat">
+                    <span>HQ Supply:</span>
+                    <strong>${intel?.command.hqSupplyText ?? 'n/a'}</strong>
                 </div>
                 <div class="unit-stat">
                     <span>Movement:</span>
-                    <strong>${unit.movement}/${unit.maxMovement}</strong>
+                    <strong>${intel?.movementText ?? `${unit.movement}/${unit.maxMovement}`}</strong>
                 </div>
             `;
         }
     } else if (gameState.selectedHex) {
         const selectedUnit = gameState.getUnitAt(gameState.selectedHex);
         if (selectedUnit && selectedUnit.owner !== gameState.currentPlayer) {
+            const intel = gameState.getUnitIntelView(selectedUnit.id, gameState.currentPlayer);
             statusText.textContent = `Enemy ${selectedUnit.name ?? selectedUnit.type} selected.`;
             unitInfo.innerHTML = `
                 <div class="unit-stat">
                     <span>Unit:</span>
-                    <strong>${selectedUnit.name ?? selectedUnit.type}</strong>
+                    <strong>${intel?.name ?? selectedUnit.name ?? selectedUnit.type}</strong>
                 </div>
                 <div class="unit-stat">
                     <span>Type:</span>
-                    <strong>${selectedUnit.type}</strong>
+                    <strong>${intel?.type ?? selectedUnit.type}</strong>
                 </div>
                 <div class="unit-stat">
                     <span>Owner:</span>
-                    <strong>${selectedUnit.owner}</strong>
+                    <strong>${intel?.owner ?? selectedUnit.owner}</strong>
                 </div>
                 <div class="unit-stat">
                     <span>Strength:</span>
-                    <strong>${selectedUnit.strength}</strong>
+                    <strong>${intel?.strengthLabel ?? getStrengthBandShortLabel(selectedUnit.strength)}</strong>
+                </div>
+                <div class="unit-stat">
+                    <span>Quality:</span>
+                        <strong>${intel?.qualityLabel ?? 'Unknown'}</strong>
+                </div>
+                <div class="unit-stat">
+                    <span>Intel:</span>
+                        <strong>${intel?.intelAgeLabel ?? 'unknown'}</strong>
+                </div>
+                <div class="unit-stat">
+                    <span>HQ:</span>
+                    <strong>${intel?.command.commandHqName ?? 'None'}</strong>
+                </div>
+                <div class="unit-stat">
+                    <span>Symbol:</span>
+                    <strong>${intel?.command.hqSymbol ?? 'n/a'}</strong>
+                </div>
+                <div class="unit-stat">
+                    <span>Command:</span>
+                    <strong>${intel?.command.commandStateLabel ?? 'Unknown'}</strong>
+                </div>
+                <div class="unit-stat">
+                    <span>HQ Supply:</span>
+                    <strong>${intel?.command.hqSupplyText ?? 'n/a'}</strong>
                 </div>
                 <div class="unit-stat">
                     <span>Movement:</span>
-                    <strong>${selectedUnit.movement}/${selectedUnit.maxMovement}</strong>
+                    <strong>${intel?.movementText ?? `${selectedUnit.movement}/${selectedUnit.maxMovement}`}</strong>
                 </div>
             `;
             return;
@@ -740,6 +799,7 @@ canvas.addEventListener('click', (event) => {
     // Check if clicking on a unit
     const unit = gameState.getUnitAt(coord);
     if (unit) {
+        gameState.markUnitObserved(unit.id);
         // If we're in ATTACK phase and an own unit is selected, and the clicked unit is an enemy,
         // treat this as an attack attempt (if adjacent). Otherwise, default to selection behavior.
         if (gameState.phase === TurnPhase.ATTACK && gameState.selectedUnitId && unit.owner !== gameState.currentPlayer) {
@@ -787,6 +847,7 @@ canvas.addEventListener('click', (event) => {
                 // Check for adjacent enemy unit at clicked coord
                 const enemy = gameState.getUnitAt(coord);
                 if (enemy && enemy.owner !== gameState.currentPlayer) {
+                    gameState.markUnitObserved(enemy.id);
                     const adjacentCoords = [
                         { q: attacker.position.q + 1, r: attacker.position.r },
                         { q: attacker.position.q - 1, r: attacker.position.r },

@@ -4,6 +4,7 @@
       "name": "AGC HQ",
       "type": "headquarters",
       "owner": "axis",
+      "hqSymbol": "C",
       "position": {
         "q": -17,
         "r": 5
@@ -16,6 +17,7 @@
       "name": "9th Army HQ",
       "type": "headquarters",
       "owner": "axis",
+      "hqSymbol": "9",
       "position": {
         "q": -16,
         "r": 3
@@ -24,10 +26,12 @@
       "movement": 3,
       "maxMovement": 3
     },
+    { "name": "AGN HQ",           "type": "headquarters", "owner": "axis", "hqSymbol": "N",  "position": { "q": -17, "r":  4 }, "strength": 2, "movement": 3, "maxMovement": 3 },
     {
       "name": "4th Army HQ",
       "type": "headquarters",
       "owner": "axis",
+      "hqSymbol": "4",
       "position": {
         "q": -16,
         "r": 5
@@ -40,6 +44,7 @@
       "name": "3rd PzGrp HQ",
       "type": "headquarters",
       "owner": "axis",
+      "hqSymbol": "P3",
       "position": {
         "q": -15,
         "r": 2
@@ -52,6 +57,7 @@
       "name": "2nd PzGrp HQ",
       "type": "headquarters",
       "owner": "axis",
+      "hqSymbol": "P2",
       "position": {
         "q": -15,
         "r": 7
@@ -64,6 +70,7 @@
       "name": "XXXIX Mot Corps",
       "type": "armor",
       "owner": "axis",
+      "commandHqName": "3rd PzGrp HQ",
       "position": {
         "q": -14,
         "r": 1
@@ -76,6 +83,7 @@
       "name": "LVII Mot Corps",
       "type": "armor",
       "owner": "axis",
+      "commandHqName": "3rd PzGrp HQ",
       "position": {
         "q": -14,
         "r": 2
@@ -88,6 +96,7 @@
       "name": "V Corps",
       "type": "infantry",
       "owner": "axis",
+      "commandHqName": "9th Army HQ",
       "position": {
         "q": -15,
         "r": 2
@@ -100,6 +109,7 @@
       "name": "VI Corps",
       "type": "infantry",
       "owner": "axis",
+      "commandHqName": "9th Army HQ",
       "position": {
         "q": -15,
         "r": 3
@@ -112,6 +122,7 @@
       "name": "VIII Corps",
       "type": "infantry",
       "owner": "axis",
+      "commandHqName": "9th Army HQ",
       "position": {
         "q": -16,
         "r": 3
@@ -124,8 +135,9 @@
       "name": "XX Corps",
       "type": "infantry",
       "owner": "axis",
+      "commandHqName": "9th Army HQ",
       "position": {
-        "q": -16,
+        "q": -17,
         "r": 3
       },
       "strength": 3,
@@ -136,6 +148,7 @@
       "name": "VII Corps",
       "type": "infantry",
       "owner": "axis",
+      "commandHqName": "4th Army HQ",
       "position": {
         "q": -15,
         "r": 3
@@ -148,6 +161,7 @@
       "name": "IX Corps",
       "type": "infantry",
       "owner": "axis",
+      "commandHqName": "4th Army HQ",
       "position": {
         "q": -15,
         "r": 4
@@ -160,6 +174,7 @@
       "name": "XIII Corps",
       "type": "infantry",
       "owner": "axis",
+      "commandHqName": "4th Army HQ",
       "position": {
         "q": -16,
         "r": 4
@@ -172,6 +187,7 @@
       "name": "XLIII Corps",
       "type": "infantry",
       "owner": "axis",
+      "commandHqName": "4th Army HQ",
       "position": {
         "q": -16,
         "r": 5
@@ -184,6 +200,7 @@
       "name": "XII Corps",
       "type": "infantry",
       "owner": "axis",
+      "commandHqName": "2nd PzGrp HQ",
       "position": {
         "q": -15,
         "r": 7
@@ -196,6 +213,7 @@
       "name": "XXIV Mot Corps",
       "type": "armor",
       "owner": "axis",
+      "commandHqName": "2nd PzGrp HQ",
       "position": {
         "q": -16,
         "r": 6
@@ -208,6 +226,7 @@
       "name": "XLVI Mot Corps",
       "type": "armor",
       "owner": "axis",
+      "commandHqName": "2nd PzGrp HQ",
       "position": {
         "q": -15,
         "r": 5
@@ -220,6 +239,7 @@
       "name": "XLVII Mot Corps",
       "type": "armor",
       "owner": "axis",
+      "commandHqName": "2nd PzGrp HQ",
       "position": {
         "q": -15,
         "r": 6
@@ -228,266 +248,102 @@
       "movement": 6,
       "maxMovement": 6
     },
-    {
-      "name": "W.Front HQ",
-      "type": "headquarters",
-      "owner": "soviet",
-      "position": {
-        "q": -11,
-        "r": 2
-      },
-      "strength": 2,
-      "movement": 3,
-      "maxMovement": 3
-    },
-    {
-      "name": "3rd Army HQ",
-      "type": "headquarters",
-      "owner": "soviet",
-      "position": {
-        "q": -12,
-        "r": 1
-      },
-      "strength": 2,
-      "movement": 3,
-      "maxMovement": 3
-    },
-    {
-      "name": "10th Army HQ",
-      "type": "headquarters",
-      "owner": "soviet",
-      "position": {
-        "q": -12,
-        "r": 3
-      },
-      "strength": 2,
-      "movement": 3,
-      "maxMovement": 3
-    },
-    {
-      "name": "4th Army HQ",
-      "type": "headquarters",
-      "owner": "soviet",
-      "position": {
-        "q": -12,
-        "r": 5
-      },
-      "strength": 2,
-      "movement": 3,
-      "maxMovement": 3
-    },
-    {
-      "name": "IV Rifle Corps",
-      "type": "infantry",
-      "owner": "soviet",
-      "position": {
-        "q": -13,
-        "r": 1
-      },
-      "strength": 3,
-      "movement": 3,
-      "maxMovement": 3
-    },
-    {
-      "name": "XI Mech Corps",
-      "type": "armor",
-      "owner": "soviet",
-      "position": {
-        "q": -13,
-        "r": 2
-      },
-      "strength": 3,
-      "movement": 5,
-      "maxMovement": 5
-    },
-    {
-      "name": "I Rifle Corps",
-      "type": "infantry",
-      "owner": "soviet",
-      "position": {
-        "q": -12,
-        "r": 2
-      },
-      "strength": 3,
-      "movement": 3,
-      "maxMovement": 3
-    },
-    {
-      "name": "V Rifle Corps",
-      "type": "infantry",
-      "owner": "soviet",
-      "position": {
-        "q": -13,
-        "r": 3
-      },
-      "strength": 3,
-      "movement": 3,
-      "maxMovement": 3
-    },
-    {
-      "name": "VI Mech Corps",
-      "type": "armor",
-      "owner": "soviet",
-      "position": {
-        "q": -12,
-        "r": 3
-      },
-      "strength": 4,
-      "movement": 5,
-      "maxMovement": 5
-    },
-    {
-      "name": "XIII Mech Corps",
-      "type": "armor",
-      "owner": "soviet",
-      "position": {
-        "q": -12,
-        "r": 4
-      },
-      "strength": 3,
-      "movement": 5,
-      "maxMovement": 5
-    },
-    {
-      "name": "VI Cav Corps",
-      "type": "armor",
-      "owner": "soviet",
-      "position": {
-        "q": -13,
-        "r": 4
-      },
-      "strength": 2,
-      "movement": 5,
-      "maxMovement": 5
-    },
-    {
-      "name": "XXVIII Rifle Corps",
-      "type": "infantry",
-      "owner": "soviet",
-      "position": {
-        "q": -13,
-        "r": 5
-      },
-      "strength": 3,
-      "movement": 3,
-      "maxMovement": 3
-    },
-    {
-      "name": "XIV Mech Corps",
-      "type": "armor",
-      "owner": "soviet",
-      "position": { "q": -13, "r": 6 },
-      "strength": 3,
-      "movement": 5,
-      "maxMovement": 5
-    },
-    { "name": "AGN HQ",           "type": "headquarters", "owner": "axis", "position": { "q": -15, "r":  2 }, "strength": 2, "movement": 3, "maxMovement": 3 },
-    { "name": "4th PzGrp HQ",     "type": "headquarters", "owner": "axis", "position": { "q": -13, "r":  0 }, "strength": 2, "movement": 3, "maxMovement": 3 },
-    { "name": "XLI Mot Corps",    "type": "armor",        "owner": "axis", "position": { "q": -14, "r":  1 }, "strength": 4, "movement": 6, "maxMovement": 6 },
-    { "name": "LVI Mot Corps",    "type": "armor",        "owner": "axis", "position": { "q": -13, "r":  0 }, "strength": 4, "movement": 6, "maxMovement": 6 },
-    { "name": "AGS HQ",           "type": "headquarters", "owner": "axis", "position": { "q": -21, "r":  9 }, "strength": 2, "movement": 3, "maxMovement": 3 },
-    { "name": "6th Army HQ",      "type": "headquarters", "owner": "axis", "position": { "q": -20, "r":  8 }, "strength": 2, "movement": 3, "maxMovement": 3 },
-    { "name": "17th Army HQ",     "type": "headquarters", "owner": "axis", "position": { "q": -20, "r": 11 }, "strength": 2, "movement": 3, "maxMovement": 3 },
-    { "name": "1st PzGrp HQ",     "type": "headquarters", "owner": "axis", "position": { "q": -19, "r":  9 }, "strength": 2, "movement": 3, "maxMovement": 3 },
-    { "name": "11th Army HQ",     "type": "headquarters", "owner": "axis", "position": { "q": -15, "r": 13 }, "strength": 2, "movement": 3, "maxMovement": 3 },
-    { "name": "XVII Corps",       "type": "infantry",     "owner": "axis", "position": { "q": -18, "r":  8 }, "strength": 3, "movement": 3, "maxMovement": 3 },
-    { "name": "XXIX Corps",       "type": "infantry",     "owner": "axis", "position": { "q": -19, "r":  8 }, "strength": 3, "movement": 3, "maxMovement": 3 },
-    { "name": "LV Corps",         "type": "infantry",     "owner": "axis", "position": { "q": -20, "r":  8 }, "strength": 3, "movement": 3, "maxMovement": 3 },
-    { "name": "III Mot Corps",    "type": "armor",        "owner": "axis", "position": { "q": -18, "r":  9 }, "strength": 4, "movement": 6, "maxMovement": 6 },
-    { "name": "XIV Mot Corps",    "type": "armor",        "owner": "axis", "position": { "q": -19, "r": 10 }, "strength": 4, "movement": 6, "maxMovement": 6 },
-    { "name": "XLVIII Mot Corps", "type": "armor",        "owner": "axis", "position": { "q": -18, "r": 11 }, "strength": 4, "movement": 6, "maxMovement": 6 },
-    { "name": "IV Corps",         "type": "infantry",     "owner": "axis", "position": { "q": -19, "r": 10 }, "strength": 3, "movement": 3, "maxMovement": 3 },
-    { "name": "LII Corps",        "type": "infantry",     "owner": "axis", "position": { "q": -19, "r": 12 }, "strength": 3, "movement": 3, "maxMovement": 3 },
-    { "name": "XLIX Mtn Corps",   "type": "infantry",     "owner": "axis", "position": { "q": -17, "r": 12 }, "strength": 3, "movement": 3, "maxMovement": 3 },
-    { "name": "XI Corps",         "type": "infantry",     "owner": "axis", "position": { "q": -16, "r": 13 }, "strength": 3, "movement": 3, "maxMovement": 3 },
-    { "name": "XXX Corps",        "type": "infantry",     "owner": "axis", "position": { "q": -15, "r": 13 }, "strength": 3, "movement": 3, "maxMovement": 3 },
+    { "name": "4th PzGrp HQ",     "type": "headquarters", "owner": "axis", "hqSymbol": "P4", "position": { "q": -13, "r":  0 }, "strength": 2, "movement": 3, "maxMovement": 3 },
+    { "name": "XLI Mot Corps",    "type": "armor",        "owner": "axis", "commandHqName": "4th PzGrp HQ", "position": { "q": -14, "r":  1 }, "strength": 4, "movement": 6, "maxMovement": 6 },
+    { "name": "LVI Mot Corps",    "type": "armor",        "owner": "axis", "commandHqName": "4th PzGrp HQ", "position": { "q": -13, "r":  0 }, "strength": 4, "movement": 6, "maxMovement": 6 },
+    { "name": "18th Army HQ",     "type": "headquarters", "owner": "axis", "hqSymbol": "18", "position": { "q": -20, "r":  3 }, "strength": 2, "movement": 3, "maxMovement": 3 },
+    { "name": "I Corps",          "type": "infantry",     "owner": "axis", "commandHqName": "18th Army HQ", "position": { "q": -21, "r":  3 }, "strength": 3, "movement": 3, "maxMovement": 3 },
+    { "name": "XXVI Corps",       "type": "infantry",     "owner": "axis", "commandHqName": "18th Army HQ", "position": { "q": -20, "r":  4 }, "strength": 3, "movement": 3, "maxMovement": 3 },
+    { "name": "XXXVIII Corps",    "type": "infantry",     "owner": "axis", "commandHqName": "18th Army HQ", "position": { "q": -19, "r":  4 }, "strength": 3, "movement": 3, "maxMovement": 3 },
+    { "name": "16th Army HQ",     "type": "headquarters", "owner": "axis", "hqSymbol": "16", "position": { "q": -19, "r":  3 }, "strength": 2, "movement": 3, "maxMovement": 3 },
+    { "name": "II Corps",         "type": "infantry",     "owner": "axis", "commandHqName": "16th Army HQ", "position": { "q": -21, "r":  4 }, "strength": 3, "movement": 3, "maxMovement": 3 },
+    { "name": "X Corps",          "type": "infantry",     "owner": "axis", "commandHqName": "16th Army HQ", "position": { "q": -21, "r":  5 }, "strength": 3, "movement": 3, "maxMovement": 3 },
+    { "name": "XXVIII Corps",     "type": "infantry",     "owner": "axis", "commandHqName": "16th Army HQ", "position": { "q": -20, "r":  5 }, "strength": 3, "movement": 3, "maxMovement": 3 },
+    { "name": "AGS HQ",           "type": "headquarters", "owner": "axis", "hqSymbol": "S",  "position": { "q": -21, "r":  9 }, "strength": 2, "movement": 3, "maxMovement": 3 },
+    { "name": "6th Army HQ",      "type": "headquarters", "owner": "axis", "hqSymbol": "6",  "position": { "q": -20, "r":  8 }, "strength": 2, "movement": 3, "maxMovement": 3 },
+    { "name": "17th Army HQ",     "type": "headquarters", "owner": "axis", "hqSymbol": "17", "position": { "q": -20, "r": 11 }, "strength": 2, "movement": 3, "maxMovement": 3 },
+    { "name": "1st PzGrp HQ",     "type": "headquarters", "owner": "axis", "hqSymbol": "P1", "position": { "q": -19, "r":  9 }, "strength": 2, "movement": 3, "maxMovement": 3 },
+    { "name": "11th Army HQ",     "type": "headquarters", "owner": "axis", "hqSymbol": "11", "position": { "q": -15, "r": 13 }, "strength": 2, "movement": 3, "maxMovement": 3 },
+    { "name": "XVII Corps",       "type": "infantry",     "owner": "axis", "commandHqName": "6th Army HQ", "position": { "q": -18, "r":  8 }, "strength": 3, "movement": 3, "maxMovement": 3 },
+    { "name": "XXIX Corps",       "type": "infantry",     "owner": "axis", "commandHqName": "6th Army HQ", "position": { "q": -19, "r":  8 }, "strength": 3, "movement": 3, "maxMovement": 3 },
+    { "name": "LV Corps",         "type": "infantry",     "owner": "axis", "commandHqName": "6th Army HQ", "position": { "q": -20, "r":  8 }, "strength": 3, "movement": 3, "maxMovement": 3 },
+    { "name": "III Mot Corps",    "type": "armor",        "owner": "axis", "commandHqName": "1st PzGrp HQ", "position": { "q": -18, "r":  9 }, "strength": 4, "movement": 6, "maxMovement": 6 },
+    { "name": "XIV Mot Corps",    "type": "armor",        "owner": "axis", "commandHqName": "1st PzGrp HQ", "position": { "q": -19, "r": 10 }, "strength": 4, "movement": 6, "maxMovement": 6 },
+    { "name": "XLVIII Mot Corps", "type": "armor",        "owner": "axis", "commandHqName": "1st PzGrp HQ", "position": { "q": -18, "r": 11 }, "strength": 4, "movement": 6, "maxMovement": 6 },
+    { "name": "IV Corps",         "type": "infantry",     "owner": "axis", "commandHqName": "17th Army HQ", "position": { "q": -19, "r": 10 }, "strength": 3, "movement": 3, "maxMovement": 3 },
+    { "name": "LII Corps",        "type": "infantry",     "owner": "axis", "commandHqName": "17th Army HQ", "position": { "q": -19, "r": 12 }, "strength": 3, "movement": 3, "maxMovement": 3 },
+    { "name": "XLIX Mtn Corps",   "type": "infantry",     "owner": "axis", "commandHqName": "17th Army HQ", "position": { "q": -17, "r": 12 }, "strength": 3, "movement": 3, "maxMovement": 3 },
+    { "name": "XI Corps",         "type": "infantry",     "owner": "axis", "commandHqName": "11th Army HQ", "position": { "q": -16, "r": 13 }, "strength": 3, "movement": 3, "maxMovement": 3 },
+    { "name": "XXX Corps",        "type": "infantry",     "owner": "axis", "commandHqName": "11th Army HQ", "position": { "q": -15, "r": 13 }, "strength": 3, "movement": 3, "maxMovement": 3 },
 
-    { "name": "Carpathian Grp HQ","type": "headquarters", "owner": "axis", "position": { "q": -19, "r": 12 }, "strength": 2, "movement": 3, "maxMovement": 3 },
-    { "name": "VIII Hung Corps",  "type": "infantry",     "owner": "axis", "position": { "q": -18, "r": 12 }, "strength": 2, "movement": 3, "maxMovement": 3 },
-    { "name": "Hung Mobile Corps","type": "armor",        "owner": "axis", "position": { "q": -17, "r": 12 }, "strength": 2, "movement": 5, "maxMovement": 5 },
+    { "name": "3rd Ro Army HQ",   "type": "headquarters", "owner": "axis", "hqSymbol": "R3", "position": { "q": -18, "r": 13 }, "strength": 2, "movement": 3, "maxMovement": 3 },
+    { "name": "Ro Mountain Corps","type": "infantry",     "owner": "axis", "commandHqName": "3rd Ro Army HQ", "position": { "q": -17, "r": 13 }, "strength": 2, "movement": 3, "maxMovement": 3 },
 
-    { "name": "3rd Ro Army HQ",   "type": "headquarters", "owner": "axis", "position": { "q": -18, "r": 13 }, "strength": 2, "movement": 3, "maxMovement": 3 },
-    { "name": "Ro Mountain Corps","type": "infantry",     "owner": "axis", "position": { "q": -17, "r": 13 }, "strength": 2, "movement": 3, "maxMovement": 3 },
+    { "name": "4th Ro Army HQ",   "type": "headquarters", "owner": "axis", "hqSymbol": "R4", "position": { "q": -18, "r": 14 }, "strength": 2, "movement": 3, "maxMovement": 3 },
+    { "name": "Ro Cavalry Corps", "type": "armor",        "owner": "axis", "commandHqName": "4th Ro Army HQ", "position": { "q": -17, "r": 14 }, "strength": 2, "movement": 5, "maxMovement": 5 },
+    { "name": "XI Ro Corps",      "type": "infantry",     "owner": "axis", "commandHqName": "4th Ro Army HQ", "position": { "q": -15, "r": 14 }, "strength": 2, "movement": 3, "maxMovement": 3 },
+    { "name": "IV Ro Corps",      "type": "infantry",     "owner": "axis", "commandHqName": "4th Ro Army HQ", "position": { "q": -15, "r": 15 }, "strength": 2, "movement": 3, "maxMovement": 3 },
+    { "name": "Leningrad MD HQ", "type": "headquarters", "owner": "soviet", "hqSymbol": "L", "position": { "q": -1, "r": -6 }, "strength": 2, "movement": 3, "maxMovement": 3 },
+    { "name": "7th Army HQ",      "type": "headquarters", "owner": "soviet", "hqSymbol": "7",  "position": { "q": 0, "r": -5 }, "strength": 2, "movement": 3, "maxMovement": 3 },
+    { "name": "14th Army HQ",     "type": "headquarters", "owner": "soviet", "hqSymbol": "14", "position": { "q": 2, "r": -7 }, "strength": 2, "movement": 3, "maxMovement": 3 },
+    { "name": "23rd Army HQ",     "type": "headquarters", "owner": "soviet", "hqSymbol": "23", "position": { "q": -4, "r": -6 }, "strength": 2, "movement": 3, "maxMovement": 3 },
 
-    { "name": "4th Ro Army HQ",   "type": "headquarters", "owner": "axis", "position": { "q": -18, "r": 14 }, "strength": 2, "movement": 3, "maxMovement": 3 },
-    { "name": "Ro Cavalry Corps", "type": "armor",        "owner": "axis", "position": { "q": -17, "r": 14 }, "strength": 2, "movement": 5, "maxMovement": 5 },
-    { "name": "XI Ro Corps",      "type": "infantry",     "owner": "axis", "position": { "q": -15, "r": 14 }, "strength": 2, "movement": 3, "maxMovement": 3 },
-    { "name": "IV Ro Corps",      "type": "infantry",     "owner": "axis", "position": { "q": -15, "r": 15 }, "strength": 2, "movement": 3, "maxMovement": 3 },
-    { "name": "Northern Front HQ","type": "headquarters", "owner": "soviet", "position": { "q": -1, "r": -6 }, "strength": 2, "movement": 3, "maxMovement": 3 },
-    { "name": "7th Army HQ",      "type": "headquarters", "owner": "soviet", "position": { "q": 0, "r": -5 }, "strength": 2, "movement": 3, "maxMovement": 3 },
-    { "name": "14th Army HQ",     "type": "headquarters", "owner": "soviet", "position": { "q": 2, "r": -7 }, "strength": 2, "movement": 3, "maxMovement": 3 },
-    { "name": "23rd Army HQ",     "type": "headquarters", "owner": "soviet", "position": { "q": -4, "r": -6 }, "strength": 2, "movement": 3, "maxMovement": 3 },
+    { "name": "Northwestern Front HQ",  "type": "headquarters", "owner": "soviet", "hqSymbol": "NW", "position": { "q": -8, "r": -2 }, "strength": 2, "movement": 3, "maxMovement": 3 },
+    { "name": "8th Army HQ",            "type": "headquarters", "owner": "soviet", "hqSymbol": "8",  "position": { "q": -10, "r": -1 }, "strength": 2, "movement": 3, "maxMovement": 3 },
+    { "name": "X Rifle Corps",          "type": "infantry", "owner": "soviet", "commandHqName": "8th Army HQ", "position": { "q": -10, "r": 0 }, "strength": 3, "movement": 3, "maxMovement": 3 },
+    { "name": "XI Rifle Corps",         "type": "infantry", "owner": "soviet", "commandHqName": "8th Army HQ", "position": { "q": -10, "r": 1 }, "strength": 3, "movement": 3, "maxMovement": 3 },
+    { "name": "XII Mechanised Corps",   "type": "armor", "owner": "soviet", "commandHqName": "8th Army HQ", "position": { "q": -9, "r": 0 }, "strength": 4, "movement": 5, "maxMovement": 5 },
+    { "name": "III Mechanised Corps",   "type": "armor", "owner": "soviet", "commandHqName": "11th Army HQ", "position": { "q": -10, "r": 2 }, "strength": 4, "movement": 5, "maxMovement": 5 },
+    { "name": "11th Army HQ",           "type": "headquarters", "owner": "soviet", "hqSymbol": "11", "position": { "q": -11, "r": 1 }, "strength": 2, "movement": 3, "maxMovement": 3 },
+    { "name": "XVI Rifle Corps",        "type": "infantry", "owner": "soviet", "commandHqName": "11th Army HQ", "position": { "q": -11, "r": 0 }, "strength": 3, "movement": 3, "maxMovement": 3 },
+    { "name": "XXIX Rifle Corps",       "type": "infantry", "owner": "soviet", "commandHqName": "11th Army HQ", "position": { "q": -12, "r": 2 }, "strength": 3, "movement": 3, "maxMovement": 3 },
+    { "name": "27th Army HQ",           "type": "headquarters", "owner": "soviet", "hqSymbol": "27", "position": { "q": -8, "r": 1 }, "strength": 2, "movement": 3, "maxMovement": 3 },
 
-    { "name": "Northwestern Front HQ",  "type": "headquarters", "owner": "soviet", "position": { "q": -8, "r": -2 }, "strength": 2, "movement": 3, "maxMovement": 3 },
-    { "name": "8th Army HQ",            "type": "headquarters", "owner": "soviet", "position": { "q": -9, "r": -2 }, "strength": 2, "movement": 3, "maxMovement": 3 },
-    { "name": "X Rifle Corps",          "type": "infantry", "owner": "soviet", "position": { "q": -8, "r": -1 }, "strength": 3, "movement": 3, "maxMovement": 3 },
-    { "name": "XI Rifle Corps",         "type": "infantry", "owner": "soviet", "position": { "q": -9, "r": 0 }, "strength": 3, "movement": 3, "maxMovement": 3 },
-    { "name": "XII Mechanised Corps",   "type": "armor", "owner": "soviet", "position": { "q": -8, "r": 0 }, "strength": 4, "movement": 5, "maxMovement": 5 },
-    { "name": "III Mechanised Corps",   "type": "armor", "owner": "soviet", "position": { "q": -7, "r": -1 }, "strength": 4, "movement": 5, "maxMovement": 5 },
-    { "name": "11th Army HQ",           "type": "headquarters", "owner": "soviet", "position": { "q": -10, "r": 1 }, "strength": 2, "movement": 3, "maxMovement": 3 },
-    { "name": "XVI Rifle Corps",        "type": "infantry", "owner": "soviet", "position": { "q": -9, "r": 1 }, "strength": 3, "movement": 3, "maxMovement": 3 },
-    { "name": "XXIX Rifle Corps",       "type": "infantry", "owner": "soviet", "position": { "q": -10, "r": 2 }, "strength": 3, "movement": 3, "maxMovement": 3 },
-    { "name": "27th Army HQ",           "type": "headquarters", "owner": "soviet", "position": { "q": -8, "r": 1 }, "strength": 2, "movement": 3, "maxMovement": 3 },
+    { "name": "Western Front HQ", "type": "headquarters", "owner": "soviet", "hqSymbol": "W", "position": { "q": -12, "r": 3 }, "strength": 2, "movement": 3, "maxMovement": 3 },
+    { "name": "3rd Army HQ", "type": "headquarters", "owner": "soviet", "hqSymbol": "3", "position": { "q": -12, "r": 2 }, "strength": 2, "movement": 3, "maxMovement": 3 },
+    { "name": "IV Rifle Corps", "type": "infantry", "owner": "soviet", "commandHqName": "3rd Army HQ", "position": { "q": -12, "r": 1 }, "strength": 3, "movement": 3, "maxMovement": 3 },
+    { "name": "XI Mechanised Corps", "type": "armor", "owner": "soviet", "commandHqName": "3rd Army HQ", "position": { "q": -11, "r": 2 }, "strength": 4, "movement": 5, "maxMovement": 5 },
+    { "name": "4th Army HQ", "type": "headquarters", "owner": "soviet", "hqSymbol": "4", "position": { "q": -13, "r": 4 }, "strength": 2, "movement": 3, "maxMovement": 3 },
+    { "name": "XXVIII Rifle Corps", "type": "infantry", "owner": "soviet", "commandHqName": "4th Army HQ", "position": { "q": -13, "r": 5 }, "strength": 3, "movement": 3, "maxMovement": 3 },
+    { "name": "XIV Mechanised Corps", "type": "armor", "owner": "soviet", "commandHqName": "4th Army HQ", "position": { "q": -12, "r": 4 }, "strength": 4, "movement": 5, "maxMovement": 5 },
+    { "name": "I Anti-Tank Brigade", "type": "infantry", "owner": "soviet", "commandHqName": "4th Army HQ", "position": { "q": -12, "r": 5 }, "strength": 2, "movement": 3, "maxMovement": 3 },
+    { "name": "10th Army HQ", "type": "headquarters", "owner": "soviet", "hqSymbol": "10", "position": { "q": -13, "r": 3 }, "strength": 2, "movement": 3, "maxMovement": 3 },
+    { "name": "I Rifle Corps", "type": "infantry", "owner": "soviet", "commandHqName": "10th Army HQ", "position": { "q": -13, "r": 4 }, "strength": 3, "movement": 3, "maxMovement": 3 },
+    { "name": "V Rifle Corps", "type": "infantry", "owner": "soviet", "commandHqName": "10th Army HQ", "position": { "q": -12, "r": 6 }, "strength": 3, "movement": 3, "maxMovement": 3 },
+    { "name": "VI Mechanised Corps", "type": "armor", "owner": "soviet", "commandHqName": "10th Army HQ", "position": { "q": -11, "r": 3 }, "strength": 4, "movement": 5, "maxMovement": 5 },
+    { "name": "XIII Mechanised Corps", "type": "armor", "owner": "soviet", "commandHqName": "10th Army HQ", "position": { "q": -11, "r": 4 }, "strength": 4, "movement": 5, "maxMovement": 5 },
+    { "name": "VI Cavalry Corps", "type": "armor", "owner": "soviet", "commandHqName": "10th Army HQ", "position": { "q": -11, "r": 5 }, "strength": 4, "movement": 5, "maxMovement": 5 },
+    { "name": "XVII Mechanised Corps", "type": "armor", "owner": "soviet", "commandHqName": "Western Front HQ", "position": { "q": -10, "r": 3 }, "strength": 4, "movement": 5, "maxMovement": 5 },
+    { "name": "XX Mechanised Corps", "type": "armor", "owner": "soviet", "commandHqName": "Western Front HQ", "position": { "q": -10, "r": 4 }, "strength": 4, "movement": 5, "maxMovement": 5 },
 
-    { "name": "Western Front HQ", "type": "headquarters", "owner": "soviet", "position": { "q": -10, "r": 3 }, "strength": 2, "movement": 3, "maxMovement": 3 },
-    { "name": "3rd Army HQ", "type": "headquarters", "owner": "soviet", "position": { "q": -11, "r": 2 }, "strength": 2, "movement": 3, "maxMovement": 3 },
-    { "name": "IV Rifle Corps", "type": "infantry", "owner": "soviet", "position": { "q": -11, "r": 1 }, "strength": 3, "movement": 3, "maxMovement": 3 },
-    { "name": "XI Mechanised Corps", "type": "armor", "owner": "soviet", "position": { "q": -9, "r": 2 }, "strength": 4, "movement": 5, "maxMovement": 5 },
-    { "name": "4th Army HQ", "type": "headquarters", "owner": "soviet", "position": { "q": -11, "r": 4 }, "strength": 2, "movement": 3, "maxMovement": 3 },
-    { "name": "XXVIII Rifle Corps", "type": "infantry", "owner": "soviet", "position": { "q": -10, "r": 4 }, "strength": 3, "movement": 3, "maxMovement": 3 },
-    { "name": "XIV Mechanised Corps", "type": "armor", "owner": "soviet", "position": { "q": -9, "r": 4 }, "strength": 4, "movement": 5, "maxMovement": 5 },
-    { "name": "I Anti-Tank Brigade", "type": "infantry", "owner": "soviet", "position": { "q": -10, "r": 5 }, "strength": 2, "movement": 3, "maxMovement": 3 },
-    { "name": "10th Army HQ", "type": "headquarters", "owner": "soviet", "position": { "q": -11, "r": 3 }, "strength": 2, "movement": 3, "maxMovement": 3 },
-    { "name": "I Rifle Corps", "type": "infantry", "owner": "soviet", "position": { "q": -9, "r": 3 }, "strength": 3, "movement": 3, "maxMovement": 3 },
-    { "name": "V Rifle Corps", "type": "infantry", "owner": "soviet", "position": { "q": -9, "r": 5 }, "strength": 3, "movement": 3, "maxMovement": 3 },
-    { "name": "VI Mechanised Corps", "type": "armor", "owner": "soviet", "position": { "q": -8, "r": 3 }, "strength": 4, "movement": 5, "maxMovement": 5 },
-    { "name": "XIII Mechanised Corps", "type": "armor", "owner": "soviet", "position": { "q": -8, "r": 4 }, "strength": 4, "movement": 5, "maxMovement": 5 },
-    { "name": "VI Cavalry Corps", "type": "armor", "owner": "soviet", "position": { "q": -8, "r": 5 }, "strength": 4, "movement": 5, "maxMovement": 5 },
-    { "name": "13th Army HQ", "type": "headquarters", "owner": "soviet", "position": { "q": -8, "r": 2 }, "strength": 2, "movement": 3, "maxMovement": 3 },
-    { "name": "XVII Mechanised Corps", "type": "armor", "owner": "soviet", "position": { "q": -7, "r": 3 }, "strength": 4, "movement": 5, "maxMovement": 5 },
-    { "name": "XX Mechanised Corps", "type": "armor", "owner": "soviet", "position": { "q": -7, "r": 4 }, "strength": 4, "movement": 5, "maxMovement": 5 },
+    { "name": "Southwestern Front HQ", "type": "headquarters", "owner": "soviet", "hqSymbol": "SW", "position": { "q": -12, "r": 9 }, "strength": 2, "movement": 3, "maxMovement": 3 },
+    { "name": "5th Army HQ", "type": "headquarters", "owner": "soviet", "hqSymbol": "5", "position": { "q": -15, "r": 8 }, "strength": 2, "movement": 3, "maxMovement": 3 },
+    { "name": "XV Rifle Corps", "type": "infantry", "owner": "soviet", "commandHqName": "5th Army HQ", "position": { "q": -15, "r": 9 }, "strength": 3, "movement": 3, "maxMovement": 3 },
+    { "name": "XXVII Rifle Corps", "type": "infantry", "owner": "soviet", "commandHqName": "5th Army HQ", "position": { "q": -14, "r": 9 }, "strength": 3, "movement": 3, "maxMovement": 3 },
+    { "name": "IX Mechanised Corps", "type": "armor", "owner": "soviet", "commandHqName": "Southwestern Front HQ", "position": { "q": -13, "r": 9 }, "strength": 4, "movement": 5, "maxMovement": 5 },
+    { "name": "XXII Mechanised Corps", "type": "armor", "owner": "soviet", "commandHqName": "5th Army HQ", "position": { "q": -14, "r": 8 }, "strength": 4, "movement": 5, "maxMovement": 5 },
+    { "name": "6th Army HQ", "type": "headquarters", "owner": "soviet", "hqSymbol": "6", "position": { "q": -15, "r": 10 }, "strength": 2, "movement": 3, "maxMovement": 3 },
+    { "name": "VI Rifle Corps", "type": "infantry", "owner": "soviet", "commandHqName": "6th Army HQ", "position": { "q": -14, "r": 10 }, "strength": 3, "movement": 3, "maxMovement": 3 },
+    { "name": "XXXVII Rifle Corps", "type": "infantry", "owner": "soviet", "commandHqName": "6th Army HQ", "position": { "q": -15, "r": 11 }, "strength": 3, "movement": 3, "maxMovement": 3 },
+    { "name": "IV Mechanised Corps", "type": "armor", "owner": "soviet", "commandHqName": "6th Army HQ", "position": { "q": -14, "r": 11 }, "strength": 4, "movement": 5, "maxMovement": 5 },
+    { "name": "XV Mechanised Corps", "type": "armor", "owner": "soviet", "commandHqName": "Southwestern Front HQ", "position": { "q": -13, "r": 10 }, "strength": 4, "movement": 5, "maxMovement": 5 },
+    { "name": "12th Army HQ", "type": "headquarters", "owner": "soviet", "hqSymbol": "12", "position": { "q": -14, "r": 12 }, "strength": 2, "movement": 3, "maxMovement": 3 },
+    { "name": "XIII Rifle Corps (12th Army)", "type": "infantry", "owner": "soviet", "commandHqName": "12th Army HQ", "position": { "q": -14, "r": 13 }, "strength": 3, "movement": 3, "maxMovement": 3 },
+    { "name": "XVII Rifle Corps (12th Army)", "type": "infantry", "owner": "soviet", "commandHqName": "12th Army HQ", "position": { "q": -13, "r": 12 }, "strength": 3, "movement": 3, "maxMovement": 3 },
+    { "name": "XVI Mechanised Corps (12th Army)", "type": "armor", "owner": "soviet", "commandHqName": "12th Army HQ", "position": { "q": -13, "r": 13 }, "strength": 4, "movement": 5, "maxMovement": 5 },
+    { "name": "26th Army HQ", "type": "headquarters", "owner": "soviet", "hqSymbol": "26", "position": { "q": -10, "r": 8 }, "strength": 2, "movement": 3, "maxMovement": 3 },
+    { "name": "VIII Rifle Corps", "type": "infantry", "owner": "soviet", "commandHqName": "26th Army HQ", "position": { "q": -9, "r": 8 }, "strength": 3, "movement": 3, "maxMovement": 3 },
+    { "name": "VIII Mechanised Corps", "type": "armor", "owner": "soviet", "commandHqName": "26th Army HQ", "position": { "q": -8, "r": 8 }, "strength": 4, "movement": 5, "maxMovement": 5 },
+    { "name": "II Cavalry Corps (26th Army)", "type": "armor", "owner": "soviet", "commandHqName": "26th Army HQ", "position": { "q": -8, "r": 9 }, "strength": 4, "movement": 5, "maxMovement": 5 },
+    { "name": "XIX Mechanised Corps", "type": "armor", "owner": "soviet", "commandHqName": "Southwestern Front HQ", "position": { "q": -9, "r": 9 }, "strength": 4, "movement": 5, "maxMovement": 5 },
+    { "name": "XXIV Mechanised Corps", "type": "armor", "owner": "soviet", "commandHqName": "Southwestern Front HQ", "position": { "q": -10, "r": 11 }, "strength": 4, "movement": 5, "maxMovement": 5 },
 
-    { "name": "Southwestern Front HQ", "type": "headquarters", "owner": "soviet", "position": { "q": -11, "r": 8 }, "strength": 2, "movement": 3, "maxMovement": 3 },
-    { "name": "5th Army HQ", "type": "headquarters", "owner": "soviet", "position": { "q": -12, "r": 8 }, "strength": 2, "movement": 3, "maxMovement": 3 },
-    { "name": "XV Rifle Corps", "type": "infantry", "owner": "soviet", "position": { "q": -12, "r": 9 }, "strength": 3, "movement": 3, "maxMovement": 3 },
-    { "name": "XXVII Rifle Corps", "type": "infantry", "owner": "soviet", "position": { "q": -11, "r": 9 }, "strength": 3, "movement": 3, "maxMovement": 3 },
-    { "name": "IX Mechanised Corps", "type": "armor", "owner": "soviet", "position": { "q": -10, "r": 9 }, "strength": 4, "movement": 5, "maxMovement": 5 },
-    { "name": "XXII Mechanised Corps", "type": "armor", "owner": "soviet", "position": { "q": -9, "r": 9 }, "strength": 4, "movement": 5, "maxMovement": 5 },
-    { "name": "6th Army HQ", "type": "headquarters", "owner": "soviet", "position": { "q": -12, "r": 10 }, "strength": 2, "movement": 3, "maxMovement": 3 },
-    { "name": "VI Rifle Corps", "type": "infantry", "owner": "soviet", "position": { "q": -11, "r": 10 }, "strength": 3, "movement": 3, "maxMovement": 3 },
-    { "name": "XXXVII Rifle Corps", "type": "infantry", "owner": "soviet", "position": { "q": -12, "r": 11 }, "strength": 3, "movement": 3, "maxMovement": 3 },
-    { "name": "IV Mechanised Corps", "type": "armor", "owner": "soviet", "position": { "q": -10, "r": 10 }, "strength": 4, "movement": 5, "maxMovement": 5 },
-    { "name": "XV Mechanised Corps", "type": "armor", "owner": "soviet", "position": { "q": -9, "r": 10 }, "strength": 4, "movement": 5, "maxMovement": 5 },
-    { "name": "12th Army HQ", "type": "headquarters", "owner": "soviet", "position": { "q": -13, "r": 11 }, "strength": 2, "movement": 3, "maxMovement": 3 },
-    { "name": "XIII Rifle Corps (12th Army)", "type": "infantry", "owner": "soviet", "position": { "q": -12, "r": 12 }, "strength": 3, "movement": 3, "maxMovement": 3 },
-    { "name": "XVII Rifle Corps (12th Army)", "type": "infantry", "owner": "soviet", "position": { "q": -11, "r": 12 }, "strength": 3, "movement": 3, "maxMovement": 3 },
-    { "name": "XVI Mechanised Corps (12th Army)", "type": "armor", "owner": "soviet", "position": { "q": -10, "r": 12 }, "strength": 4, "movement": 5, "maxMovement": 5 },
-    { "name": "26th Army HQ", "type": "headquarters", "owner": "soviet", "position": { "q": -10, "r": 8 }, "strength": 2, "movement": 3, "maxMovement": 3 },
-    { "name": "VIII Rifle Corps", "type": "infantry", "owner": "soviet", "position": { "q": -9, "r": 8 }, "strength": 3, "movement": 3, "maxMovement": 3 },
-    { "name": "VIII Mechanised Corps", "type": "armor", "owner": "soviet", "position": { "q": -8, "r": 8 }, "strength": 4, "movement": 5, "maxMovement": 5 },
-    { "name": "II Cavalry Corps (26th Army)", "type": "armor", "owner": "soviet", "position": { "q": -8, "r": 9 }, "strength": 4, "movement": 5, "maxMovement": 5 },
-    { "name": "XIX Mechanised Corps", "type": "armor", "owner": "soviet", "position": { "q": -8, "r": 10 }, "strength": 4, "movement": 5, "maxMovement": 5 },
-    { "name": "XXIV Mechanised Corps", "type": "armor", "owner": "soviet", "position": { "q": -7, "r": 10 }, "strength": 4, "movement": 5, "maxMovement": 5 },
-
-    { "name": "Southern Front HQ", "type": "headquarters", "owner": "soviet", "position": { "q": -12, "r": 14 }, "strength": 2, "movement": 3, "maxMovement": 3 },
-    { "name": "9th Army HQ", "type": "headquarters", "owner": "soviet", "position": { "q": -13, "r": 14 }, "strength": 2, "movement": 3, "maxMovement": 3 },
-    { "name": "XIV Rifle Corps (9th Army)", "type": "infantry", "owner": "soviet", "position": { "q": -12, "r": 15 }, "strength": 3, "movement": 3, "maxMovement": 3 },
-    { "name": "XXXV Rifle Corps", "type": "infantry", "owner": "soviet", "position": { "q": -11, "r": 15 }, "strength": 3, "movement": 3, "maxMovement": 3 },
-    { "name": "II Cavalry Corps (9th Army)", "type": "armor", "owner": "soviet", "position": { "q": -11, "r": 14 }, "strength": 4, "movement": 5, "maxMovement": 5 },
-    { "name": "II Mechanised Corps", "type": "armor", "owner": "soviet", "position": { "q": -10, "r": 14 }, "strength": 4, "movement": 5, "maxMovement": 5 },
-    { "name": "XVIII Mechanised Corps", "type": "armor", "owner": "soviet", "position": { "q": -9, "r": 14 }, "strength": 4, "movement": 5, "maxMovement": 5 },
-    { "name": "18th Army HQ", "type": "headquarters", "owner": "soviet", "position": { "q": -12, "r": 16 }, "strength": 2, "movement": 3, "maxMovement": 3 },
-    { "name": "XVII Rifle Corps (18th Army)", "type": "infantry", "owner": "soviet", "position": { "q": -12, "r": 17 }, "strength": 3, "movement": 3, "maxMovement": 3 },
-    { "name": "LV Rifle Corps", "type": "infantry", "owner": "soviet", "position": { "q": -11, "r": 17 }, "strength": 3, "movement": 3, "maxMovement": 3 },
-    { "name": "XVI Mechanised Corps (18th Army)", "type": "armor", "owner": "soviet", "position": { "q": -10, "r": 17 }, "strength": 4, "movement": 5, "maxMovement": 5 },
-
-    { "name": "STAVKA HQ", "type": "headquarters", "owner": "soviet", "position": { "q": -6, "r": 6 }, "strength": 2, "movement": 3, "maxMovement": 3 },
-    { "name": "16th Army HQ (Reserve)", "type": "headquarters", "owner": "soviet", "position": { "q": -6, "r": 5 }, "strength": 2, "movement": 3, "maxMovement": 3 },
-    { "name": "19th Army HQ (Reserve)", "type": "headquarters", "owner": "soviet", "position": { "q": -5, "r": 6 }, "strength": 2, "movement": 3, "maxMovement": 3 },
-    { "name": "20th Army HQ (Reserve)", "type": "headquarters", "owner": "soviet", "position": { "q": -4, "r": 6 }, "strength": 2, "movement": 3, "maxMovement": 3 },
-    { "name": "21st Army HQ (Reserve)", "type": "headquarters", "owner": "soviet", "position": { "q": -6, "r": 7 }, "strength": 2, "movement": 3, "maxMovement": 3 },
-    { "name": "22nd Army HQ (Reserve)", "type": "headquarters", "owner": "soviet", "position": { "q": -5, "r": 7 }, "strength": 2, "movement": 3, "maxMovement": 3 },
-    { "name": "24th Army HQ (Reserve)", "type": "headquarters", "owner": "soviet", "position": { "q": -4, "r": 7 }, "strength": 2, "movement": 3, "maxMovement": 3 },
-    { "name": "28th Army HQ (Reserve)", "type": "headquarters", "owner": "soviet", "position": { "q": -3, "r": 7 }, "strength": 2, "movement": 3, "maxMovement": 3 }
+    { "name": "Odessa MD HQ", "type": "headquarters", "owner": "soviet", "hqSymbol": "O", "position": { "q": -12, "r": 14 }, "strength": 2, "movement": 3, "maxMovement": 3 },
+    { "name": "9th Separate Army HQ", "type": "headquarters", "owner": "soviet", "hqSymbol": "9", "position": { "q": -13, "r": 14 }, "strength": 2, "movement": 3, "maxMovement": 3 },
+    { "name": "XIV Rifle Corps (9th Army)", "type": "infantry", "owner": "soviet", "commandHqName": "9th Separate Army HQ", "position": { "q": -12, "r": 15 }, "strength": 3, "movement": 3, "maxMovement": 3 },
+    { "name": "XXXV Rifle Corps", "type": "infantry", "owner": "soviet", "commandHqName": "9th Separate Army HQ", "position": { "q": -11, "r": 15 }, "strength": 3, "movement": 3, "maxMovement": 3 },
+    { "name": "II Cavalry Corps (9th Army)", "type": "armor", "owner": "soviet", "commandHqName": "9th Separate Army HQ", "position": { "q": -11, "r": 14 }, "strength": 4, "movement": 5, "maxMovement": 5 },
+    { "name": "II Mechanised Corps", "type": "armor", "owner": "soviet", "commandHqName": "9th Separate Army HQ", "position": { "q": -10, "r": 14 }, "strength": 4, "movement": 5, "maxMovement": 5 },
+    { "name": "XVIII Mechanised Corps", "type": "armor", "owner": "soviet", "commandHqName": "9th Separate Army HQ", "position": { "q": -9, "r": 14 }, "strength": 4, "movement": 5, "maxMovement": 5 }
   ]
 }

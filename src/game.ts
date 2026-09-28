@@ -1,4 +1,4 @@
-import { AxialCoord, hexEqual, hexKey } from './hex';
+import { AxialCoord, axialToCube, hexDistance, hexEqual, hexKey } from './hex';
 import { Hex, TerrainType } from './map';
 import defaultSetupData from './default-setup.json';
 import { globalBus, GameMessage } from './messaging';
@@ -14,6 +14,105 @@ export enum UnitType {
     HEADQUARTERS = 'headquarters',
 }
 
+export type StrengthBand = 'low' | 'medium' | 'high' | 'elite';
+export type QualityBand = 'poor' | 'standard' | 'good' | 'elite';
+
+export function getStrengthBand(strength: number): StrengthBand {
+    if (strength <= 2) return 'low';
+    if (strength <= 4) return 'medium';
+    if (strength <= 6) return 'high';
+    return 'elite';
+}
+
+export function getStrengthBandLabel(strength: number): string {
+    switch (getStrengthBand(strength)) {
+        case 'low':
+            return 'Low (1-2)';
+        case 'medium':
+            return 'Medium (3-4)';
+        case 'high':
+            return 'High (5-6)';
+        case 'elite':
+            return 'Elite (7+)';
+    }
+}
+
+export function getStrengthBandShortLabel(strength: number): string {
+    switch (getStrengthBand(strength)) {
+        case 'low':
+            return 'L';
+        case 'medium':
+            return 'M';
+        case 'high':
+            return 'H';
+        case 'elite':
+            return 'E';
+    }
+}
+
+export function getQualityBand(quality: number): QualityBand {
+    if (quality <= 2) return 'poor';
+    if (quality === 3) return 'standard';
+    if (quality === 4) return 'good';
+    return 'elite';
+}
+
+export function getQualityBandLabel(quality: number): string {
+    switch (getQualityBand(quality)) {
+        case 'poor':
+            return 'Poor';
+        case 'standard':
+            return 'Standard';
+        case 'good':
+            return 'Good';
+        case 'elite':
+            return 'Elite';
+    }
+}
+
+export function getIntelAgeLabel(currentTurn: number, lastObservedTurn: number): string {
+    const age = Math.max(0, currentTurn - lastObservedTurn);
+    if (age === 0) return 'fresh';
+    if (age === 1) return 'recent';
+    if (age <= 3) return 'stale';
+    return 'outdated';
+}
+
+const COMMAND_RANGE_WITH_SUPPLY = 4;
+const COMMAND_RANGE_WITHOUT_SUPPLY = 2;
+const COMMAND_BONUS = 1;
+const COMMAND_PENALTY = -1;
+const DEFAULT_HQ_SUPPLY_POINTS = 6;
+
+export interface UnitCommandView {
+    commandHqId?: string;
+    commandHqName?: string;
+    hqSymbol?: string;
+    commandRange: number;
+    commandDistance?: number;
+    inCommandRange: boolean;
+    movementModifier: number;
+    combatModifier: number;
+    commandStateLabel: string;
+    hqSupplyText?: string;
+    independent: boolean;
+}
+
+export interface UnitIntelView {
+    id: string;
+    name?: string;
+    type: UnitType;
+    owner: Player;
+    strengthLabel: string;
+    qualityLabel: string;
+    intelAgeLabel: string;
+    movementText: string;
+    exactStrength?: number;
+    exactQuality?: number;
+    isOwnerUnit: boolean;
+    command: UnitCommandView;
+}
+
 export interface Unit {
     id: string;
     name?: string;
@@ -21,8 +120,16 @@ export interface Unit {
     owner: Player;
     position: AxialCoord;
     strength: number; // 1-5
+    quality: number; // 1-5
     movement: number;
     maxMovement: number;
+    lastObservedTurn: number;
+    commandHqId?: string;
+    commandHqName?: string;
+    hqSymbol?: string;
+    independent?: boolean;
+    supplyPoints: number;
+    maxSupplyPoints: number;
 }
 
 export interface SetupUnitData {
@@ -31,8 +138,16 @@ export interface SetupUnitData {
     owner: string;
     position: AxialCoord;
     strength: number;
+    quality?: number;
     movement: number;
     maxMovement: number;
+    lastObservedTurn?: number;
+    commandHqId?: string;
+    commandHqName?: string;
+    hqSymbol?: string;
+    independent?: boolean;
+    supplyPoints?: number;
+    maxSupplyPoints?: number;
 }
 
 export interface GameSetupData {
@@ -64,6 +179,7 @@ export class GameState {
         this.map = map;
         this.setupData = setupData;
         this.initializeUnits();
+        this.assignCommandHeadquarters();
     }
 
     private initializeUnits(): void {
@@ -81,8 +197,16 @@ export class GameState {
                 owner,
                 position: unitData.position,
                 strength: unitData.strength,
+                quality: unitData.quality,
                 movement: unitData.movement,
                 maxMovement: unitData.maxMovement,
+                lastObservedTurn: unitData.lastObservedTurn,
+                commandHqId: unitData.commandHqId,
+                commandHqName: unitData.commandHqName,
+                hqSymbol: unitData.hqSymbol,
+                independent: unitData.independent,
+                supplyPoints: unitData.supplyPoints,
+                maxSupplyPoints: unitData.maxSupplyPoints,
             });
         });
     }
@@ -93,10 +217,20 @@ export class GameState {
         owner: Player;
         position: AxialCoord;
         strength: number;
+        quality?: number;
         movement: number;
         maxMovement: number;
+        lastObservedTurn?: number;
+        commandHqId?: string;
+        commandHqName?: string;
+        hqSymbol?: string;
+        independent?: boolean;
+        supplyPoints?: number;
+        maxSupplyPoints?: number;
     }): void {
         const id = `${props.owner}-${this.units.size}`;
+        const isHeadquarters = props.type === UnitType.HEADQUARTERS;
+        const maxSupplyPoints = isHeadquarters ? (props.maxSupplyPoints ?? DEFAULT_HQ_SUPPLY_POINTS) : 0;
         this.units.set(id, {
             id,
             name: props.name,
@@ -104,9 +238,208 @@ export class GameState {
             owner: props.owner,
             position: props.position,
             strength: props.strength,
+            quality: props.quality ?? 3,
             movement: props.movement,
             maxMovement: props.maxMovement,
+            lastObservedTurn: props.lastObservedTurn ?? this.turn,
+            commandHqId: props.commandHqId,
+            commandHqName: props.commandHqName,
+            hqSymbol: props.hqSymbol,
+            independent: props.independent ?? false,
+            supplyPoints: isHeadquarters ? (props.supplyPoints ?? maxSupplyPoints) : 0,
+            maxSupplyPoints,
         });
+    }
+
+    private assignCommandHeadquarters(): void {
+        const headquarterUnits = Array.from(this.units.values()).filter(unit => unit.type === UnitType.HEADQUARTERS);
+
+        this.units.forEach((unit) => {
+            if (unit.type === UnitType.HEADQUARTERS) {
+                if (!unit.hqSymbol) {
+                    unit.hqSymbol = unit.name ? unit.name.replace(/[^A-Z0-9]/gi, '').charAt(0).toUpperCase() : 'H';
+                }
+                return;
+            }
+
+            if (unit.commandHqId) {
+                const explicitHQ = this.units.get(unit.commandHqId);
+                if (explicitHQ && explicitHQ.type === UnitType.HEADQUARTERS && explicitHQ.owner === unit.owner) {
+                    return;
+                }
+            }
+
+            const candidateHQs = headquarterUnits.filter(hq => hq.owner === unit.owner);
+            if (candidateHQs.length === 0) {
+                unit.commandHqId = undefined;
+                return;
+            }
+
+            if (unit.commandHqName) {
+                const namedHQ = candidateHQs.find(hq => hq.name === unit.commandHqName);
+                if (namedHQ) {
+                    unit.commandHqId = namedHQ.id;
+                    if (!unit.hqSymbol) {
+                        unit.hqSymbol = namedHQ.hqSymbol ?? namedHQ.name?.replace(/[^A-Z0-9]/gi, '').charAt(0).toUpperCase();
+                    }
+                    return;
+                }
+            }
+
+            let bestHQ = candidateHQs[0];
+            let bestDistance = hexDistance(axialToCube(unit.position.q, unit.position.r), axialToCube(bestHQ.position.q, bestHQ.position.r));
+
+            for (let index = 1; index < candidateHQs.length; index++) {
+                const candidate = candidateHQs[index];
+                const distance = hexDistance(axialToCube(unit.position.q, unit.position.r), axialToCube(candidate.position.q, candidate.position.r));
+                if (distance < bestDistance) {
+                    bestHQ = candidate;
+                    bestDistance = distance;
+                }
+            }
+
+            unit.commandHqId = bestHQ.id;
+            if (!unit.hqSymbol) {
+                unit.hqSymbol = bestHQ.hqSymbol ?? bestHQ.name?.replace(/[^A-Z0-9]/gi, '').charAt(0).toUpperCase();
+            }
+        });
+    }
+
+    markUnitObserved(unitId: string): void {
+        const unit = this.units.get(unitId);
+        if (!unit) return;
+        unit.lastObservedTurn = this.turn;
+    }
+
+    private getCommandHeadquarters(unit: Unit): Unit | undefined {
+        if (unit.type === UnitType.HEADQUARTERS) {
+            return unit;
+        }
+
+        if (unit.commandHqId) {
+            const hq = this.units.get(unit.commandHqId);
+            if (hq && hq.type === UnitType.HEADQUARTERS && hq.owner === unit.owner) {
+                return hq;
+            }
+        }
+
+        if (unit.independent) {
+            const anyHQs = Array.from(this.units.values()).filter(other => other.type === UnitType.HEADQUARTERS && other.owner === unit.owner);
+            if (anyHQs.length === 0) return undefined;
+
+            let bestHQ = anyHQs[0];
+            let bestDistance = hexDistance(axialToCube(unit.position.q, unit.position.r), axialToCube(bestHQ.position.q, bestHQ.position.r));
+
+            for (let index = 1; index < anyHQs.length; index++) {
+                const candidate = anyHQs[index];
+                const distance = hexDistance(axialToCube(unit.position.q, unit.position.r), axialToCube(candidate.position.q, candidate.position.r));
+                if (distance < bestDistance) {
+                    bestHQ = candidate;
+                    bestDistance = distance;
+                }
+            }
+
+            return bestHQ;
+        }
+
+        const candidateHQs = Array.from(this.units.values()).filter(other => other.type === UnitType.HEADQUARTERS && other.owner === unit.owner);
+        if (candidateHQs.length === 0) return undefined;
+
+        let bestHQ = candidateHQs[0];
+        let bestDistance = hexDistance(axialToCube(unit.position.q, unit.position.r), axialToCube(bestHQ.position.q, bestHQ.position.r));
+
+        for (let index = 1; index < candidateHQs.length; index++) {
+            const candidate = candidateHQs[index];
+            const distance = hexDistance(axialToCube(unit.position.q, unit.position.r), axialToCube(candidate.position.q, candidate.position.r));
+            if (distance < bestDistance) {
+                bestHQ = candidate;
+                bestDistance = distance;
+            }
+        }
+
+        return bestHQ;
+    }
+
+    private getCommandRangeForHQ(hq: Unit): number {
+        return hq.supplyPoints > 0 ? COMMAND_RANGE_WITH_SUPPLY : COMMAND_RANGE_WITHOUT_SUPPLY;
+    }
+
+    getUnitCommandView(unit: Unit): UnitCommandView {
+        const hq = this.getCommandHeadquarters(unit);
+
+        if (!hq) {
+            return {
+                hqSymbol: unit.hqSymbol,
+                commandRange: 0,
+                inCommandRange: false,
+                movementModifier: COMMAND_PENALTY,
+                combatModifier: COMMAND_PENALTY,
+                commandStateLabel: unit.independent ? 'Independent, no HQ assigned' : 'No HQ assigned',
+                independent: !!unit.independent,
+            };
+        }
+
+        if (unit.type === UnitType.HEADQUARTERS) {
+            const commandRange = this.getCommandRangeForHQ(unit);
+            return {
+                commandHqId: unit.id,
+                commandHqName: unit.name ?? 'HQ',
+                hqSymbol: unit.hqSymbol,
+                commandRange,
+                commandDistance: 0,
+                inCommandRange: true,
+                movementModifier: 0,
+                combatModifier: 0,
+                commandStateLabel: unit.supplyPoints > 0
+                    ? `HQ supplied (${unit.supplyPoints}/${unit.maxSupplyPoints}), command range ${commandRange}`
+                    : `HQ out of supply (${unit.supplyPoints}/${unit.maxSupplyPoints}), command range ${commandRange}`,
+                hqSupplyText: `${unit.supplyPoints}/${unit.maxSupplyPoints}`,
+                independent: false,
+            };
+        }
+
+        const commandRange = this.getCommandRangeForHQ(hq);
+        const commandDistance = hexDistance(axialToCube(unit.position.q, unit.position.r), axialToCube(hq.position.q, hq.position.r));
+        const inCommandRange = commandDistance <= commandRange;
+        const modifier = inCommandRange ? COMMAND_BONUS : COMMAND_PENALTY;
+
+        return {
+            commandHqId: hq.id,
+            commandHqName: hq.name ?? hq.id,
+            hqSymbol: unit.hqSymbol ?? hq.hqSymbol ?? hq.name?.replace(/[^A-Z0-9]/gi, '').charAt(0).toUpperCase(),
+            commandRange,
+            commandDistance,
+            inCommandRange,
+            movementModifier: modifier,
+            combatModifier: modifier,
+            commandStateLabel: unit.independent
+                ? (inCommandRange ? `Independent, supported by ${hq.name ?? hq.id}` : `Independent, outside HQ support`)
+                : (inCommandRange ? `In command range of ${hq.name ?? hq.id}` : `Out of command range of ${hq.name ?? hq.id}`),
+            hqSupplyText: `${hq.supplyPoints}/${hq.maxSupplyPoints}`,
+            independent: !!unit.independent,
+        };
+    }
+
+    private spendHQSupplyForAction(unit: Unit): void {
+        if (unit.type === UnitType.HEADQUARTERS) return;
+
+        const hq = this.getCommandHeadquarters(unit);
+        if (!hq) return;
+
+        const commandView = this.getUnitCommandView(unit);
+        if (!commandView.inCommandRange || hq.supplyPoints <= 0) return;
+
+        hq.supplyPoints = Math.max(0, hq.supplyPoints - 1);
+    }
+
+    getUnitMovementAllowance(unit: Unit): number {
+        const commandView = this.getUnitCommandView(unit);
+        return Math.max(0, unit.movement + commandView.movementModifier);
+    }
+
+    getUnitCombatStrength(unit: Unit): number {
+        const commandView = this.getUnitCommandView(unit);
+        return Math.max(1, unit.strength + commandView.combatModifier);
     }
 
     selectUnit(unitId: string): boolean {
@@ -117,8 +450,9 @@ export class GameState {
 
         this.selectedUnitId = unitId;
         this.selectedHex = null;
+        this.markUnitObserved(unitId);
         // Compute reachable tiles using movementCost from map
-        const costs = this.computeReachableCosts(unit.position, unit.movement, unit.owner, unit);
+        const costs = this.computeReachableCosts(unit.position, this.getUnitMovementAllowance(unit), unit.owner, unit);
         this.lastMoveCosts = costs;
 
         this.validMoves = Array.from(costs.keys())
@@ -157,6 +491,34 @@ export class GameState {
 
     getUniqueAttackTargetsCount(): number {
         return new Set(Array.from(this.attacks.values())).size;
+    }
+
+    getUnitIntelView(unitId: string, viewer: Player): UnitIntelView | undefined {
+        const unit = this.units.get(unitId);
+        if (!unit) return undefined;
+
+        const isOwnerUnit = unit.owner === viewer;
+        const intelAgeLabel = getIntelAgeLabel(this.turn, unit.lastObservedTurn);
+        const command = this.getUnitCommandView(unit);
+
+        return {
+            id: unit.id,
+            name: unit.name,
+            type: unit.type,
+            owner: unit.owner,
+            strengthLabel: getStrengthBandLabel(unit.strength),
+            qualityLabel: getQualityBandLabel(unit.quality),
+            intelAgeLabel,
+            movementText: `${this.getUnitMovementAllowance(unit)} effective (${unit.movement}/${unit.maxMovement} raw)`,
+            exactStrength: isOwnerUnit ? unit.strength : undefined,
+            exactQuality: isOwnerUnit ? unit.quality : undefined,
+            isOwnerUnit,
+            command,
+        };
+    }
+
+    getVisibleUnitsForPlayer(viewer: Player): UnitIntelView[] {
+        return Array.from(this.units.values()).map(unit => this.getUnitIntelView(unit.id, viewer)).filter((unit): unit is UnitIntelView => !!unit);
     }
 
     resetAttacks(): void {
@@ -232,8 +594,10 @@ export class GameState {
         }
 
         const cost = this.lastMoveCosts.get(targetKey)!;
+        this.spendHQSupplyForAction(unit);
         unit.position = targetCoord;
         unit.movement -= cost;
+        unit.lastObservedTurn = this.turn;
         this.validMoves = [];
         this.lastMoveCosts = new Map();
         this.selectedUnitId = null;
@@ -355,6 +719,8 @@ export class GameState {
             const target = this.units.get(targetId);
             if (!target) continue; // defender already gone or invalid
 
+            this.markUnitObserved(targetId);
+
             // Collect valid attackers (skip attackers that have been removed earlier)
             const attackers = attackerIds
                 .map(id => this.units.get(id))
@@ -362,28 +728,34 @@ export class GameState {
 
             if (attackers.length === 0) continue;
 
-            const combined = attackers.reduce((s, u) => s + u.strength, 0);
+            const combined = attackers.reduce((s, u) => s + this.getUnitCombatStrength(u), 0);
+            const targetStrength = this.getUnitCombatStrength(target);
+            attackers.forEach((attacker) => {
+                attacker.lastObservedTurn = this.turn;
+                this.spendHQSupplyForAction(attacker);
+            });
+            this.spendHQSupplyForAction(target);
 
-            if (combined > target.strength) {
+            if (combined > targetStrength) {
                 // Attackers win: defender removed
                 removeUnitIds.add(targetId);
                 const atkNames = attackers.map(a => a.id).join(', ');
-                const text = `Attack success ${target.id} removed by ${atkNames} (${combined} > ${target.strength})`;
+                const text = `Attack success ${target.id} removed by ${atkNames} (${combined} > ${targetStrength})`;
                 messages.push(text);
-                globalBus.emit({ type: 'combat', text, data: { targetId, attackerIds, combined, targetStrength: target.strength } });
-            } else if (combined < target.strength) {
+                globalBus.emit({ type: 'combat', text, data: { targetId, attackerIds, combined, targetStrength } });
+            } else if (combined < targetStrength) {
                 // Defender wins: remove all attackers that attacked this defender
                 for (const a of attackers) removeUnitIds.add(a.id);
                 const atkNames = attackers.map(a => a.id).join(', ');
-                const text = `Attackers ${atkNames} eliminated by ${target.id} (${combined} < ${target.strength})`;
+                const text = `Attackers ${atkNames} eliminated by ${target.id} (${combined} < ${targetStrength})`;
                 messages.push(text);
-                globalBus.emit({ type: 'combat', text, data: { targetId, attackerIds, combined, targetStrength: target.strength } });
+                globalBus.emit({ type: 'combat', text, data: { targetId, attackerIds, combined, targetStrength } });
             } else {
                 // equal: no result
                 const atkNames = attackers.map(a => a.id).join(', ');
-                const text = `No result: ${atkNames} vs ${target.id} (${combined} = ${target.strength})`;
+                const text = `No result: ${atkNames} vs ${target.id} (${combined} = ${targetStrength})`;
                 messages.push(text);
-                globalBus.emit({ type: 'combat', text, data: { targetId, attackerIds, combined, targetStrength: target.strength } });
+                globalBus.emit({ type: 'combat', text, data: { targetId, attackerIds, combined, targetStrength } });
             }
         }
 
