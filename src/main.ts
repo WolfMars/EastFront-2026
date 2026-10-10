@@ -16,8 +16,8 @@ const PAN_STEP = 32;
 
 let HEX_SIZE = DEFAULT_HEX_SIZE; // pixels
 
-let offsetX = canvas.width / 2;
-let offsetY = canvas.height / 2;
+let offsetX = canvas.width / 2 + 4 * DEFAULT_HEX_SIZE; // TEMP-DEBUG: start scrolled to Bug/Lower Don
+let offsetY = canvas.height / 2 - 19.5 * DEFAULT_HEX_SIZE; // TEMP-DEBUG: remove both offsets
 
 function setZoom(nextHexSize: number, anchorX = canvas.width / 2, anchorY = canvas.height / 2): void {
     const clampedSize = Math.min(Math.max(nextHexSize, MIN_HEX_SIZE), MAX_HEX_SIZE);
@@ -399,7 +399,6 @@ function getUnitSizeMarker(unit: { name?: string; type: UnitType }): string {
 function drawUnit(unitId: string): void {
     const unit = gameState.units.get(unitId);
     if (!unit) return;
-    const intel = gameState.getUnitIntelView(unit.id, gameState.currentPlayer);
 
     const pixel = gameToCanvas(unit.position);
     const x = pixel.x;
@@ -408,21 +407,23 @@ function drawUnit(unitId: string): void {
     // Unit color based on player
     const color = unit.owner === Player.SOVIET ? '#FF4444' : '#6A8CFF';
 
-    const rectWidth = HEX_SIZE * 1.4;
-    const rectHeight = HEX_SIZE * 1.12;
+    const rectWidth = HEX_SIZE * 1.2;
+    const rectHeight = HEX_SIZE * 1.04;
     const rectX = x - rectWidth / 2;
-    const rectY = y - rectHeight / 2;
+    const rectY = y - rectHeight / 2 - HEX_SIZE * 0.12;
 
     const sizeMarker = getUnitSizeMarker(unit);
-    const textHiddenZoom = HEX_SIZE < 28;
     const smallZoom = HEX_SIZE < 24;
-    const symbolBoxWidth = smallZoom ? Math.min(rectWidth * 0.62, rectWidth - 10) : Math.min(rectWidth * 0.72, rectWidth - 8);
-    const symbolBoxHeight = smallZoom ? Math.min(rectHeight * 0.30, rectHeight - 16) : Math.min(rectHeight * 0.38, rectHeight - 12);
-    const symbolBoxX = x - symbolBoxWidth / 2;
-    const symbolBoxY = rectY + (smallZoom ? 7 : Math.max(6, rectHeight * 0.32));
-    const bottomTextY = rectY + rectHeight - Math.max(6, rectHeight * 0.2);
-    const sizeMarkerY = rectY + (smallZoom ? 4 : Math.max(10, rectHeight * 0.18));
     const shouldRenderUnitText = HEX_SIZE >= 28;
+    const symbolBoxWidth = smallZoom ? Math.min(rectWidth * 0.62, rectWidth - 10) : Math.min(rectWidth * 0.72, rectWidth - 8);
+    const symbolBoxHeight = shouldRenderUnitText
+        ? Math.min(rectHeight * 0.31, rectHeight - 20.5)
+        : smallZoom ? Math.min(rectHeight * 0.30, rectHeight - 16) : Math.min(rectHeight * 0.38, rectHeight - 12);
+    const symbolBoxX = x - symbolBoxWidth / 2;
+    const symbolBoxY = rectY + (shouldRenderUnitText
+        ? Math.max(12.5, rectHeight * 0.40)
+        : smallZoom ? 7 : Math.max(6, rectHeight * 0.32));
+    const bottomTextY = rectY + rectHeight - Math.max(4, rectHeight * 0.1);
 
     ctx.fillStyle = color;
     ctx.strokeStyle = '#111111';
@@ -437,15 +438,19 @@ function drawUnit(unitId: string): void {
         ctx.font = '7px Arial';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText(unit.name, x, rectY + 7, rectWidth - 4);
+        ctx.fillText(unit.name, x, rectY + 9, rectWidth - 4);
     }
 
     if (shouldRenderUnitText) {
-        ctx.fillStyle = '#000000';
+        // Size marker sits on the top edge, on a small chip so the border does not cut through it.
         ctx.font = 'bold 8px Arial';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText(sizeMarker, x, sizeMarkerY);
+        const markerWidth = ctx.measureText(sizeMarker).width;
+        ctx.fillStyle = color;
+        ctx.fillRect(x - markerWidth / 2 - 1.5, rectY - 3.5, markerWidth + 3, 7);
+        ctx.fillStyle = '#000000';
+        ctx.fillText(sizeMarker, x, rectY);
     }
 
     ctx.strokeStyle = '#000000';
@@ -459,11 +464,12 @@ function drawUnit(unitId: string): void {
         ctx.ellipse(x, symbolBoxY + symbolBoxHeight / 2, ovalWidth, ovalHeight, 0, 0, Math.PI * 2);
         ctx.stroke();
     } else if (unit.type === UnitType.INFANTRY) {
-        const inset = smallZoom ? 4 : 8;
-        ctx.moveTo(symbolBoxX + inset, symbolBoxY + inset);
-        ctx.lineTo(symbolBoxX + symbolBoxWidth - inset, symbolBoxY + symbolBoxHeight - inset);
-        ctx.moveTo(symbolBoxX + symbolBoxWidth - inset, symbolBoxY + inset);
-        ctx.lineTo(symbolBoxX + inset, symbolBoxY + symbolBoxHeight - inset);
+        const insetY = symbolBoxHeight * 0.225; // X is 55% of the symbol box height
+        const insetX = symbolBoxWidth / 4;
+        ctx.moveTo(symbolBoxX + insetX, symbolBoxY + insetY);
+        ctx.lineTo(symbolBoxX + symbolBoxWidth - insetX, symbolBoxY + symbolBoxHeight - insetY);
+        ctx.moveTo(symbolBoxX + symbolBoxWidth - insetX, symbolBoxY + insetY);
+        ctx.lineTo(symbolBoxX + insetX, symbolBoxY + symbolBoxHeight - insetY);
         ctx.stroke();
     } else if (unit.type === UnitType.HEADQUARTERS) {
         const poleX = x;

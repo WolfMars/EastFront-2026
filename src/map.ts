@@ -47,7 +47,7 @@ export type HexSideMap = Map<string, HexSideType>;
  *
  * Returns a HexSideMap of canonical side keys -> side type.
  */
-export function applyRiverData(hexMap: Map<string, Hex>, riverData: any): HexSideMap {
+export function applyRiverData(_hexMap: Map<string, Hex>, riverData: any): HexSideMap {
     const sideMap: HexSideMap = new Map();
     if (!riverData) return sideMap;
 

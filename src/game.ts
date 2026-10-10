@@ -608,7 +608,7 @@ export class GameState {
         return true;
     }
 
-    private computeReachableCosts(start: AxialCoord, movement: number, owner: Player, movingUnit: Unit): Map<string, number> {
+    private computeReachableCosts(start: AxialCoord, movement: number, _owner: Player, movingUnit: Unit): Map<string, number> {
         const dirs = [
             { q: 1, r: 0 },
             { q: -1, r: 0 },
