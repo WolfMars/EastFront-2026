@@ -20,6 +20,18 @@ refined over time. Do not treat the current implementation as authoritative.
 ### After completing a task
 - Always close with a short list of known inaccuracies or compromises in the implementation.
 
+## River authoring rules
+
+When creating or editing rivers in the map data:
+- Hexsides connect only if they share a hex CORNER (a point where three hexes meet), never merely a hex.
+- Generate and validate rivers with `node scripts/river_tool.mjs` (`path`, `validate`); do not reason about
+  connectivity by reading coordinate strings.
+- Each river is a continuous start-to-end chain of side-key segments, grouped under its own name in the river data file.
+- Do not create orphan, branching, or disconnected segments.
+- When editing several rivers, keep each river's segments together and do not mix them across river names.
+
+For the corner model, worked example and workflow, see [docs/RIVER_CREATION_GUIDE.md](../docs/RIVER_CREATION_GUIDE.md).
+
 ## Handling questions
 
 Questions may be about the code, or about game design, history, or wargame theory in general.

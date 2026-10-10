@@ -379,6 +379,23 @@ function drawRivers(): void {
 /**
  * Draw a unit
  */
+function getUnitSizeMarker(unit: { name?: string; type: UnitType }): string {
+    const name = unit.name ?? '';
+    if (unit.type === UnitType.HEADQUARTERS) {
+        return 'XXXX';
+    }
+    if (/army\s+group|group/i.test(name)) {
+        return 'XXXXX';
+    }
+    if (/\barmy\b/i.test(name)) {
+        return 'XXXX';
+    }
+    if (/\bcorps\b/i.test(name)) {
+        return 'XXX';
+    }
+    return 'XXX';
+}
+
 function drawUnit(unitId: string): void {
     const unit = gameState.units.get(unitId);
     if (!unit) return;
@@ -396,6 +413,17 @@ function drawUnit(unitId: string): void {
     const rectX = x - rectWidth / 2;
     const rectY = y - rectHeight / 2;
 
+    const sizeMarker = getUnitSizeMarker(unit);
+    const textHiddenZoom = HEX_SIZE < 28;
+    const smallZoom = HEX_SIZE < 24;
+    const symbolBoxWidth = smallZoom ? Math.min(rectWidth * 0.62, rectWidth - 10) : Math.min(rectWidth * 0.72, rectWidth - 8);
+    const symbolBoxHeight = smallZoom ? Math.min(rectHeight * 0.30, rectHeight - 16) : Math.min(rectHeight * 0.38, rectHeight - 12);
+    const symbolBoxX = x - symbolBoxWidth / 2;
+    const symbolBoxY = rectY + (smallZoom ? 7 : Math.max(6, rectHeight * 0.32));
+    const bottomTextY = rectY + rectHeight - Math.max(6, rectHeight * 0.2);
+    const sizeMarkerY = rectY + (smallZoom ? 4 : Math.max(10, rectHeight * 0.18));
+    const shouldRenderUnitText = HEX_SIZE >= 28;
+
     ctx.fillStyle = color;
     ctx.strokeStyle = '#111111';
     ctx.lineWidth = 1.6;
@@ -404,49 +432,70 @@ function drawUnit(unitId: string): void {
     ctx.fill();
     ctx.stroke();
 
-    ctx.strokeStyle = '#000000';
-    ctx.lineWidth = 2.2;
-    ctx.beginPath();
-
-    if (unit.type === UnitType.ARMOR) {
-        ctx.ellipse(x, y - 4, rectWidth * 0.3, rectHeight * 0.2, 0, 0, Math.PI * 2);
-        ctx.stroke();
-    } else if (unit.type === UnitType.INFANTRY) {
-        ctx.moveTo(rectX + 6, rectY + 6);
-        ctx.lineTo(rectX + rectWidth - 6, rectY + rectHeight -10);
-        ctx.moveTo(rectX + rectWidth - 6, rectY + 6);
-        ctx.lineTo(rectX + 6, rectY + rectHeight - 10);
-        ctx.stroke();
-    } else if (unit.type === UnitType.HEADQUARTERS) {
-        ctx.fillStyle = '#000000';
-        ctx.font = 'bold 9px Arial';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(intel?.command.hqSymbol ? `${intel.command.hqSymbol} HQ` : 'HQ', x, y - 2);
-    }
-
-    if (intel?.command.hqSymbol && unit.type !== UnitType.HEADQUARTERS) {
-        ctx.fillStyle = '#000000';
-        ctx.font = 'bold 10px Arial';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(intel.command.hqSymbol, x, rectY + 11);
-    }
-
-    ctx.fillStyle = '#000000';
-    ctx.font = 'bold 10px Arial';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    const detailText = `${getStrengthBandShortLabel(unit.strength)}-${unit.maxMovement}`;
-    ctx.fillText(detailText, x, y + 10);
-
-    // Unit name label at top of counter (compressed to fit if long)
-    if (unit.name) {
+    if (shouldRenderUnitText && unit.name) {
         ctx.fillStyle = '#000000';
         ctx.font = '7px Arial';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText(unit.name, x, rectY + 5, rectWidth - 4);
+        ctx.fillText(unit.name, x, rectY + 7, rectWidth - 4);
+    }
+
+    if (shouldRenderUnitText) {
+        ctx.fillStyle = '#000000';
+        ctx.font = 'bold 8px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(sizeMarker, x, sizeMarkerY);
+    }
+
+    ctx.strokeStyle = '#000000';
+    ctx.lineWidth = 1.4;
+    ctx.strokeRect(symbolBoxX, symbolBoxY, symbolBoxWidth, symbolBoxHeight);
+
+    ctx.beginPath();
+    if (unit.type === UnitType.ARMOR) {
+        const ovalWidth = Math.max(6, symbolBoxWidth * (smallZoom ? 0.34 : 0.24));
+        const ovalHeight = Math.max(4, symbolBoxHeight * (smallZoom ? 0.36 : 0.28));
+        ctx.ellipse(x, symbolBoxY + symbolBoxHeight / 2, ovalWidth, ovalHeight, 0, 0, Math.PI * 2);
+        ctx.stroke();
+    } else if (unit.type === UnitType.INFANTRY) {
+        const inset = smallZoom ? 4 : 8;
+        ctx.moveTo(symbolBoxX + inset, symbolBoxY + inset);
+        ctx.lineTo(symbolBoxX + symbolBoxWidth - inset, symbolBoxY + symbolBoxHeight - inset);
+        ctx.moveTo(symbolBoxX + symbolBoxWidth - inset, symbolBoxY + inset);
+        ctx.lineTo(symbolBoxX + inset, symbolBoxY + symbolBoxHeight - inset);
+        ctx.stroke();
+    } else if (unit.type === UnitType.HEADQUARTERS) {
+        const poleX = x;
+        const poleTop = symbolBoxY + 4;
+        const poleBottom = symbolBoxY + symbolBoxHeight - 4;
+        const poleLength = poleBottom - poleTop;
+        const flagHalfWidth = Math.min(symbolBoxWidth * 0.24, 8);
+        const flagHeight = Math.min(poleLength * 0.42, 10);
+        const flagTopY = symbolBoxY + 5;
+        const flagBottomY = flagTopY + flagHeight;
+        const flagRightX = poleX + flagHalfWidth;
+
+        ctx.beginPath();
+        ctx.moveTo(poleX, poleTop);
+        ctx.lineTo(poleX, poleBottom);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(poleX, flagTopY);
+        ctx.lineTo(flagRightX, flagTopY + flagHeight / 2);
+        ctx.lineTo(poleX, flagBottomY);
+        ctx.closePath();
+        ctx.stroke();
+    }
+
+    if (shouldRenderUnitText) {
+        ctx.fillStyle = '#000000';
+        ctx.font = 'bold 9px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(`M${unit.maxMovement}`, x - 13, bottomTextY);
+        ctx.fillText(`S${unit.strength}`, x + 13, bottomTextY);
     }
 }
 

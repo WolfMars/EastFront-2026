@@ -26,22 +26,32 @@ export function getFrontlineColor(a: HexOwner, b: HexOwner): string | null {
 }
 
 /** Terrain/feature on a hex edge. Extend this union as new side types are added. */
-/** Terrain/feature on a hex edge. Extend this union as new side types are added. */
 export type HexSideType = 'none' | 'river' | 'bridge';
 
 /** Map from a canonical hex-side key (see hexSideKey) to its side data. */
 export type HexSideMap = Map<string, HexSideType>;
 
 /**
- * Apply river/side data to the map. Accepts a simple JSON structure like:
- * { "rivers": ["q,r|q,r", { "key": "q,r|q,r", "type": "river" }] }
+ * Apply river/side data to the map.
+ *
+ * Supported formats:
+ * 1) Flat legacy format:
+ *    { "rivers": ["q,r|q,r", "q,r|q,r"] }
+ * 2) Named-river format:
+ *    {
+ *      "rivers": [
+ *        { "name": "Daugava", "segments": ["q,r|q,r", "q,r|q,r"] },
+ *        { "name": "Bug", "segments": [] }
+ *      ]
+ *    }
+ *
  * Returns a HexSideMap of canonical side keys -> side type.
  */
 export function applyRiverData(hexMap: Map<string, Hex>, riverData: any): HexSideMap {
     const sideMap: HexSideMap = new Map();
     if (!riverData) return sideMap;
 
-    const entries: Array<string | { key: string; type?: string }> = [];
+    const entries: Array<string | { key?: string; type?: string; segments?: string[]; name?: string }> = [];
     if (Array.isArray(riverData.rivers)) {
         for (const e of riverData.rivers) entries.push(e);
     } else if (Array.isArray(riverData.sides)) {
@@ -50,8 +60,13 @@ export function applyRiverData(hexMap: Map<string, Hex>, riverData: any): HexSid
 
     for (const e of entries) {
         if (typeof e === 'string') {
-            const key = e;
-            sideMap.set(key, 'river');
+            sideMap.set(e, 'river');
+            continue;
+        }
+        if (e && Array.isArray(e.segments)) {
+            for (const segment of e.segments) {
+                if (typeof segment === 'string') sideMap.set(segment, 'river');
+            }
             continue;
         }
         if (e && typeof e.key === 'string') {
@@ -194,15 +209,15 @@ const BOARD_ROWS = [
     { r:  -8, qStart: -21, codes: 'wwwwwwwwwwwwwwwfffffwxfffffff' }, // N Finland / Lake Ladoga
     { r:  -7, qStart: -21, codes: 'wwwwwwwwwwwwwwwwwwwfxxfffffff' }, // Gulf of Finland / Leningrad
     { r:  -6, qStart: -21, codes: 'wwwwwwwwwwwwwwfffffffffffffff' }, // Tallinn / Estonia coast
-    { r:  -5, qStart: -21, codes: 'wwwwwwwwwwwwwfffwffffffffffff' }, // Baltic states forest
-    { r:  -4, qStart: -21, codes: 'wwwwwwwwwwwwwwf.wfff.ffffffff' }, // Gulf of Riga / Lake Peipus
-    { r:  -3, qStart: -21, codes: 'wwwwwwwwwwww.wfff.ffx.fffffff' }, // N Latvia / Pskov
+    { r:  -5, qStart: -21, codes: 'wwwwwwwwwwwwwwffwffffffffffff' }, // Baltic states forest
+    { r:  -4, qStart: -21, codes: 'wwwwwwwwwwww.wf.wfff.ffffffff' }, // Gulf of Riga / Lake Peipus
+    { r:  -3, qStart: -21, codes: 'wwwwwwwwwww...fff.ffx.fffffff' }, // N Latvia / Pskov
     { r:  -2, qStart: -21, codes: 'wwwwwwwwww..f..ff.f..ffffffff' }, // Riga / Lithuania
-    { r:  -1, qStart: -21, codes: 'wwwwwwwww....ffffffffffffffff' }, // S Latvia/ Belarus
+    { r:  -1, qStart: -21, codes: 'wwwwwwwwww...ffffffffffffffff' }, // S Latvia/ Belarus
     { r:   0, qStart: -21, codes: 'wwwwwwww.f..f.f.ffff.ffffffff' }, // N Lithuania / Central Russia
     { r:   1, qStart: -21, codes: 'wwwwwww.f.ff.f.ffffffffffffff' }, // East Prussia / Belarus
-    { r:   2, qStart: -21, codes: 'wwwwww.f.ffffffffffffffffffff' }, // Poland border / forest
-    { r:   3, qStart: -21, codes: '...w...ffffffffff............' }, // Minsk / Ukraine opens east
+    { r:   2, qStart: -21, codes: 'wwwww..f.ffffffffffffffffffff' }, // Poland border / forest
+    { r:   3, qStart: -21, codes: '.......ffffffffff............' }, // Minsk / Ukraine opens east
     { r:   4, qStart: -21, codes: '...........f.ffff............' }, // Pripyat Marshes begin
     { r:   5, qStart: -21, codes: '........ffxf.fff.............' }, // Pripyat Marshes center
     { r:   6, qStart: -21, codes: '........fxxxffff.............' }, // Pripyat / Brest
@@ -215,9 +230,9 @@ const BOARD_ROWS = [
     { r:  13, qStart: -21, codes: '...fmm....................www' }, // Romania / Black Sea west
     { r:  14, qStart: -21, codes: '.....m........ww..........www' }, // Odessa coast / Azov / Caspian
     { r:  15, qStart: -21, codes: '.....m.....wwww..........wwww' }, // Black Sea north coast
-    { r:  16, qStart: -21, codes: '......www.wwww...........wwww' }, // Black Sea / Crimea
-    { r:  17, qStart: -21, codes: '.....www..m...m..........wwww' }, // Crimean Mts / Black Sea
-    { r:  18, qStart: -21, codes: '....wwwwmmwwwwmmmmmmmmm.wwwww' }, // Caucasus / Black Sea
+    { r:  16, qStart: -21, codes: '.......ww.wwww...........wwww' }, // Black Sea / Crimea
+    { r:  17, qStart: -21, codes: '......ww..m...m..........wwww' }, // Crimean Mts / Black Sea
+    { r:  18, qStart: -21, codes: '.....wwwmmwwwwmmmmmmmmm.wwwww' }, // Caucasus / Black Sea
 ];
 
 const TERRAIN_CODE_MAP: Record<string, TerrainType> = {
@@ -247,14 +262,14 @@ const BOARD_CITIES: Array<{ q: number; r: number; name: string }> = [
     { q: -6,  r: -6, name: 'Tallinn' },
     { q: -6,  r: -3, name: 'Pskov' },
     { q: -2,  r: -4, name: 'Novgorod' },
-    { q: -9,  r: -2, name: 'Riga' },
+    { q: -8,  r: -3, name: 'Riga' },
     { q: -2,  r: -7, name: 'Leningrad' },
     // Baltic states
     { q: -11, r:  1, name: 'Kaunas' },
     { q: -11, r:  2, name: 'Vilnius' },
     // Central sector — Army Group Center objectives
     { q: -10, r:  3, name: 'Minsk' },
-    { q: -6,  r:  1, name: 'Vitebsk' },
+    { q: -6,  r:  0, name: 'Vitebsk' },
     { q: -5,  r:  1, name: 'Smolensk' },
     { q: -5,  r:  4, name: 'Bryansk' },
     { q:  0,  r: -2, name: 'Tver' },
@@ -272,6 +287,7 @@ const BOARD_CITIES: Array<{ q: number; r: number; name: string }> = [
     { q: -6,  r:  9, name: 'Kharkov' },
     { q: -14, r: 15, name: 'Odessa' },
     { q: -13, r: 18, name: 'Sevastopol' },
+    { q: -18, r: 18, name: 'Bucharest' },
     { q: -5,  r: 14, name: 'Rostov' },
     { q:  0,  r: 11, name: 'Stalingrad' },
 ];
