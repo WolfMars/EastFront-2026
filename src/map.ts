@@ -216,7 +216,7 @@ const BOARD_ROWS = [
     { r:  -1, qStart: -21, codes: 'wwwwwwwwww...ffffffffffffffff' }, // S Latvia/ Belarus
     { r:   0, qStart: -21, codes: 'wwwwwwww.f..f.f.ffff.ffffffff' }, // N Lithuania / Central Russia
     { r:   1, qStart: -21, codes: 'wwwwwww.f.ff.f.ffffffffffffff' }, // East Prussia / Belarus
-    { r:   2, qStart: -21, codes: 'wwwww..f.ffffffffffffffffffff' }, // Poland border / forest
+    { r:   2, qStart: -21, codes: 'wwww...f.ffffffffffffffffffff' }, // Poland border / forest
     { r:   3, qStart: -21, codes: '.......ffffffffff............' }, // Minsk / Ukraine opens east
     { r:   4, qStart: -21, codes: '...........f.ffff............' }, // Pripyat Marshes begin
     { r:   5, qStart: -21, codes: '........ffxf.fff.............' }, // Pripyat Marshes center
@@ -224,10 +224,10 @@ const BOARD_ROWS = [
     { r:   7, qStart: -21, codes: '........xx...................' }, // Pripyat Marshes south
     { r:   8, qStart: -21, codes: '.............................' }, // Ukraine steppes / Kiev (extended for AGS)
     { r:   9, qStart: -21, codes: '.............................' }, // Ukraine / Kharkov / Lviv (extended for AGS)
-    { r:  10, qStart: -21, codes: '....f......................ww' }, // Carpathians / Caspian (extended for AGS)
-    { r:  11, qStart: -21, codes: '...ff......................ww' }, // Carpathians / Stalingrad (extended for AGS)
-    { r:  12, qStart: -21, codes: '...fmm.....................ww' }, // Carpathian foothills (extended for AGS)
-    { r:  13, qStart: -21, codes: '...fmm....................www' }, // Romania / Black Sea west
+    { r:  10, qStart: -21, codes: '....f........................' }, // Carpathians / Caspian (extended for AGS)
+    { r:  11, qStart: -21, codes: '...ff........................' }, // Carpathians / Stalingrad (extended for AGS)
+    { r:  12, qStart: -21, codes: '...fmm.......................' }, // Carpathian foothills (extended for AGS)
+    { r:  13, qStart: -21, codes: '...fmm.....................ww' }, // Romania / Black Sea west
     { r:  14, qStart: -21, codes: '.....m........ww..........www' }, // Odessa coast / Azov / Caspian
     { r:  15, qStart: -21, codes: '.....m.....wwww..........wwww' }, // Black Sea north coast
     { r:  16, qStart: -21, codes: '.......ww.wwww...........wwww' }, // Black Sea / Crimea
