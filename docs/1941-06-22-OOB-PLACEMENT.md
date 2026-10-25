@@ -98,7 +98,7 @@ Primary cross-check: [Operation Barbarossa order of battle](https://en.wikipedia
 
 | Counter | Hex | Landmark / geographic reference |
 | --- | --- | --- |
-| 16th Army HQ [16] | `(-19, 3)` | Allenstein-Insterburg axis |
+| 16th Army HQ [16] | `(-17, 2)` | Gdansk city hex (map-alignment adjustment) |
 | II Corps | `(-21, 4)` | Vistula corridor staging area |
 | X Corps | `(-21, 5)` | East Prussian southern rear area |
 | XXVIII Corps | `(-20, 5)` | East Prussian southern rail belt |
@@ -200,9 +200,9 @@ No subordinate counter is represented under these army HQs at the current scale.
 
 | Counter | Hex | Landmark / geographic reference |
 | --- | --- | --- |
-| 11th Army HQ [11] | `(-11, 1)` | Kaunas |
+| 11th Army HQ [11] | `(-12, 1)` | Kaunas city hex (map-alignment adjustment) |
 | XVI Rifle Corps | `(-11, 0)` | Kaunas western approaches |
-| XXIX Rifle Corps | `(-12, 2)` | Vilnius-Bialystok rail zone |
+| XXIX Rifle Corps | `(-14, 4)` | Bialystok city hex (map-alignment adjustment) |
 | III Mechanised Corps | `(-10, 2)` | Vilnius area |
 
 #### 27th Army (organizational parent: Northwestern Front)
@@ -223,7 +223,7 @@ No subordinate counter is represented under 27th Army at the current scale.
 
 | Counter | Hex | Landmark / geographic reference |
 | --- | --- | --- |
-| 3rd Army HQ [3] | `(-12, 2)` | Grodno-Bialystok line |
+| 3rd Army HQ [3] | `(-14, 4)` | Bialystok city hex (map-alignment adjustment) |
 | IV Rifle Corps | `(-12, 1)` | Grodno frontier sector |
 | XI Mechanised Corps | `(-11, 2)` | Grodno-Lida axis |
 

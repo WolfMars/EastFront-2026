@@ -22,7 +22,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const RIVER_FILE = path.join(ROOT, 'data', 'rivers-sidekeys.json');
 
 // Map bounds, matching BOARD_ROWS in src/map.ts.
-const Q_MIN = -21, Q_MAX = 7, R_MIN = -8, R_MAX = 18;
+const Q_MIN = -21, Q_MAX = 7, R_MIN = -8, R_MAX = 22;
 
 // Same order as HEX_DIRS in src/main.ts: E, SE, SW, W, NW, NE.
 // Consecutive entries (cyclically) are mutually adjacent hexes around a centre hex.

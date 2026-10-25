@@ -37,7 +37,7 @@ joined). Going toward the Bug's end, the river leaves through the first corner, 
 3. At every corner at most two sides of the river meet (no branches). An interior side joins its predecessor
    at one corner and its successor at the other.
 4. The chain has exactly two open corners, the start and the end. No orphan pieces, no duplicated sides.
-5. Both hexes of every side must be on the map (q -21..7, r -8..18).
+5. Both hexes of every side must be on the map (q -21..7, r -8..22).
 6. Write sides in chain order, start first and end last, so the ends are easy to find.
 7. Write keys in canonical form: smaller `q` first, ties broken by smaller `r` (`-13,15|-12,15`, not
    `-12,15|-13,15`). The game canonicalises on load, but the tool warns about non-canonical rows.

@@ -14,10 +14,10 @@ const MAX_HEX_SIZE = 64;
 const DEFAULT_HEX_SIZE = 28;
 const PAN_STEP = 32;
 
-let HEX_SIZE = DEFAULT_HEX_SIZE; // pixels
+let HEX_SIZE = 11; // TEMP-DEBUG: whole-map view; restore to DEFAULT_HEX_SIZE
 
-let offsetX = canvas.width / 2 + 4 * DEFAULT_HEX_SIZE; // TEMP-DEBUG: start scrolled to Bug/Lower Don
-let offsetY = canvas.height / 2 - 19.5 * DEFAULT_HEX_SIZE; // TEMP-DEBUG: remove both offsets
+let offsetX = 611; // TEMP-DEBUG: restore to canvas.width / 2
+let offsetY = 270; // TEMP-DEBUG: restore to canvas.height / 2
 
 function setZoom(nextHexSize: number, anchorX = canvas.width / 2, anchorY = canvas.height / 2): void {
     const clampedSize = Math.min(Math.max(nextHexSize, MIN_HEX_SIZE), MAX_HEX_SIZE);
