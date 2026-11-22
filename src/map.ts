@@ -208,15 +208,15 @@ const TERRAIN_DISPLAY_NAME: Record<TerrainType, string> = {
 const BOARD_ROWS = [
     { r:  -8, qStart: -21, codes: 'wwwwwwwwwwwwwfffffffwxfffffff' }, // SW Finland coast (Turku) / Lake Ladoga
     { r:  -7, qStart: -21, codes: 'wwwwwwwwwwwwwwwwwwwfxxfffffff' }, // Gulf of Finland / Leningrad
-    { r:  -6, qStart: -21, codes: 'wwwwwwwwwwwwwwfffffffffffffff' }, // Tallinn / Estonia coast
-    { r:  -5, qStart: -21, codes: 'wwwwwwwwwwww.fffwffffffffffff' }, // W Estonia coast (Haapsalu) / Lake Peipus
-    { r:  -4, qStart: -21, codes: 'wwwwwwwwwwwww.f.wfff.ffffffff' }, // Gulf of Riga north / Parnu / Lake Peipus
-    { r:  -3, qStart: -21, codes: 'wwwwwwwwwwfw..fff.ffx.fffffff' }, // Courland tip (Ventspils) / Gulf of Riga
-    { r:  -2, qStart: -21, codes: 'wwwwwwwwww..f..ff.f..ffffffff' }, // Riga / Lithuania
-    { r:  -1, qStart: -21, codes: 'wwwwwwwww....ffffffffffffffff' }, // Liepaja coast / S Latvia / Belarus
-    { r:   0, qStart: -21, codes: 'wwwwwwww.f..f.f.ffff.ffffffff' }, // N Lithuania / Central Russia
-    { r:   1, qStart: -21, codes: 'wwwwwww.f.ff.f.ffffffffffffff' }, // East Prussia / Belarus
-    { r:   2, qStart: -21, codes: 'wwww...f.ffffffffffffffffffff' }, // Poland border / forest
+    { r:  -6, qStart: -21, codes: 'wwwwwwwwwwwwwfffxffffffffffff' }, // Tallinn / Estonia coast
+    { r:  -5, qStart: -21, codes: 'wwwwwwwwwwww.fffwxfffffffffff' }, // W Estonia coast (Haapsalu) / Lake Peipus
+    { r:  -4, qStart: -21, codes: 'wwwwwwwwwwwwwff.w.ff.ffffffff' }, // Gulf of Riga north / Parnu / Lake Peipus
+    { r:  -3, qStart: -21, codes: 'wwwwwwwwww.w...f..ffx.fffffff' }, // Courland tip (Ventspils) / Gulf of Riga
+    { r:  -2, qStart: -21, codes: 'wwwwwwwww.f.f...f.f..ffffffff' }, // Riga / Lithuania
+    { r:  -1, qStart: -21, codes: 'wwwwwwwww...ff.fffffffffffff' }, // Liepaja coast / S Latvia / Belarus
+    { r:   0, qStart: -21, codes: 'wwwwwwww....f.f.ffff.ffffffff' }, // N Lithuania / Central Russia
+    { r:   1, qStart: -21, codes: 'wwwwwwwwf..f.f.ffffffffffffff' }, // East Prussia / Belarus
+    { r:   2, qStart: -21, codes: 'wwww...f..fffffffffffffffffff' }, // Poland border / forest
     { r:   3, qStart: -21, codes: '.......ffffffffff............' }, // Minsk / Ukraine opens east
     { r:   4, qStart: -21, codes: '...........f.ffff............' }, // Pripyat Marshes begin
     { r:   5, qStart: -21, codes: '........ffxf.fff.............' }, // Pripyat Marshes center
@@ -227,16 +227,16 @@ const BOARD_ROWS = [
     { r:  10, qStart: -21, codes: '....f........................' }, // Carpathians / Caspian (extended for AGS)
     { r:  11, qStart: -21, codes: '...ff........................' }, // Carpathians / Stalingrad (extended for AGS)
     { r:  12, qStart: -21, codes: '...fmm.......................' }, // Carpathian foothills (extended for AGS)
-    { r:  13, qStart: -21, codes: '...fmm.....................ww' }, // Romania / Black Sea west
-    { r:  14, qStart: -21, codes: '.....m.........w..........www' }, // Mariupol / Taganrog bay / Caspian
-    { r:  15, qStart: -21, codes: '.....m......www..........wwww' }, // Odessa coast / Sea of Azov
-    { r:  16, qStart: -21, codes: '........ww..ww...........wwww' }, // Karkinit gulf / Perekop / Sea of Azov
-    { r:  17, qStart: -21, codes: '......xww.m...m..........wwww' }, // Danube delta / Crimea / Kerch strait (river hexside)
-    { r:  18, qStart: -21, codes: '......wwwmwwwmmmmmmmmmm.wwwww' }, // Constanta / Sevastopol / Caucasus coast
-    { r:  19, qStart: -21, codes: '.....wwwwwwwwmmmm...wwwwwwwww' }, // Dobrudja coast / Tuapse / Caspian
-    { r:  20, qStart: -21, codes: '....wwwwwwwwwmmmmm..wwwwwwwww' }, // Varna coast / Abkhazia / Caucasus
-    { r:  21, qStart: -21, codes: '....wwwwwwwwww.mmmmwwwwwwwwww' }, // Burgas coast / Colchis / Caucasus
-    { r:  22, qStart: -21, codes: '..mwwwwmmwwwww.mmmmwwwwwwwwww' }, // Strandzha / Sinop (Turkey) / Georgia
+    { r:  13, qStart: -21, codes: '...fmm.......................' }, // Romania / Black Sea west
+    { r:  14, qStart: -21, codes: '.....m.........w.........w...' }, // Mariupol / Taganrog bay / Caspian
+    { r:  15, qStart: -21, codes: '.....m......www.......wwww...' }, // Odessa coast / Sea of Azov
+    { r:  16, qStart: -21, codes: '........ww..ww.......wwwww...' }, // Karkinit gulf / Perekop / Sea of Azov
+    { r:  17, qStart: -21, codes: '......xww.m...m......wwww....' }, // Danube delta / Crimea / Kerch strait (river hexside)
+    { r:  18, qStart: -21, codes: '......wwwmwwwmmmmm..www......' }, // Constanta / Sevastopol / Caucasus coast
+    { r:  19, qStart: -21, codes: '.....wwwwwwwwmmmm...ww.......' }, // Dobrudja coast / Tuapse / Caspian
+    { r:  20, qStart: -21, codes: '....wwwwwwwwwmmmmm.www.......' }, // Varna coast / Abkhazia / Caucasus
+    { r:  21, qStart: -21, codes: '....wwwwwwwwww.mmmmwww.......' }, // Burgas coast / Colchis / Caucasus
+    { r:  22, qStart: -21, codes: '..mwwwwmmwwwww.mmmmwww.......' }, // Strandzha / Sinop (Turkey) / Georgia
 ];
 
 const TERRAIN_CODE_MAP: Record<string, TerrainType> = {

@@ -59,7 +59,7 @@
       "owner": "axis",
       "hqSymbol": "P2",
       "position": {
-        "q": -15,
+        "q": -16,
         "r": 7
       },
       "strength": 2,
@@ -72,8 +72,8 @@
       "owner": "axis",
       "commandHqName": "3rd PzGrp HQ",
       "position": {
-        "q": -14,
-        "r": 1
+        "q": -16,
+        "r": 2
       },
       "strength": 4,
       "movement": 6,
@@ -202,7 +202,7 @@
       "owner": "axis",
       "commandHqName": "2nd PzGrp HQ",
       "position": {
-        "q": -15,
+        "q": -16,
         "r": 7
       },
       "strength": 3,
@@ -248,9 +248,9 @@
       "movement": 6,
       "maxMovement": 6
     },
-    { "name": "4th PzGrp HQ",     "type": "headquarters", "owner": "axis", "hqSymbol": "P4", "position": { "q": -13, "r":  0 }, "strength": 2, "movement": 3, "maxMovement": 3 },
-    { "name": "XLI Mot Corps",    "type": "armor",        "owner": "axis", "commandHqName": "4th PzGrp HQ", "position": { "q": -14, "r":  1 }, "strength": 4, "movement": 6, "maxMovement": 6 },
-    { "name": "LVI Mot Corps",    "type": "armor",        "owner": "axis", "commandHqName": "4th PzGrp HQ", "position": { "q": -13, "r":  0 }, "strength": 4, "movement": 6, "maxMovement": 6 },
+    { "name": "4th PzGrp HQ",     "type": "headquarters", "owner": "axis", "hqSymbol": "P4", "position": { "q": -14, "r":  2}, "strength": 2, "movement": 3, "maxMovement": 3 },
+    { "name": "XLI Mot Corps",    "type": "armor",        "owner": "axis", "commandHqName": "4th PzGrp HQ", "position": { "q": -16, "r":  2 }, "strength": 4, "movement": 6, "maxMovement": 6 },
+    { "name": "LVI Mot Corps",    "type": "armor",        "owner": "axis", "commandHqName": "4th PzGrp HQ", "position": { "q": -14, "r":  2 }, "strength": 4, "movement": 6, "maxMovement": 6 },
     { "name": "18th Army HQ",     "type": "headquarters", "owner": "axis", "hqSymbol": "18", "position": { "q": -20, "r":  3 }, "strength": 2, "movement": 3, "maxMovement": 3 },
     { "name": "I Corps",          "type": "infantry",     "owner": "axis", "commandHqName": "18th Army HQ", "position": { "q": -21, "r":  3 }, "strength": 3, "movement": 3, "maxMovement": 3 },
     { "name": "XXVI Corps",       "type": "infantry",     "owner": "axis", "commandHqName": "18th Army HQ", "position": { "q": -20, "r":  4 }, "strength": 3, "movement": 3, "maxMovement": 3 },

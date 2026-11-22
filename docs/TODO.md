@@ -5,7 +5,16 @@
 - [ ] The temporary debug start view in `src/main.ts` (`TEMP-DEBUG`: `HEX_SIZE = 11`, offsets 611 / 270) is committed on purpose while debug work continues. Revisit later: restore `HEX_SIZE = DEFAULT_HEX_SIZE` and centred offsets. This also clears the unused `DEFAULT_HEX_SIZE` compile error. It fits the current 31-row map on the 1200x800 canvas.
 - [ ] Map alignment with reality (see "Map alignment" below). Poland and the Baltic coast are the worst area.
 - [ ] Upgrade Vite 5 to 8 to fix the `npm audit` findings (esbuild <= 0.24.2 dev-server request leak, vite). Dev toolchain only. Do not use `npm audit fix --force` blindly; check `vite.config.ts` and run `npm run build` afterwards.
-- [ ] Optional: waypoint (`--via`) option for `node scripts/river_tool.mjs path`, for real river shapes and fewer equal-length ties.
+- [ ] Terrain from the board photos: the northern area (Gdansk - Minsk - Smolensk - Leningrad - Tallinn) was adjusted from `docs/81434784118*.jpeg`: 12 hexes changed (mostly over-forested hexes in Lithuania and around Pskov/Ostrov turned clear, two marsh hexes near Luga/Narva). Method: fit the photo to the cities' real lat/lon (homography, ~0.4 hex mean error), sample the average colour around each hex centre and classify it (dark = forest, blue-grey = marsh, light olive = clear), changing a hex only when the photo is clearly different. City hexes, unit start hexes (both setup files), water and mountain hexes were left alone. The same method could be applied to the rest of the map; the throwaway scripts were not kept in the repo.
+- [ ] Optional: waypoint (`--via`) option for `node scripts/river_tool.mjs path`, for real river shapes and fewer equal-length ties. The batch 1-5 rivers were traced with a throwaway script (lat/lon waypoints fitted to the city markers, then shortest corner path); that script could become this option.
+- [ ] Rivers: review the least reliable ones against the board photos (`docs/81434*.jpeg`). They were placed from remembered real waypoints, not read off the photos, so they are approximate:
+  - Kuma and Terek: very short and approximate; the Kuma used to wind across mountain hexes (the row-18 mountains at q=-3..1 are now clear).
+  - Velikaya, Narva and Luga: very short at 80 km/hex; the Luga and Narva mouths touch.
+  - Medveditsa, Upper Don and Lower Don all meet at one corner (Stalingrad area); the Southern Bug start touches the Dniester.
+  - Tsna, Khoper, Sheksna, Donets (upper reach) and the Daugava source end are rough.
+  - Daugava runs along Riga's east/north-east edge (a hex side cannot pass through the hex centre).
+  - River mouths just reach the coast: no Dnieper/Danube-style deltas or limans.
+- [ ] Rivers not drawn: the Svir and Lake Onega (north of the r=-8 edge), the middle Volga (Kazan-Syzran, east of the q=7 edge, so Upper and Lower Volga are not connected), Sozh/Berezina. Ilmen, Ladoga and Onega are still not water hexes, so the Lovat and Volkhov end at land hexes.
 - [ ] Optional: remove the unused parameters `applyRiverData(_hexMap)` in `src/map.ts` and `computeReachableCosts(_owner)` in `src/game.ts`, together with their call sites.
 
 ## Map alignment
@@ -16,12 +25,12 @@ Reference maps are kept in `docs/`: the photographed EastFront board (`*.jpeg`),
 
 1. Black Sea, Crimea and Sea of Azov reworked by hand: Crimea is a land peninsula joined at Perekop, the Karkinit gulf and Sea of Azov are water, and the Kerch strait stays a river hexside. The board was extended to r=22 (Turkish coast beyond r=22 is still cut off; only Sinop shows).
 2. Dnieper missing.
-3. Other major rivers missing: Vistula, Neman, Pripet, Dniester, Volga, Oka, Donets (only Daugava, Bug, Lower Don are drawn).
+3. Rivers: all rivers visible on the board photos and inside the map are drawn. Missing only because they lie off the map or are hard to place: the Svir and Lake Onega (north of the r=-8 edge), the middle Volga (Kazan-Syzran, east of the edge), Sozh/Berezina, and the Ladoga/Ilmen/Onega lakes themselves. Drawn: Daugava, Dniester, Lower Don, Upper Don, Prut, Danube, Dnieper, Desna, Pripet, Vistula, San, Western Bug, Narew, Niemen, Velikaya, Narva, Southern Bug, Donets, Manych, Kuban, Kuma, Terek, Upper Volga, Lower Volga, Oka, Moscow River, Tsna, Khoper, Medveditsa, Volkhov, Luga, Lovat, Sheksna, plus the Kerch strait hexside. The Dnieper and later rivers were placed by tracing real waypoints (lat/lon, fitted to the city markers) onto hexsides; the board photos (`docs/81434*.jpeg`) were used as a sanity check only, since the photographed board uses a different hex orientation. The Prut and Danube were traced from the board photos (`docs/81434775858__*.jpeg`) and placed by geography. The Prut ends at corner `(-16,16)(-16,17)(-15,16)`, where it joins the Danube at Galati; the Danube runs from the Iron Gates along the Bulgaria-Romania border, north at Silistra, then wraps the north and east side of the delta marsh hex `(-15,17)` to the sea. Distributaries of the delta and the Danube west of the map edge are not drawn.
 4. No real lakes: Ladoga, Peipus, Ilmen, Onega.
 5. Baltic coast reworked by hand from the photos (rows r=-8..-1): Gulf of Riga now two connected water hexes `(-10,-3)` and `(-9,-4)`, Courland tip (Ventspils `(-11,-3)`) and Liepaja `(-12,-1)` are land, Estonian coast (Haapsalu, Parnu) and SW Finland (Turku) are land. Estonian islands (Saaremaa, Hiiumaa) are deliberately left as sea. The Gulf of Finland is a single water row (r=-7), wider than the real ~70 km gulf. Open: `(-14,1)` is sea in reality but stays land because XXXIX and XLI Mot Corps are placed there.
 6. Pripet Marshes undersized.
 7. Carpathians and Crimean mountains barely represented.
-8. Bug displaced: ends at Odessa (the Southern Bug mouth is near Mykolaiv, ~120 km east); north-west end stops near Lviv.
+8. Bug displaced (resolved): the former `Bug` block was actually the Dniester course and is renamed `Dniester`; the Western Bug and Southern Bug (ends near Nikolaev) are separate rivers.
 9. Poznan-Warsaw spacing was too tight in the original placement; after the marker shifts, their current separation is 320 km versus about 278 km real.
 10. Map edges still cut real terrain: north at Leningrad (no Finland/Karelia). The south edge is now r=22, which cuts the Turkish coast, Transcaucasia and the southern Caspian.
 
@@ -87,11 +96,12 @@ Findings from the second 10 pairs: Vilnius-Riga (+33%) and Gdansk-Warsaw (+23%) 
 4. [x] Move 15 city markers to their projected hexes and coordinate the approved Gdansk, Kaunas, and Bialystok counter placements. Königsberg is deferred by request; its earlier unconstrained projection landed on water, so revisit after terrain/coast work.
 5. [x] Baltic coast reworked (see discrepancy 5). Königsberg reassessed and kept at `(-15, 2)`: alternatives `(-14,2)`, `(-15,1)` and `(-14,1)` all give a higher mean distance error (11.9% vs 13.1-17.7%).
    - Black Sea reworked (see discrepancy 1) and the board extended to r=22. Neutral ownership for Bulgaria, Turkey and open sea in the new rows; Romania Axis; Caucasus Soviet. Bucharest moved to `(-18, 18)`, its exact projected hex (empty, still Axis). Sevastopol `(-12,18)` and Odessa `(-13,15)` reassessed and kept: already on their projected coastal hexes.
-   - Follow-up: the Caspian coast is displaced. Rows 13-18 put it at q>=3..6, while the new rows 19-22 use the real position (q>=-1..-2), so there is a visible notch at the r=18/19 boundary. Rework the Caspian next.
-   - Follow-up: Kuban/Caucasus foothill mountains at r=17-18 (q=-8..1) predate the new Caucasus rows and were not revisited.
-   - Follow-up: the Bug river still ends at Odessa, not Nikolaev (discrepancy 8).
+   - Follow-up (resolved): the Caspian was reworked from a rough real-world outline (lat/lon polygon projected onto the grid): the western shore runs continuously from the Volga delta `(1,15)` past Kizlyar `(-2,19)` to Derbent `(-3,22)`, the north shore is at r=14-15, and the east side is now land (steppe/desert, no desert terrain type) instead of sea. The Volga, Kuma and Terek ends were re-routed to the new shore. The Caspian is only 2-4 hexes wide and its outline is approximate (the polygon was not checked against the photos).
+   - Follow-up: Kuban/Caucasus foothill mountains at r=17-18 (q=-8..-4) predate the new Caucasus rows and were not revisited (the q=-3..1 ones were cleared).
+   - Follow-up (resolved): the Bug river ends at Odessa. It is now the `Dniester`; the Southern Bug is a separate river ending near Nikolaev.
    - The debug start view fits the taller map (checked: rows span y≈138–633 of 800, columns stay under x≈960 of 1200).
-   - Follow-up: the Daugava river segments still end at the old Riga position `(-8,-3)`; Riga now sits at `(-10,-2)`. Re-route the mouth with `scripts/river_tool.mjs`.
+   - Follow-up (resolved): the Daugava was re-routed through Vitebsk `(-6,1)` and Riga `(-10,-2)`, ending at Riga's Gulf of Riga corner.
    - Follow-up: move the two Mot Corps off `(-14,1)` so it can become sea; needs a unit-placement decision.
 6. Re-run the pair analysis; target all pairs within ~25%.
 7. [x] Confirm setup-counter changes before moving cities with units on their current or destination hexes.
+8. Add rivers, using manual start-end hex sides, or using the reference maps.

@@ -24,7 +24,7 @@ The hexes touching both `-13,15` and `-12,15` are `-12,14` and `-13,16`, so the 
 | `-13,15` `-12,15` `-13,16` | `-13,15\|-13,16` and `-13,16\|-12,15` |
 
 A river leaves this side through one corner, and the other corner stays open (or is where the previous side
-joined). Going toward the Bug's end, the river leaves through the first corner, so the next side is either
+joined). Going toward the Dniester's end, the river leaves through the first corner, so the next side is either
 `-13,15|-12,14` or `-12,14|-12,15`.
 
 `-13,15|-14,15` is NOT connected: it shares only the hex `-13,15`. Its corners are
@@ -96,7 +96,7 @@ The real file contains several such blocks, one per river.
 
 ## Reference data
 
-`Bug` (start `-13,15|-12,15`, end `-16,9|-15,9`, 19 sides) and `Lower Don` (start `-6,15|-5,14`, end
-`-1,11|0,11`, 11 sides) in the data file are regression cases: `regen Bug` and `regen "Lower Don"` must
+`Dniester` (start `-13,15|-12,15`, end `-16,9|-15,9`, 19 sides) and `Lower Don` (start `-6,15|-5,14`, end
+`-1,11|0,11`, 11 sides) in the data file are regression cases: `regen Dniester` and `regen "Lower Don"` must
 report an identical sequence. Run them, together with `selftest`, after any change to the tool.
 
