@@ -178,6 +178,14 @@ command HQ. Landmarks are approximate, as the map is stylised at 80 km/hex.
 
 ## Soviet Forces
 
+Soviet combat counters start on the border hexes (marked **B**) as far as stacking
+allows: 2 per clear hex, 1 per forest, marsh or mountain hex, and 1 per city hex
+(two combat counters in a city would need an HQ in the same hex). Mechanised and
+cavalry corps that do not fit are held one hex behind. Army and Front HQs sit on
+the hexes just behind the border. The posture is forward and offensive, but
+counters are not tuned for a coordinated opening move. Landmarks are approximate
+at 80 km/hex. The Leningrad MD HQs are unchanged.
+
 ### Leningrad Military District
 
 | Counter | Hex | Landmark / geographic reference |
@@ -193,31 +201,31 @@ No subordinate counter is represented under these army HQs at the current scale.
 
 | Counter | Hex | Landmark / geographic reference |
 | --- | --- | --- |
-| Northwestern Front HQ [NW] | `(-8, -2)` | Riga |
+| Northwestern Front HQ [NW] | `(-11, 2)` | Vilnius city hex |
 
 #### 8th Army (organizational parent: Northwestern Front)
 
 | Counter | Hex | Landmark / geographic reference |
 | --- | --- | --- |
-| 8th Army HQ [8] | `(-10, -1)` | Siauliai-Riga axis |
-| X Rifle Corps | `(-10, 0)` | Siauliai line |
-| XI Rifle Corps | `(-10, 1)` | Kaunas-Siauliai axis |
-| XII Mechanised Corps | `(-9, 0)` | Siauliai-Raseiniai sector |
+| 8th Army HQ [8] | `(-12, 1)` | Kaunas city hex |
+| X Rifle Corps | `(-13, 1)` **B** | East Prussian border, Tilsit-Taurage |
+| XI Rifle Corps | `(-13, 1)` **B** | East Prussian border, Tilsit-Taurage |
+| XII Mechanised Corps | `(-12, 2)` | Kaunas-Vilnius rear |
 
 #### 11th Army (organizational parent: Northwestern Front)
 
 | Counter | Hex | Landmark / geographic reference |
 | --- | --- | --- |
-| 11th Army HQ [11] | `(-12, 1)` | Kaunas city hex (map-alignment adjustment) |
-| XVI Rifle Corps | `(-11, 0)` | Kaunas western approaches |
-| XXIX Rifle Corps | `(-14, 4)` | Bialystok city hex (map-alignment adjustment) |
-| III Mechanised Corps | `(-10, 2)` | Vilnius area |
+| 11th Army HQ [11] | `(-12, 1)` | Kaunas city hex |
+| XVI Rifle Corps | `(-13, 2)` **B** | East Prussian border, Kaunas approaches |
+| XXIX Rifle Corps | `(-13, 2)` **B** | East Prussian border, Kaunas approaches |
+| III Mechanised Corps | `(-12, 2)` | Kaunas-Vilnius rear |
 
 #### 27th Army (organizational parent: Northwestern Front)
 
 | Counter | Hex | Landmark / geographic reference |
 | --- | --- | --- |
-| 27th Army HQ [27] | `(-8, 1)` | Daugavpils second echelon |
+| 27th Army HQ [27] | `(-11, 2)` | Vilnius city hex |
 
 No subordinate counter is represented under 27th Army at the current scale.
 
@@ -225,42 +233,42 @@ No subordinate counter is represented under 27th Army at the current scale.
 
 | Counter | Hex | Landmark / geographic reference |
 | --- | --- | --- |
-| Western Front HQ [W] | `(-12, 3)` | Bialystok-Minsk axis |
+| Western Front HQ [W] | `(-13, 5)` | Volkovysk rear |
 
 #### 3rd Army (organizational parent: Western Front)
 
 | Counter | Hex | Landmark / geographic reference |
 | --- | --- | --- |
-| 3rd Army HQ [3] | `(-14, 4)` | Bialystok city hex (map-alignment adjustment) |
-| IV Rifle Corps | `(-12, 1)` | Grodno frontier sector |
-| XI Mechanised Corps | `(-11, 2)` | Grodno-Lida axis |
+| 3rd Army HQ [3] | `(-13, 3)` | Grodno rear |
+| IV Rifle Corps | `(-14, 3)` **B** | Suwalki-Grodno frontier (forest) |
+| XI Mechanised Corps | `(-13, 3)` | Grodno rear |
 
 #### 4th Army (organizational parent: Western Front)
 
 | Counter | Hex | Landmark / geographic reference |
 | --- | --- | --- |
-| 4th Army HQ [4] | `(-13, 4)` | Brest-Litovsk approaches |
-| XXVIII Rifle Corps | `(-13, 5)` | Brest-Litovsk fortress line |
-| XIV Mechanised Corps | `(-12, 4)` | Kobryn-Brest sector |
-| I Anti-Tank Brigade | `(-12, 5)` | Brest-Kobryn defensive belt |
+| 4th Army HQ [4] | `(-14, 7)` | Kobryn approaches |
+| XXVIII Rifle Corps | `(-14, 6)` **B** | Brest city hex |
+| XIV Mechanised Corps | `(-15, 7)` **B** | Bug River, south of Brest |
+| I Anti-Tank Brigade | `(-15, 7)` **B** | Bug River, south of Brest |
 
 #### 10th Army (organizational parent: Western Front)
 
 | Counter | Hex | Landmark / geographic reference |
 | --- | --- | --- |
-| 10th Army HQ [10] | `(-13, 3)` | Bialystok |
-| I Rifle Corps | `(-13, 4)` | Bialystok salient western shoulder |
-| V Rifle Corps | `(-12, 6)` | Brest-Baranovichi corridor |
-| VI Mechanised Corps | `(-11, 3)` | Bialystok reserve area |
-| XIII Mechanised Corps | `(-11, 4)` | Bialystok southern approaches |
-| VI Cavalry Corps | `(-11, 5)` | Slonim-Baranovichi axis |
+| 10th Army HQ [10] | `(-13, 4)` | Bialystok rear |
+| I Rifle Corps | `(-14, 4)` **B** | Bialystok city hex |
+| V Rifle Corps | `(-14, 5)` **B** | Bialystok southern shoulder |
+| VI Mechanised Corps | `(-14, 5)` **B** | Bialystok southern shoulder |
+| XIII Mechanised Corps | `(-13, 4)` | Bialystok rear |
+| VI Cavalry Corps | `(-12, 4)` | Volkovysk-Slonim reserve |
 
 #### Front reserve (organizational parent: Western Front)
 
 | Counter | Hex | Landmark / geographic reference |
 | --- | --- | --- |
-| XVII Mechanised Corps | `(-10, 3)` | Baranovichi approaches |
-| XX Mechanised Corps | `(-10, 4)` | Minsk western approaches |
+| XVII Mechanised Corps | `(-13, 5)` | Volkovysk rear |
+| XX Mechanised Corps | `(-14, 7)` | Kobryn approaches |
 
 The later 13th Army HQ is deliberately not placed in the 22 June setup.
 
@@ -268,69 +276,69 @@ The later 13th Army HQ is deliberately not placed in the 22 June setup.
 
 | Counter | Hex | Landmark / geographic reference |
 | --- | --- | --- |
-| Southwestern Front HQ [SW] | `(-12, 9)` | Zhitomir front command area |
+| Southwestern Front HQ [SW] | `(-15, 9)` | Lutsk-Rovno rear |
 
 #### 5th Army (organizational parent: Southwestern Front)
 
 | Counter | Hex | Landmark / geographic reference |
 | --- | --- | --- |
-| 5th Army HQ [5] | `(-15, 8)` | Kovel-Lutsk border belt |
-| XV Rifle Corps | `(-15, 9)` | Kovel |
-| XXVII Rifle Corps | `(-14, 9)` | Lutsk |
-| XXII Mechanised Corps | `(-14, 8)` | Volodymyr-Volynskyi axis |
+| 5th Army HQ [5] | `(-15, 8)` | Kovel-Lutsk rear |
+| XV Rifle Corps | `(-16, 8)` **B** | Vladimir-Volynskyi border sector |
+| XXVII Rifle Corps | `(-16, 8)` **B** | Vladimir-Volynskyi border sector |
+| XXII Mechanised Corps | `(-15, 8)` | Kovel-Lutsk rear |
 
 #### 6th Army (organizational parent: Southwestern Front)
 
 | Counter | Hex | Landmark / geographic reference |
 | --- | --- | --- |
-| 6th Army HQ [6] | `(-15, 10)` | Lviv border approaches |
-| VI Rifle Corps | `(-14, 10)` | Rava-Ruska sector |
-| XXXVII Rifle Corps | `(-15, 11)` | Lviv southern sector |
-| IV Mechanised Corps | `(-14, 11)` | Lviv-Brody axis |
+| 6th Army HQ [6] | `(-15, 10)` | Brody approaches |
+| VI Rifle Corps | `(-16, 10)` **B** | Rava-Ruska / Przemysl border |
+| XXXVII Rifle Corps | `(-16, 10)` **B** | Rava-Ruska / Przemysl border |
+| IV Mechanised Corps | `(-16, 9)` **B** | Lviv city hex |
 
 #### 12th Army (organizational parent: Southwestern Front)
 
 | Counter | Hex | Landmark / geographic reference |
 | --- | --- | --- |
-| 12th Army HQ [12] | `(-14, 12)` | Stanislav / Carpathian approaches |
-| XIII Rifle Corps (12th Army) | `(-14, 13)` | Chernivtsi sector |
-| XVII Rifle Corps (12th Army) | `(-13, 12)` | Stanislav area |
-| XVI Mechanised Corps (12th Army) | `(-13, 13)` | Drohobych-Stryi axis |
+| 12th Army HQ [12] | `(-15, 12)` | Stanislav approaches |
+| XIII Rifle Corps (12th Army) | `(-16, 13)` **B** | Carpathian foothills (mountain hex) |
+| XVII Rifle Corps (12th Army) | `(-15, 13)` **B** | Chernivtsi-Stanislav border |
+| XVI Mechanised Corps (12th Army) | `(-15, 13)` **B** | Chernivtsi-Stanislav border |
 
 #### 26th Army (organizational parent: Southwestern Front)
 
 | Counter | Hex | Landmark / geographic reference |
 | --- | --- | --- |
-| 26th Army HQ [26] | `(-10, 8)` | Przemysl-Lviv axis |
-| VIII Rifle Corps | `(-9, 8)` | Sambir area |
-| VIII Mechanised Corps | `(-8, 8)` | Drohobych area |
-| II Cavalry Corps (26th Army) | `(-8, 9)` | Stryi sector |
+| 26th Army HQ [26] | `(-15, 11)` | Sambir-Drohobych rear |
+| VIII Rifle Corps | `(-16, 11)` **B** | Przemysl-Sambir border |
+| VIII Mechanised Corps | `(-16, 11)` **B** | Przemysl-Sambir border |
+| II Cavalry Corps (26th Army) | `(-16, 12)` **B** | Carpathian foothills (mountain hex) |
 
 #### Front reserve (organizational parent: Southwestern Front)
 
 | Counter | Hex | Landmark / geographic reference |
 | --- | --- | --- |
-| IX Mechanised Corps | `(-13, 9)` | Novograd-Volynskyi reserve area |
-| XV Mechanised Corps | `(-13, 10)` | Brody reserve area |
-| XIX Mechanised Corps | `(-9, 9)` | Rivne reserve area |
-| XXIV Mechanised Corps | `(-10, 11)` | Proskurov reserve area |
+| IX Mechanised Corps | `(-15, 9)` | Lutsk-Rovno rear |
+| XV Mechanised Corps | `(-15, 10)` | Brody approaches |
+| XIX Mechanised Corps | `(-15, 11)` | Sambir-Drohobych rear |
+| XXIV Mechanised Corps | `(-15, 12)` | Stanislav approaches |
 
 ### Odessa Military District / 9th Separate Army
 
 | Counter | Hex | Landmark / geographic reference |
 | --- | --- | --- |
-| Odessa MD HQ [O] | `(-12, 14)` | Chisinau / Bessarabian frontier |
+| Odessa MD HQ [O] | `(-14, 14)` | Balti rear |
 
 #### 9th Separate Army (organizational parent: Odessa Military District)
 
 | Counter | Hex | Landmark / geographic reference |
 | --- | --- | --- |
-| 9th Separate Army HQ [9] | `(-13, 14)` | Balti sector |
-| XIV Rifle Corps (9th Army) | `(-12, 15)` | Balti-Chisinau axis |
-| XXXV Rifle Corps | `(-11, 15)` | Chisinau approaches |
-| II Cavalry Corps (9th Army) | `(-11, 14)` | Balti sector |
-| II Mechanised Corps | `(-10, 14)` | Tiraspol sector |
-| XVIII Mechanised Corps | `(-9, 14)` | Odessa approaches |
+| 9th Separate Army HQ [9] | `(-14, 15)` | Kishinev approaches |
+| XIV Rifle Corps (9th Army) | `(-15, 14)` **B** | Prut border, Chernivtsi |
+| XXXV Rifle Corps | `(-15, 14)` **B** | Prut border, Chernivtsi |
+| II Cavalry Corps (9th Army) | `(-15, 15)` **B** | Prut border, Balti sector |
+| II Mechanised Corps | `(-15, 15)` **B** | Prut border, Balti sector |
+| XVIII Mechanised Corps | `(-15, 16)` **B** | Prut border, Kishinev sector |
 
 ## Review Checklist
 
