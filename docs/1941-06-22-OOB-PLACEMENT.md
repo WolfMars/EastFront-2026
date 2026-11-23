@@ -35,138 +35,146 @@ Primary cross-check: [Operation Barbarossa order of battle](https://en.wikipedia
 
 ## Axis
 
+Axis counters are placed on Axis-owned land hexes of
+`src/data/1941-06-barbarossa.json`. Hexes that touch Soviet-owned land
+(border hexes, marked **B**) are stacked to their limit (2 on clear terrain,
+1 on forest, marsh or mountain) because this setup is an offensive opening.
+Army and Panzer Group HQs sit on or next to a border hex where stacking
+allows, and every corps is within 4 hexes (command range with supply) of its
+command HQ. Landmarks are approximate, as the map is stylised at 80 km/hex.
+
 ### Army Group Centre (AGC)
 
 | Counter | Hex | Landmark / geographic reference |
 | --- | --- | --- |
-| AGC HQ [C] | `(-17, 5)` | Warsaw area |
+| AGC HQ [C] | `(-17, 5)` | Warsaw approaches / Modlin |
 
 #### 9th Army (organizational parent: AGC)
 
 | Counter | Hex | Landmark / geographic reference |
 | --- | --- | --- |
-| 9th Army HQ [9] | `(-16, 3)` | Suwalki corridor, East Prussia |
-| V Corps | `(-15, 2)` | East Prussian-Suwalki frontier |
-| VI Corps | `(-15, 3)` | East Prussian-Suwalki frontier |
-| VIII Corps | `(-16, 3)` | Suwalki corridor |
-| XX Corps | `(-17, 3)` | East Prussian frontier near Gdansk |
+| 9th Army HQ [9] | `(-16, 4)` | Ostrolenka-Lomza rear |
+| V Corps | `(-15, 4)` **B** | Suwalki-Grodno frontier |
+| VI Corps | `(-16, 3)` | Suwalki-Augustow rear |
+| VIII Corps | `(-16, 4)` | Ostrolenka-Lomza rear |
+| XX Corps | `(-17, 5)` | Modlin-Ostrow Mazowiecka |
 
 #### 4th Army (organizational parent: AGC)
 
 | Counter | Hex | Landmark / geographic reference |
 | --- | --- | --- |
-| 4th Army HQ [4] | `(-16, 5)` | Brest-Litovsk approaches |
-| VII Corps | `(-15, 3)` | Brest-Litovsk axis |
-| IX Corps | `(-15, 4)` | Brest-Litovsk axis |
-| XIII Corps | `(-16, 4)` | Polish-Belarusian frontier |
-| XLIII Corps | `(-16, 5)` | Brest-Litovsk approaches |
+| 4th Army HQ [4] | `(-16, 5)` | Warsaw city hex |
+| VII Corps | `(-15, 5)` **B** | Bialystok approaches |
+| IX Corps | `(-15, 5)` **B** | Bialystok approaches |
+| XIII Corps | `(-16, 5)` | Warsaw city hex |
+| XLIII Corps | `(-16, 6)` | Siedlce rear |
 
 #### 3rd Panzer Group (organizational parent: AGC)
 
 | Counter | Hex | Landmark / geographic reference |
 | --- | --- | --- |
-| 3rd PzGrp HQ [P3] | `(-15, 2)` | Konigsberg / East Prussia |
-| XXXIX Mot Corps | `(-14, 1)` | Tilsit-Kaunas axis |
-| LVII Mot Corps | `(-14, 2)` | East Prussia-Lithuania frontier |
+| 3rd PzGrp HQ [P3] | `(-15, 4)` **B** | Suwalki-Grodno frontier |
+| XXXIX Mot Corps | `(-15, 3)` **B** | Suwalki-Alytus axis |
+| LVII Mot Corps | `(-15, 3)` **B** | Suwalki-Alytus axis |
 
 #### 2nd Panzer Group (organizational parent: AGC)
 
 | Counter | Hex | Landmark / geographic reference |
 | --- | --- | --- |
-| 2nd PzGrp HQ [P2] | `(-15, 7)` | Brest-Litovsk |
-| XII Corps | `(-15, 7)` | Brest-Litovsk |
-| XXIV Mot Corps | `(-16, 6)` | Brest-Litovsk approach from Poland |
-| XLVI Mot Corps | `(-15, 5)` | Brest-Litovsk axis |
-| XLVII Mot Corps | `(-15, 6)` | Brest-Litovsk approaches |
+| 2nd PzGrp HQ [P2] | `(-16, 6)` | Siedlce rear |
+| XII Corps | `(-16, 7)` **B** | Bug River, south of Brest |
+| XXIV Mot Corps | `(-16, 7)` **B** | Bug River, south of Brest |
+| XLVI Mot Corps | `(-15, 6)` **B** | Brest-Litovsk approaches |
+| XLVII Mot Corps | `(-15, 6)` **B** | Brest-Litovsk approaches |
 
 ### Army Group North (AGN)
 
 | Counter | Hex | Landmark / geographic reference |
 | --- | --- | --- |
-| AGN HQ [N] | `(-17, 4)` | Insterburg-Gumbinnen rear command area |
+| AGN HQ [N] | `(-17, 4)` | Allenstein-Insterburg rear command area |
 
 #### 18th Army (organizational parent: AGN)
 
 | Counter | Hex | Landmark / geographic reference |
 | --- | --- | --- |
-| 18th Army HQ [18] | `(-20, 3)` | Gdansk-East Prussian coastal rear area |
-| I Corps | `(-21, 3)` | Danzig corridor rear assembly area |
-| XXVI Corps | `(-20, 4)` | Elbing-Marienburg axis |
-| XXXVIII Corps | `(-19, 4)` | Allenstein approaches |
+| 18th Army HQ [18] | `(-17, 2)` | Gdansk city hex |
+| I Corps | `(-17, 2)` | Gdansk city hex |
+| XXVI Corps | `(-18, 4)` | Elbing-Marienburg |
+| XXXVIII Corps | `(-18, 3)` | Elbing-Marienburg |
 
 #### 16th Army (organizational parent: AGN)
 
 | Counter | Hex | Landmark / geographic reference |
 | --- | --- | --- |
-| 16th Army HQ [16] | `(-17, 2)` | Gdansk city hex (map-alignment adjustment) |
-| II Corps | `(-21, 4)` | Vistula corridor staging area |
-| X Corps | `(-21, 5)` | East Prussian southern rear area |
-| XXVIII Corps | `(-20, 5)` | East Prussian southern rail belt |
+| 16th Army HQ [16] | `(-17, 3)` | East Prussian rear |
+| II Corps | `(-17, 3)` | East Prussian rear |
+| X Corps | `(-17, 4)` | Allenstein |
+| XXVIII Corps | `(-18, 3)` | Elbing-Marienburg |
 
 #### 4th Panzer Group (organizational parent: AGN)
 
 | Counter | Hex | Landmark / geographic reference |
 | --- | --- | --- |
-| 4th PzGrp HQ [P4] | `(-13, 0)` | Tilsit / Memel approaches |
-| XLI Mot Corps | `(-14, 1)` | Tilsit-Kaunas axis |
-| LVI Mot Corps | `(-13, 0)` | Memel-Tilsit sector (forward panzer reserve) |
+| 4th PzGrp HQ [P4] | `(-16, 3)` | East Prussian rear, behind the Tilsit axis |
+| XLI Mot Corps | `(-14, 2)` **B** | Tilsit-Kaunas axis |
+| LVI Mot Corps | `(-14, 2)` **B** | Tilsit-Kaunas axis |
 
 ### Army Group South (AGS)
 
 | Counter | Hex | Landmark / geographic reference |
 | --- | --- | --- |
-| AGS HQ [S] | `(-21, 9)` | Lublin district |
+| AGS HQ [S] | `(-18, 10)` | Przemysl-Lublin district |
 
 #### 6th Army (organizational parent: AGS)
 
 | Counter | Hex | Landmark / geographic reference |
 | --- | --- | --- |
-| 6th Army HQ [6] | `(-20, 8)` | Lublin-Lutsk axis |
-| XVII Corps | `(-18, 8)` | Hrubieszow-Lutsk axis |
-| XXIX Corps | `(-19, 8)` | Lublin-Lutsk axis |
-| LV Corps | `(-20, 8)` | Lublin district |
+| 6th Army HQ [6] | `(-18, 8)` | Lublin-Lutsk axis |
+| XVII Corps | `(-18, 8)` | Lublin-Lutsk axis |
+| XXIX Corps | `(-18, 9)` | Hrubieszow-Lutsk axis |
+| LV Corps | `(-18, 9)` | Hrubieszow-Lutsk axis |
 
 #### 17th Army (organizational parent: AGS)
 
 | Counter | Hex | Landmark / geographic reference |
 | --- | --- | --- |
-| 17th Army HQ [17] | `(-20, 11)` | Przemysl sector |
-| IV Corps | `(-19, 10)` | Przemysl-Lviv axis |
-| LII Corps | `(-19, 12)` | Carpathian foothills |
-| XLIX Mtn Corps | `(-17, 12)` | Carpathian foothills east of Przemysl |
+| 17th Army HQ [17] | `(-18, 10)` | Przemysl sector |
+| IV Corps | `(-17, 10)` **B** | Przemysl-Lviv axis (forest) |
+| LII Corps | `(-17, 11)` **B** | Carpathian foothills (forest) |
+| XLIX Mtn Corps | `(-17, 12)` **B** | Carpathian foothills (mountain) |
 
 #### 1st Panzer Group (organizational parent: AGS)
 
 | Counter | Hex | Landmark / geographic reference |
 | --- | --- | --- |
-| 1st PzGrp HQ [P1] | `(-19, 9)` | Vladimir-Volynskyi / Lutsk axis |
-| III Mot Corps | `(-18, 9)` | Sokal-Lutsk axis |
-| XIV Mot Corps | `(-19, 10)` | Rava-Ruska sector |
-| XLVIII Mot Corps | `(-18, 11)` | Lviv approaches |
+| 1st PzGrp HQ [P1] | `(-17, 9)` **B** | Vladimir-Volynskyi / Rava-Ruska axis |
+| III Mot Corps | `(-17, 8)` **B** | Sokal-Lutsk axis |
+| XIV Mot Corps | `(-17, 8)` **B** | Sokal-Lutsk axis |
+| XLVIII Mot Corps | `(-17, 9)` **B** | Lviv approaches |
 
 #### 11th Army (organizational parent: AGS / Army Group Antonescu sector)
 
 | Counter | Hex | Landmark / geographic reference |
 | --- | --- | --- |
-| 11th Army HQ [11] | `(-15, 13)` | Iasi / Prut River sector |
-| XI Corps | `(-16, 13)` | Siret-Prut approaches |
-| XXX Corps | `(-15, 13)` | Iasi / Prut River sector |
+| 11th Army HQ [11] | `(-17, 14)` **B** | Northern Moldavia / Prut River sector |
+| XI Corps | `(-16, 14)` **B** | Prut River sector (mountain hex) |
+| XXX Corps | `(-18, 14)` | Northern Moldavia |
 
 #### 3rd Romanian Army (organizational parent: Army Group Antonescu)
 
 | Counter | Hex | Landmark / geographic reference |
 | --- | --- | --- |
-| 3rd Ro Army HQ [R3] | `(-18, 13)` | Suceava / northern Moldavia |
-| Ro Mountain Corps | `(-17, 13)` | Chernivtsi-Carpathian sector |
+| 3rd Ro Army HQ [R3] | `(-17, 14)` **B** | Northern Moldavia |
+| Ro Mountain Corps | `(-17, 13)` **B** | Carpathian sector (mountain hex) |
 
 #### 4th Romanian Army (organizational parent: Army Group Antonescu)
 
 | Counter | Hex | Landmark / geographic reference |
 | --- | --- | --- |
-| 4th Ro Army HQ [R4] | `(-18, 14)` | Iasi / central Moldavia |
-| Ro Cavalry Corps | `(-17, 14)` | Prut River crossing sector |
-| XI Ro Corps | `(-15, 14)` | Bessarabian frontier |
-| IV Ro Corps | `(-15, 15)` | Odessa approaches |
+| 4th Ro Army HQ [R4] | `(-17, 15)` | Central Moldavia |
+| Ro Cavalry Corps | `(-16, 16)` **B** | Prut River crossing sector |
+| XI Ro Corps | `(-16, 15)` **B** | Bessarabian frontier (mountain hex) |
+| IV Ro Corps | `(-16, 16)` **B** | Lower Prut / Odessa approaches |
 
 ## Soviet Forces
 

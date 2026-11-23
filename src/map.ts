@@ -210,18 +210,18 @@ const BOARD_ROWS = [
     { r:  -7, qStart: -21, codes: 'wwwwwwwwwwwwwwwwwwwfxxfffffff' }, // Gulf of Finland / Leningrad
     { r:  -6, qStart: -21, codes: 'wwwwwwwwwwwwwfffxffffffffffff' }, // Tallinn / Estonia coast
     { r:  -5, qStart: -21, codes: 'wwwwwwwwwwww.fffwxfffffffffff' }, // W Estonia coast (Haapsalu) / Lake Peipus
-    { r:  -4, qStart: -21, codes: 'wwwwwwwwwwwwwff.w.ff.ffffffff' }, // Gulf of Riga north / Parnu / Lake Peipus
-    { r:  -3, qStart: -21, codes: 'wwwwwwwwww.w...f..ffx.fffffff' }, // Courland tip (Ventspils) / Gulf of Riga
-    { r:  -2, qStart: -21, codes: 'wwwwwwwww.f.f...f.f..ffffffff' }, // Riga / Lithuania
-    { r:  -1, qStart: -21, codes: 'wwwwwwwww...ff.fffffffffffff' }, // Liepaja coast / S Latvia / Belarus
-    { r:   0, qStart: -21, codes: 'wwwwwwww....f.f.ffff.ffffffff' }, // N Lithuania / Central Russia
-    { r:   1, qStart: -21, codes: 'wwwwwwwwf..f.f.ffffffffffffff' }, // East Prussia / Belarus
-    { r:   2, qStart: -21, codes: 'wwww...f..fffffffffffffffffff' }, // Poland border / forest
-    { r:   3, qStart: -21, codes: '.......ffffffffff............' }, // Minsk / Ukraine opens east
+    { r:  -4, qStart: -21, codes: 'wwwwwwwwwwwww.f.w.ff.ffffffff' }, // Gulf of Riga north / Parnu / Lake Peipus
+    { r:  -3, qStart: -21, codes: 'wwwwwwwwwwfww..f..ffx.fffffff' }, // Courland tip (Ventspils) / Gulf of Riga
+    { r:  -2, qStart: -21, codes: 'wwwwwwwwwffw.f..f.f..ffffffff' }, // Riga / Lithuania
+    { r:  -1, qStart: -21, codes: 'wwwwwwwww......ffffffffffffff' }, // Liepaja coast / S Latvia / Belarus
+    { r:   0, qStart: -21, codes: 'wwwwwwwww.....f.ffff.ffffffff' }, // N Lithuania / Central Russia
+    { r:   1, qStart: -21, codes: 'wwwwwwww.....f.ffffffffffffff' }, // East Prussia / Belarus
+    { r:   2, qStart: -21, codes: 'wwww.ww.....fffffffffffffffff' }, // Poland border / forest
+    { r:   3, qStart: -21, codes: '.......f....fffff............' }, // Minsk / Ukraine opens east
     { r:   4, qStart: -21, codes: '...........f.ffff............' }, // Pripyat Marshes begin
-    { r:   5, qStart: -21, codes: '........ffxf.fff.............' }, // Pripyat Marshes center
+    { r:   5, qStart: -21, codes: '.........f.xffff.............' }, // Pripyat Marshes center
     { r:   6, qStart: -21, codes: '........fxxxffff.............' }, // Pripyat / Brest
-    { r:   7, qStart: -21, codes: '........xx...................' }, // Pripyat Marshes south
+    { r:   7, qStart: -21, codes: '.........xxff................' }, // Pripyat Marshes south
     { r:   8, qStart: -21, codes: '.............................' }, // Ukraine steppes / Kiev (extended for AGS)
     { r:   9, qStart: -21, codes: '.............................' }, // Ukraine / Kharkov / Lviv (extended for AGS)
     { r:  10, qStart: -21, codes: '....f........................' }, // Carpathians / Caspian (extended for AGS)
@@ -292,7 +292,7 @@ const BOARD_CITIES: BoardCity[] = [
     { q: -17, r:  2, name: 'Gdansk', lat: 54.3520, lon: 18.6466 },
     { q: -20, r:  5, name: 'Poznan', lat: 52.4064, lon: 16.9252 },
     { q: -14, r:  4, name: 'Bialystok', lat: 53.1325, lon: 23.1688 },
-    { q: -15, r:  2, name: 'Königsberg', lat: 54.7104, lon: 20.4522 },
+    { q: -16, r:  3, name: 'Königsberg', lat: 54.7104, lon: 20.4522 },
     { q: -16, r:  5, name: 'Warsaw', lat: 52.2297, lon: 21.0122 },
     { q: -14, r:  6, name: 'Brest', lat: 52.0976, lon: 23.7341 },
     { q: -16, r:  9, name: 'Lviv', lat: 49.8397, lon: 24.0297 },
