@@ -1,7 +1,7 @@
 import { AxialCoord, hexToPixel, pixelToHex, hexSideKey } from './hex';
 import { generateMap, getTerrainColor, getOwnerColor, getFrontlineColor, applyBorderData, applyRiverData, Hex, TerrainType, getTerrainMovementCost, getTerrainDisplayName, type BorderData, type HexSideMap } from './map';
 import defaultRiverData from '../data/rivers-sidekeys.json';
-import { GameState, Player, UnitType, type GameSetupData, TurnPhase, getStrengthBandShortLabel } from './game';
+import { GameState, Player, UnitType, type Unit, type GameSetupData, TurnPhase, getStrengthBandShortLabel } from './game';
 import { globalBus, type GameMessage } from './messaging';
 import defaultBorderData from './data/1941-06-barbarossa.json';
 import agcSetupData from './data/agc-barbarossa-setup.json';
@@ -44,6 +44,28 @@ let currentRiverData: any = defaultRiverData as any;
 let riverSideMap: HexSideMap = applyRiverData(hexMap, currentRiverData);
 let gameState = new GameState(hexMap, agcSetupData as GameSetupData);
 
+// UI-only state: which unit is drawn on top in each stacked hex ("q,r" -> unit id).
+const stackTop = new Map<string, string>();
+
+function coordKey(coord: AxialCoord): string {
+    return `${coord.q},${coord.r}`;
+}
+
+function getTopUnit(coord: AxialCoord): Unit | undefined {
+    const stack = gameState.getUnitsAtHex(coord);
+    if (stack.length === 0) return undefined;
+    const preferredId = stackTop.get(coordKey(coord));
+    return stack.find(unit => unit.id === preferredId)
+        ?? stack.find(unit => unit.type !== UnitType.HEADQUARTERS)
+        ?? stack[0];
+}
+
+function getNextInStack(coord: AxialCoord, currentId: string | undefined): Unit | undefined {
+    const stack = gameState.getUnitsAtHex(coord);
+    if (stack.length === 0) return undefined;
+    const index = stack.findIndex(unit => unit.id === currentId);
+    return stack[(index + 1) % stack.length];
+}
 // Simple on-page logger: writes a short message to #log-message and appends history to #log-history.
 export function pageLog(message: string, appendHistory: boolean = true): void {
     const logSpan = document.getElementById('log-message');
@@ -396,13 +418,13 @@ function getUnitSizeMarker(unit: { name?: string; type: UnitType }): string {
     return 'XXX';
 }
 
-function drawUnit(unitId: string): void {
+function drawUnit(unitId: string, offsetPxX = 0, offsetPxY = 0): void {
     const unit = gameState.units.get(unitId);
     if (!unit) return;
 
     const pixel = gameToCanvas(unit.position);
-    const x = pixel.x;
-    const y = pixel.y;
+    const x = pixel.x + offsetPxX;
+    const y = pixel.y + offsetPxY;
 
     // Unit color based on player
     const color = unit.owner === Player.SOVIET ? '#FF4444' : '#6A8CFF';
@@ -433,6 +455,11 @@ function drawUnit(unitId: string): void {
     ctx.fill();
     ctx.stroke();
 
+    if (unit.id === gameState.selectedUnitId) {
+        ctx.strokeStyle = '#FFFF00';
+        ctx.lineWidth = 2.5;
+        ctx.strokeRect(rectX - 1.5, rectY - 1.5, rectWidth + 3, rectHeight + 3);
+    }
     if (shouldRenderUnitText && unit.name) {
         ctx.fillStyle = '#000000';
         ctx.font = '7px Arial';
@@ -506,11 +533,52 @@ function drawUnit(unitId: string): void {
 }
 
 /**
- * Draw all units
+ * Draw all units. Units sharing a hex are fanned out towards their own rear
+ * (Axis to the west, Soviet to the east) with the top counter drawn last,
+ * plus a count badge on the opposite side.
  */
 function drawUnits(): void {
-    gameState.units.forEach((_, unitId) => {
-        drawUnit(unitId);
+    const stacks = new Map<string, Unit[]>();
+    gameState.units.forEach((unit) => {
+        const key = coordKey(unit.position);
+        const stack = stacks.get(key);
+        if (stack) stack.push(unit);
+        else stacks.set(key, [unit]);
+    });
+
+    stacks.forEach((stack) => {
+        if (stack.length === 1) {
+            drawUnit(stack[0].id);
+            return;
+        }
+
+        const top = getTopUnit(stack[0].position)!;
+        const below = stack.filter(unit => unit.id !== top.id);
+        const direction = top.owner === Player.AXIS ? -1 : 1;
+        const step = Math.max(3, HEX_SIZE * 0.3);
+
+        below.forEach((unit, index) => {
+            const depth = below.length - index;
+            drawUnit(unit.id, direction * depth * step, -depth * step * 0.5);
+        });
+        drawUnit(top.id);
+
+        const pixel = gameToCanvas(top.position);
+        const radius = Math.max(5, HEX_SIZE * 0.3);
+        const badgeX = pixel.x - direction * HEX_SIZE * 0.6;
+        const badgeY = pixel.y - HEX_SIZE * 0.6;
+        ctx.fillStyle = '#FFFFFF';
+        ctx.strokeStyle = '#111111';
+        ctx.lineWidth = 1.4;
+        ctx.beginPath();
+        ctx.arc(badgeX, badgeY, radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = '#111111';
+        ctx.font = `bold ${Math.round(radius * 1.4)}px Arial`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(String(stack.length), badgeX, badgeY + 0.5);
     });
 }
 
@@ -610,6 +678,21 @@ function render(): void {
 }
 
 /**
+ * Sidebar list of every counter in a hex (only shown for stacks); items are clickable.
+ */
+function stackListHtml(coord: AxialCoord, highlightId: string | undefined): string {
+    const stack = gameState.getUnitsAtHex(coord);
+    if (stack.length < 2) return '';
+    const items = stack.map((unit) => {
+        const intel = gameState.getUnitIntelView(unit.id, gameState.currentPlayer);
+        const detail = intel?.isOwnerUnit ? `S${unit.strength}` : (intel?.strengthLabel ?? '');
+        const selectedClass = unit.id === highlightId ? ' selected' : '';
+        return `<div class="stack-item${selectedClass}" data-unit-id="${unit.id}"><span>${intel?.name ?? unit.name ?? unit.type}</span><small>${unit.type} · ${detail}</small></div>`;
+    }).join('');
+    return `<div class="stack-list"><div class="stack-title">Units in hex (${stack.length})</div>${items}</div>`;
+}
+
+/**
  * Update UI panels
  */
 function updateUI(): void {
@@ -691,10 +774,11 @@ function updateUI(): void {
                     <span>Movement:</span>
                     <strong>${intel?.movementText ?? `${unit.movement}/${unit.maxMovement}`}</strong>
                 </div>
+                ${stackListHtml(unit.position, unit.id)}
             `;
         }
     } else if (gameState.selectedHex) {
-        const selectedUnit = gameState.getUnitAt(gameState.selectedHex);
+        const selectedUnit = getTopUnit(gameState.selectedHex);
         if (selectedUnit && selectedUnit.owner !== gameState.currentPlayer) {
             const intel = gameState.getUnitIntelView(selectedUnit.id, gameState.currentPlayer);
             statusText.textContent = `Enemy ${selectedUnit.name ?? selectedUnit.type} selected.`;
@@ -743,6 +827,7 @@ function updateUI(): void {
                     <span>Movement:</span>
                     <strong>${intel?.movementText ?? `${selectedUnit.movement}/${selectedUnit.maxMovement}`}</strong>
                 </div>
+                ${stackListHtml(selectedUnit.position, selectedUnit.id)}
             `;
             return;
         }
@@ -851,8 +936,21 @@ canvas.addEventListener('click', (event) => {
     lastClick = { q: coord.q, r: coord.r };
     updateDebugPanel();
 
-    // Check if clicking on a unit
-    const unit = gameState.getUnitAt(coord);
+    // Moving onto a hex that already holds friendly units must win over re-selecting them.
+    if (gameState.selectedUnitId && gameState.phase === TurnPhase.MOVE) {
+        const mover = gameState.units.get(gameState.selectedUnitId);
+        const isOwnHex = mover && mover.position.q === coord.q && mover.position.r === coord.r;
+        const isValidMove = gameState.validMoves.some(m => m.q === coord.q && m.r === coord.r);
+        if (mover && !isOwnHex && isValidMove) {
+            if (gameState.moveUnit(coord)) stackTop.set(coordKey(coord), mover.id);
+            render();
+            updateUI();
+            return;
+        }
+    }
+
+    // Check if clicking on a unit (the top counter of a stack)
+    const unit = getTopUnit(coord);
     if (unit) {
         gameState.markUnitObserved(unit.id);
         // If we're in ATTACK phase and an own unit is selected, and the clicked unit is an enemy,
@@ -888,8 +986,16 @@ canvas.addEventListener('click', (event) => {
                 }
             }
         }
-        if (unit.owner === gameState.currentPlayer) {
-            gameState.selectUnit(unit.id);
+        // Clicking the hex that is already selected cycles through its stack.
+        const selectedUnitHere = gameState.selectedUnitId ? gameState.units.get(gameState.selectedUnitId) : undefined;
+        const alreadySelectedHere = (selectedUnitHere && selectedUnitHere.position.q === coord.q && selectedUnitHere.position.r === coord.r)
+            || (gameState.selectedHex && gameState.selectedHex.q === coord.q && gameState.selectedHex.r === coord.r);
+        const picked = alreadySelectedHere
+            ? getNextInStack(coord, selectedUnitHere?.id ?? unit.id) ?? unit
+            : unit;
+        stackTop.set(coordKey(coord), picked.id);
+        if (picked.owner === gameState.currentPlayer) {
+            gameState.selectUnit(picked.id);
         } else {
             gameState.selectHex(coord);
         }
@@ -961,6 +1067,25 @@ canvas.addEventListener('click', (event) => {
  */
 document.getElementById('end-turn-btn')!.addEventListener('click', () => {
     gameState.advancePhase();
+    render();
+    updateUI();
+});
+
+/**
+ * Sidebar: pick a counter from the stack list of the selected hex.
+ */
+document.getElementById('unit-info')!.addEventListener('click', (event) => {
+    const item = (event.target as HTMLElement).closest('[data-unit-id]') as HTMLElement | null;
+    if (!item) return;
+    const unit = gameState.units.get(item.dataset.unitId ?? '');
+    if (!unit) return;
+
+    stackTop.set(coordKey(unit.position), unit.id);
+    if (unit.owner === gameState.currentPlayer) {
+        gameState.selectUnit(unit.id);
+    } else {
+        gameState.selectHex(unit.position);
+    }
     render();
     updateUI();
 });

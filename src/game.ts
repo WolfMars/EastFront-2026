@@ -571,7 +571,7 @@ export class GameState {
         return this.canUnitOccupyHex(coord, movingUnit);
     }
 
-    private getUnitsAtHex(coord: AxialCoord): Unit[] {
+    getUnitsAtHex(coord: AxialCoord): Unit[] {
         return Array.from(this.units.values()).filter(unit => hexEqual(unit.position, coord));
     }
 

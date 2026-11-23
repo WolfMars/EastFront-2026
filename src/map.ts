@@ -20,7 +20,7 @@ export function getOwnerColor(owner: HexOwner): string | null {
  */
 export function getFrontlineColor(a: HexOwner, b: HexOwner): string | null {
     if ((a === 'A' && b === 'S') || (a === 'S' && b === 'A')) {
-        return '#FF8C00'; // Orange
+        return '#fd03f0'; // Pink
     }
     return null;
 }
